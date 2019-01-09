@@ -1,13 +1,13 @@
 import axios from '@/libs/api.request'
 
 export const login = ({ userName, password }) => {
-  const data = {
-    userName,
+  const params = {
+    loginName: userName,
     password
   }
   return axios.request({
-    url: 'login',
-    data,
+    url: '/itsm/system/permission/loginTo/login',
+    params,
     method: 'post'
   })
 }

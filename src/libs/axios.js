@@ -14,14 +14,14 @@ const addErrorLog = errorInfo => {
 
 class HttpRequest {
   constructor (baseUrl = baseURL) {
-    this.baseUrl = baseUrl
+    this.baseUrl = 'http://192.168.3.32:9104'
     this.queue = {}
   }
   getInsideConfig () {
     const config = {
       baseURL: this.baseUrl,
       headers: {
-        //
+        // 'Content-Type': 'application/x-www-form-urlencoded'
       }
     }
     return config
@@ -67,7 +67,6 @@ class HttpRequest {
   request (options) {
     const instance = axios.create()
     options = Object.assign(this.getInsideConfig(), options)
-    this.interceptors(instance, options.url)
     return instance(options)
   }
 }
