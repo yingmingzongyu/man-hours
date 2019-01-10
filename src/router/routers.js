@@ -1,4 +1,11 @@
+/*
+ * @Author: yincheng
+ * @Date: 2019-01-10 10:12:27
+ * @LastEditors: yincheng
+ * @LastEditTime: 2019-01-10 15:04:51
+ */
 import Main from '@/components/main'
+import parentView from '@/components/parent-view'
 
 /**
  * iview-admin中meta除了原生参数外可配置的参数:
@@ -45,6 +52,110 @@ export default [
           icon: 'md-home'
         },
         component: () => import('@/view/single-page/home')
+      },
+    ]
+  },
+  {
+    path: '/project',
+    name: 'project',
+    component: Main,
+    meta: {
+      title: '项目管理'
+    },
+    children: [
+      {
+        path: 'software-development',
+        name: 'software-development',
+        meta: {
+          title: '软件开发'
+        },
+        component: parentView,
+        children: [
+          {
+            path: 'product-manage',
+            name: 'product-manage',
+            meta: {
+              title: '软件产品管理'
+            },
+            component: () => import('@/view/project/software-development/product-manage.vue')
+          },
+          {
+            path: 'project-manage',
+            name: 'project-manage',
+            meta: {
+              title: '软件项目管理'
+            },
+            component: () => import('@/view/project/software-development/project-manage.vue')
+          },
+        ]
+      },
+      {
+        path: 'project-construction',
+        name: 'project-construction',
+        component: parentView,
+        meta: {
+          title: '项目施工'
+        },
+        children: [
+          {
+            path: 'intelligentize',
+            name: 'intelligentize',
+            meta: {
+              title: '智能化项目管理'
+            },
+            component: () => import('@/view/project/software-development/product-manage.vue')
+          },
+          {
+            path: 'integration',
+            name: 'integration',
+            meta: {
+              title: '系统集成项目管理'
+            },
+            component: () => import('@/view/project/software-development/project-manage.vue')
+          },
+          {
+            path: 'multimedia',
+            name: 'multimedia',
+            meta: {
+              title: '多媒体项目管理'
+            },
+            component: () => import('@/view/project/software-development/project-manage.vue')
+          },
+          {
+            path: 'ops',
+            name: 'ops',
+            meta: {
+              title: '运维服务项目管理'
+            },
+            component: () => import('@/view/project/software-development/project-manage.vue')
+          }
+        ]
+      },
+      {
+        path: 'train-study',
+        name: 'train-study',
+        component: parentView,
+        meta: {
+          title: '学习培训'
+        },
+        children: [
+          {
+            path: 'internal',
+            name: 'internal',
+            meta: {
+              title: '内部培训'
+            },
+            component: () => import('@/view/project/software-development/product-manage.vue')
+          },
+          {
+            path: 'external',
+            name: 'external',
+            meta: {
+              title: '外部培训'
+            },
+            component: () => import('@/view/project/software-development/project-manage.vue')
+          }
+        ]
       }
     ]
   },
