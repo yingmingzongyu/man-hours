@@ -145,6 +145,10 @@ export default {
             title: "文档"
           },
           name: "doc"
+        },
+        {
+          icon: "ios-construct",
+          name: "system"
         }
       ];
     },

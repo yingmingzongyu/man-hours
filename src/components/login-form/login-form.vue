@@ -15,7 +15,7 @@
       </Input>
     </FormItem>
     <FormItem>
-      <Button @click="handleSubmit" type="primary" long>登录</Button>
+      <Button @click="handleSubmit" type="primary" long :loading="loginLoading">登录</Button>
     </FormItem>
   </Form>
 </template>
@@ -38,6 +38,10 @@ export default {
           { required: true, message: '密码不能为空', trigger: 'blur' }
         ]
       }
+    },
+    loginLoading: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
