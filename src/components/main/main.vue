@@ -148,7 +148,7 @@ export default {
         },
         {
           icon: "ios-construct",
-          name: "system",
+          name: "project",
           meta: {
             icon: "ios-construct",
             title: "项目管理"
@@ -190,7 +190,7 @@ export default {
               children: [
                 {
                   icon: "ios-construct",
-                  name: "intelligentize-manage",
+                  name: "intelligentize",
                   meta: {
                     icon: "ios-construct",
                     title: "智能化项目管理"
@@ -198,7 +198,7 @@ export default {
                 },
                 {
                   icon: "ios-construct",
-                  name: "integration-manage",
+                  name: "integration",
                   meta: {
                     icon: "ios-construct",
                     title: "系统集成项目管理"
@@ -206,7 +206,7 @@ export default {
                 },
                 {
                   icon: "ios-construct",
-                  name: "multimedia-manage",
+                  name: "multimedia",
                   meta: {
                     icon: "ios-construct",
                     title: "多媒体项目管理"
@@ -214,7 +214,7 @@ export default {
                 },
                 {
                   icon: "ios-construct",
-                  name: "ops-manage",
+                  name: "ops",
                   meta: {
                     icon: "ios-construct",
                     title: "运维服务项目管理"
@@ -232,7 +232,7 @@ export default {
               children: [
                 {
                   icon: "ios-construct",
-                  name: "internal-train",
+                  name: "internal",
                   meta: {
                     icon: "ios-construct",
                     title: "内部培训"
@@ -240,7 +240,7 @@ export default {
                 },
                 {
                   icon: "ios-construct",
-                  name: "external-train",
+                  name: "external",
                   meta: {
                     icon: "ios-construct",
                     title: "外部培训"
