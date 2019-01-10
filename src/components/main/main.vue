@@ -148,7 +148,107 @@ export default {
         },
         {
           icon: "ios-construct",
-          name: "system"
+          name: "system",
+          meta: {
+            icon: "ios-construct",
+            title: "项目管理"
+          },
+          children: [
+            {
+              icon: "ios-construct",
+              name: "software-development",
+              meta: {
+                icon: "ios-construct",
+                title: "软件开发"
+              },
+              children: [
+                {
+                  icon: "ios-construct",
+                  name: "product-manage",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "软件产品管理"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "project-manage",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "软件项目管理"
+                  }
+                },
+              ]
+            },
+            {
+              icon: "ios-construct",
+              name: "project-construction",
+              meta: {
+                icon: "ios-construct",
+                title: "项目施工"
+              },
+              children: [
+                {
+                  icon: "ios-construct",
+                  name: "intelligentize-manage",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "智能化项目管理"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "integration-manage",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "系统集成项目管理"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "multimedia-manage",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "多媒体项目管理"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "ops-manage",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "运维服务项目管理"
+                  }
+                },
+              ]
+            },
+            {
+              icon: "ios-construct",
+              name: "train-study",
+              meta: {
+                icon: "ios-construct",
+                title: "学习培训"
+              },
+              children: [
+                {
+                  icon: "ios-construct",
+                  name: "internal-train",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "内部培训"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "external-train",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "外部培训"
+                  }
+                },
+              ]
+            }
+          ]
         }
       ];
     },
