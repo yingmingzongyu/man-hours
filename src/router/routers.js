@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 10:12:27
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-10 15:04:51
+ * @LastEditTime: 2019-01-10 17:50:24
  */
 import Main from '@/components/main'
 import parentView from '@/components/parent-view'
@@ -156,6 +156,14 @@ export default [
             component: () => import('@/view/project/software-development/project-manage.vue')
           }
         ]
+      },
+      {
+        path: 'label-manage',
+        name: 'label-manage',
+        meta: {
+          title: '标签管理'
+        },
+        component: () => import('@/view/project/software-development/project-manage.vue')
       }
     ]
   },

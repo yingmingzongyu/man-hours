@@ -1,3 +1,9 @@
+<!--
+ * @Author: yincheng
+ * @Date: 2019-01-10 11:35:19
+ * @LastEditors: yincheng
+ * @LastEditTime: 2019-01-10 18:01:55
+ -->
 <template>
   <Layout style="height: 100%" class="main">
     <Sider
@@ -247,6 +253,14 @@ export default {
                   }
                 },
               ]
+            },
+            {
+              icon: "ios-construct",
+              name: "label-manage",
+              meta: {
+                icon: "ios-construct",
+                title: "标签管理"
+              },
             }
           ]
         }
