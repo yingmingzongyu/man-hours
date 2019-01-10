@@ -76,9 +76,9 @@ export default {
         }).then(res => {
           // 格式化返回的数据data
           const { user, userCredentials } = res.data.data
-          let {loginName, userId} = userCredentials,{imagePath, token} = user
+          let {loginName, userId, token} = userCredentials,{imagePath} = user
           // 缓存用户相关信息
-          setUserInfo({
+          commit('setUserInfo',{
             loginName, userId, imagePath, token, hasGetInfo: true
           })
           resolve()
