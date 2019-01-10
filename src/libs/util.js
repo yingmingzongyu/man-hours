@@ -13,7 +13,7 @@ export const setUserInfo = (info) => {
 }
 // 获取登录信息相关方法
 export const getUserItem = (item) => {
-  const value = localRead('userInfo')?JSON.parse(localRead('userInfo'))[item]:'';
+  const value = localRead('userInfo') && JSON.parse(localRead('userInfo'))?JSON.parse(localRead('userInfo'))[item]:'';
   return value
 }
 

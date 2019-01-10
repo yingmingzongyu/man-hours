@@ -13,6 +13,7 @@ import { setUserInfo, getUserItem } from '@/libs/util'
 export default {
   state: {
     loginName: getUserItem('loginName'),
+    userName: getUserItem('userName'),
     userId: getUserItem('userId'),
     imagePath: getUserItem('imagePath'),
     token: getUserItem('token'),
@@ -27,7 +28,7 @@ export default {
     setUserInfo (state, info) {
       // 枚举state键值找到对应属性
       Object.keys(state).map((v)=>{
-        if(info[v]){
+        if(info&&info[v]){
           state[v] = info[v];
         }
       })
@@ -76,10 +77,10 @@ export default {
         }).then(res => {
           // 格式化返回的数据data
           const { user, userCredentials } = res.data.data
-          let {loginName, userId, token} = userCredentials,{imagePath} = user
+          let {loginName, userId, token} = userCredentials,{imagePath, userName} = user
           // 缓存用户相关信息
           commit('setUserInfo',{
-            loginName, userId, imagePath, token, hasGetInfo: true
+            loginName, userName, userId, imagePath, token, hasGetInfo: true
           })
           resolve()
         }).catch(err => {
@@ -90,7 +91,9 @@ export default {
     // 退出登录
     handleLogOut ({ state, commit }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
+        logout().then(() => {
+          // 清空userInfo缓存
+          commit('setUserInfo',null)
           resolve()
         }).catch(err => {
           reject(err)
