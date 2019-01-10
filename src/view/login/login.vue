@@ -30,7 +30,7 @@ export default {
     ...mapActions(["handleLogin"]),
     handleSubmit({ userName, password }) {
       this.loading = true;
-      this.handleLogin({ userName, password }).then(res => {
+      this.handleLogin({ loginName:userName, password }).then(res => {
         this.loading = false;
         this.$router.push({
           name: this.$config.homeName

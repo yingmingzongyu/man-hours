@@ -8,15 +8,15 @@ import {
   restoreTrash,
   getUnreadCount
 } from '@/api/user'
-import { setToken, getToken } from '@/libs/util'
+import { setUserInfo, getUserItem } from '@/libs/util'
 
 export default {
   state: {
-    userName: '',
-    userId: '',
-    avatorImgPath: '',
-    token: getToken(),
-    hasGetInfo: false,
+    loginName: getUserItem('loginName'),
+    userId: getUserItem('userId'),
+    imagePath: getUserItem('imagePath'),
+    token: getUserItem('token'),
+    hasGetInfo: getUserItem('userId')?true:false,
     unreadCount: 0,
     messageUnreadList: [],
     messageReadedList: [],
@@ -24,21 +24,14 @@ export default {
     messageContentStore: {}
   },
   mutations: {
-    setAvator (state, avatorPath) {
-      state.avatorImgPath = avatorPath
-    },
-    setUserId (state, id) {
-      state.userId = id
-    },
-    setUserName (state, name) {
-      state.userName = name
-    },
-    setToken (state, token) {
-      state.token = token
-      setToken(token)
-    },
-    setHasGetInfo (state, status) {
-      state.hasGetInfo = status
+    setUserInfo (state, info) {
+      // 枚举state键值找到对应属性
+      Object.keys(state).map((v)=>{
+        if(info[v]){
+          state[v] = info[v];
+        }
+      })
+      setUserInfo(info)
     },
     setMessageCount (state, count) {
       state.unreadCount = count
@@ -69,25 +62,25 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, { userName, password }) {
+    handleLogin ({ commit }, { loginName, password }) {
       const key = CryptoJS.enc.Utf8.parse(`abcdefgabcdefg12`)
-      userName = userName.trim()
+      loginName = loginName.trim()
       password = CryptoJS.AES.encrypt(password, key, {
         mode: CryptoJS.mode.ECB,
         padding: CryptoJS.pad.Pkcs7
       }).toString()
       return new Promise((resolve, reject) => {
         login({
-          userName,
+          loginName,
           password
         }).then(res => {
-          const data = res.data.data
-          // 获取用户相关信息
-          commit('setToken', data.userCredentials.token)
-          commit('setAvator', data.user.loginName)
-          commit('setUserName', data.user.loginName)
-          commit('setUserId', data.userCredentials.userId)
-          commit('setHasGetInfo', true)
+          // 格式化返回的数据data
+          const { user, userCredentials } = res.data.data
+          let {loginName, userId} = userCredentials,{imagePath, token} = user
+          // 缓存用户相关信息
+          setUserInfo({
+            loginName, userId, imagePath, token, hasGetInfo: true
+          })
           resolve()
         }).catch(err => {
           reject(err)
@@ -98,7 +91,6 @@ export default {
     handleLogOut ({ state, commit }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
-          commit('setToken', '')
           resolve()
         }).catch(err => {
           reject(err)

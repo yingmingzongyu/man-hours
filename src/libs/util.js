@@ -6,17 +6,18 @@ const { title, cookieExpires, useI18n } = config
 
 export const TOKEN_KEY = 'token'
 
-export const setToken = (token) => {
-  // Cookies.set(TOKEN_KEY, token, { expires: cookieExpires || 1 })
-  localStorage.token = token
+// 设置登录信息相关方法
+export const setUserInfo = (info) => {
+  info = JSON.stringify(info);
+  localSave('userInfo',info)
+}
+// 获取登录信息相关方法
+export const getUserItem = (item) => {
+  const value = localRead('userInfo')?JSON.parse(localRead('userInfo'))[item]:'';
+  return value
 }
 
-export const getToken = () => {
-  // const token = Cookies.get(TOKEN_KEY)
-  const token = localStorage.token
-  if (token) return token
-  else return false
-}
+
 
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0
