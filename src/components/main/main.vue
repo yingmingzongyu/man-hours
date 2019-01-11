@@ -103,7 +103,7 @@ export default {
       return this.$store.state.app.tagRouter;
     },
     userAvator() {
-      return this.$store.state.user.avatorImgPath;
+      return this.$store.state.user.imagePath;
     },
     cacheList() {
       const list = [

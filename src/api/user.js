@@ -1,4 +1,5 @@
 import axios from '@/libs/api.request'
+import store from '@/store'
 
 export const login = ({ loginName, password }) => {
   const params = {
@@ -22,9 +23,11 @@ export const getUserInfo = (token) => {
   })
 }
 
-export const logout = (token) => {
+export const logout = () => {
+  const params = { loginName: store.state.user.loginName }
   return axios.request({
-    url: 'logout',
+    url: '/itsm/system/permission/loginTo/loginOut',
+    params,
     method: 'post'
   })
 }

@@ -22,8 +22,6 @@ const turnTo = (to, access, next) => {
 router.beforeEach((to, from, next) => {
   iView.LoadingBar.start()
   const token = store.state.user.token
-  console.log('==========before router=============')
-  console.log(store);
   if (!token && to.name !== LOGIN_PAGE_NAME) {
     // 未登录且要跳转的页面不是登录页
     next({
@@ -38,10 +36,11 @@ router.beforeEach((to, from, next) => {
       name: homeName // 跳转到homeName页
     })
   } else {
+    console.log(store.state.user.hasGetInfo);
     if (store.state.user.hasGetInfo) {
       turnTo(to, store.state.user.access, next)
     } else {
-      setUserInfo('')
+      setUserInfo(null)
       next({
         name: 'login'
       })
