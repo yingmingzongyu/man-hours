@@ -1,3 +1,9 @@
+/*
+ * @Author: yincheng
+ * @Date: 2019-01-10 15:10:26
+ * @LastEditors: yincheng
+ * @LastEditTime: 2019-01-11 16:13:07
+ */
 import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
 const Random = Mock.Random
@@ -37,7 +43,7 @@ export const projectDetails = () => {
 }
 export const queryDetails = req => {
   let list = []
-  req = JSON.parse(req.body)
+  req = JSON.parse(req.body) || {}
   doCustomTimes(10, () => {
     list.push(Mock.mock({
       "projectNumber|1-300000": 3,
@@ -47,6 +53,7 @@ export const queryDetails = req => {
       "labelName|1": ["test1", "test2", "test5", "test1,test3,test5", "test1,test2,test4"],
       "summarize": "@cword(4, 20)",
       "createTime": "@datetime",
+      "createUser": "@cname"
     }))
   })
   return {
@@ -55,7 +62,7 @@ export const queryDetails = req => {
       list,
       total: 999,
       pageSize: 10,
-      pageNum: req.pageNum,
+      pageNum: req.pageNum || 1,
       pages: 10,
     }
   }
@@ -74,7 +81,7 @@ export const delLabel = () => {
 }
 export const queryLabel = req => {
   let list = []
-  req = JSON.parse(req.body)
+  req = JSON.parse(req.body) || {}
   doCustomTimes(10, () => {
     list.push(Mock.mock({
       "relatedProjectsCount|1-30": 30,
@@ -88,7 +95,7 @@ export const queryLabel = req => {
       list,
       total: 23,
       pageSize: 10,
-      pageNum: req.pageNum,
+      pageNum: req.pageNum || 1,
       pages: 2,
     }
   }

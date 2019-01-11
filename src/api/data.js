@@ -42,3 +42,12 @@ export const getOrgData = () => {
     method: 'get'
   })
 }
+
+
+export const getProject = formData => {
+  return axios.request({
+    url: '/project/management/query',
+    method: 'get',
+    data: formData
+  })
+}
