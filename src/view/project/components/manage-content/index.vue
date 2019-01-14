@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 16:38:24
+ * @LastEditTime: 2019-01-14 17:31:28
  -->
 <template>
   <div>
@@ -178,8 +178,8 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize
       };
-      data.startTime = data.createTime[0];
-      data.endTime = data.createTime[1];
+      data.startTime = this.formatTime(data.createTime[0]);
+      data.endTime = this.formatTime(data.createTime[1]);
       delete data.createTime;
       this.$emit("query", data);
     },
@@ -194,8 +194,8 @@ export default {
         if (valid) {
           let formData = {...this.$refs["project-form"].form}
           formData.participants = formData.participants.toString()
-          formData.startTime = dayjs(formData.startTime).format('YYYY-MM-DD');
-          formData.endTime = dayjs(formData.endTime).format('YYYY-MM-DD');
+          formData.startTime = this.formatTime(formData.startTime);
+          formData.endTime = this.formatTime(formData.endTime);
           this.$emit("submitProject", formData, () => {
             this.submitLoading = false;
             this.modal = false;
@@ -211,6 +211,13 @@ export default {
     pageSizeChange(pageSize) {
       this.pageSize = pageSize;
       this.query();
+    },
+    formatTime(date, type="YYYY-MM-DD") {
+      if(date instanceof Date){
+        return dayjs(date).format(type)
+      }else{
+        return null
+      }
     }
   },
   watch: {
