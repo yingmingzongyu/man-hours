@@ -163,7 +163,7 @@ export default [
         meta: {
           title: '标签管理'
         },
-        component: () => import('@/view/project/software-development/project-manage.vue')
+        component: () => import('@/view/project/label-manage/index.vue')
       }
     ]
   },

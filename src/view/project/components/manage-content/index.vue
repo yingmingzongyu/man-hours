@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 09:24:29
+ * @LastEditTime: 2019-01-14 17:31:28
  -->
 <template>
   <div>
@@ -59,11 +59,12 @@
       <div slot="footer">
         <Button @click="submit" type="info" :loading="submitLoading">提交</Button>
       </div>
-      <ProjectFrom ref="form"/>
+      <ProjectFrom ref="project-form"/>
     </Modal>
   </div>
 </template>
 <script>
+import dayjs from "dayjs";
 import ProjectFrom from "../project-form";
 export default {
   props: {
@@ -73,7 +74,8 @@ export default {
     },
     tableData: {
       type: Object,
-      required: true
+      required: true,
+      default: ()=>({})
     }
   },
   components: {
@@ -176,8 +178,8 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize
       };
-      data.startTime = data.createTime[0];
-      data.endTime = data.createTime[1];
+      data.startTime = this.formatTime(data.createTime[0]);
+      data.endTime = this.formatTime(data.createTime[1]);
       delete data.createTime;
       this.$emit("query", data);
     },
@@ -188,9 +190,13 @@ export default {
     //add
     submit() {
       this.submitLoading = true;
-      this.$refs["form"].$refs["form"].validate(valid => {
+      this.$refs["project-form"].$refs["form"].validate(valid => {
         if (valid) {
-          this.$emit("submitProject", this.$refs["form"].form, () => {
+          let formData = {...this.$refs["project-form"].form}
+          formData.participants = formData.participants.toString()
+          formData.startTime = this.formatTime(formData.startTime);
+          formData.endTime = this.formatTime(formData.endTime);
+          this.$emit("submitProject", formData, () => {
             this.submitLoading = false;
             this.modal = false;
           });
@@ -205,12 +211,19 @@ export default {
     pageSizeChange(pageSize) {
       this.pageSize = pageSize;
       this.query();
+    },
+    formatTime(date, type="YYYY-MM-DD") {
+      if(date instanceof Date){
+        return dayjs(date).format(type)
+      }else{
+        return null
+      }
     }
   },
   watch: {
     modal() {
       //重置表单状态
-      this.$refs["form"].$refs["form"].resetFields();
+      this.$refs["project-form"].$refs["form"].resetFields();
     }
   }
 };

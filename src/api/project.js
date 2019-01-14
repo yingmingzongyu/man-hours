@@ -15,3 +15,22 @@ export const addProject = data => {
     data
   })
 }
+
+/*
+ * 标签管理
+ */
+export const getLabel = data => {
+  return axios.request({
+    url: '/project/label/query',
+    method: 'get',
+    data
+  })
+}
+
+export const deleteLabel = data => {
+  return axios.request({
+    url: '/project/label/delete',
+    method: 'delete',
+    data
+  })
+}
