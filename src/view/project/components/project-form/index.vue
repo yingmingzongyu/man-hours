@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 17:18:11
+ * @LastEditTime: 2019-01-14 17:19:52
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -50,9 +50,6 @@
 import throttle from "lodash/throttle";
 import { querySystemUser } from "@/api/user";
 export default {
-  components: {
-    SelectUser
-  },
   data() {
     return {
       formWidth: 308,
