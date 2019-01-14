@@ -2,11 +2,11 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-11 18:01:53
+ * @LastEditTime: 2019-01-14 09:08:20
  -->
 <template>
   <div>
-    <ManageContent @query="getData" :tableData="tableData" :tableLoading="tableLoading" @submitForm="submitForm"/>
+    <ManageContent @query="getData" :tableData="tableData" :tableLoading="tableLoading" @submitProject="submitProject"/>
   </div>
 </template>
 <script>
@@ -44,7 +44,7 @@ export default {
         this.tableLoading = false
       })
     },
-    submitForm(data, close){
+    submitProject(data, close){
       addProject(data)
       .then(res=>{
         if (res.data.status === 200) {

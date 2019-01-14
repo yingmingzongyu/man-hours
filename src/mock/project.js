@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 15:10:26
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-11 16:13:07
+ * @LastEditTime: 2019-01-14 09:28:22
  */
 import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
@@ -44,7 +44,7 @@ export const projectDetails = () => {
 export const queryDetails = req => {
   let list = []
   req = JSON.parse(req.body) || {}
-  doCustomTimes(10, () => {
+  doCustomTimes(req.pageSize || 10, () => {
     list.push(Mock.mock({
       "projectNumber|1-300000": 3,
       "projectName": "@cword(3, 10)",
@@ -82,7 +82,7 @@ export const delLabel = () => {
 export const queryLabel = req => {
   let list = []
   req = JSON.parse(req.body) || {}
-  doCustomTimes(10, () => {
+  doCustomTimes(req.pageSize || 10, () => {
     list.push(Mock.mock({
       "relatedProjectsCount|1-30": 30,
       "id|1-30": 30,

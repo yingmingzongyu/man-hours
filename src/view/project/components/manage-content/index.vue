@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-11 17:54:05
+ * @LastEditTime: 2019-01-14 09:24:29
  -->
 <template>
   <div>
@@ -55,7 +55,10 @@
         @on-page-size-change="pageSizeChange"
       />
     </Card>
-    <Modal v-model="modal" title="新增项目" :loading="true" @on-ok="submit()">
+    <Modal v-model="modal" title="新增项目" :loading="true">
+      <div slot="footer">
+        <Button @click="submit" type="info" :loading="submitLoading">提交</Button>
+      </div>
       <ProjectFrom ref="form"/>
     </Modal>
   </div>
@@ -156,6 +159,7 @@ export default {
         }
       ],
       modal: false,
+      submitLoading: false,
       pageNum: this.tableData.pageNum,
       pageSize: this.tableData.pageSize
     };
@@ -183,11 +187,15 @@ export default {
     },
     //add
     submit() {
+      this.submitLoading = true;
       this.$refs["form"].$refs["form"].validate(valid => {
         if (valid) {
-          this.$emit('submitForm', this.$refs["form"].form, ()=>{
+          this.$emit("submitProject", this.$refs["form"].form, () => {
+            this.submitLoading = false;
             this.modal = false;
-          })
+          });
+        } else {
+          this.submitLoading = false;
         }
       });
     },
@@ -197,6 +205,12 @@ export default {
     pageSizeChange(pageSize) {
       this.pageSize = pageSize;
       this.query();
+    }
+  },
+  watch: {
+    modal() {
+      //重置表单状态
+      this.$refs["form"].$refs["form"].resetFields();
     }
   }
 };

@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-11 17:18:00
+ * @LastEditTime: 2019-01-14 09:21:29
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -50,7 +50,7 @@ export default {
           {
             required: true,
             message: '项目归属不能为空',
-            trigger: 'blur'
+            trigger: 'change'
           }
         ],
         projectName:[
