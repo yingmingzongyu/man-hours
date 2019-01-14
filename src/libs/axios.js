@@ -14,14 +14,15 @@ const addErrorLog = errorInfo => {
 
 class HttpRequest {
   constructor (baseUrl = baseURL) {
-    this.baseUrl = 'http://192.168.3.32:9104'
+    this.baseUrl = ''
     this.queue = {}
   }
   getInsideConfig () {
     const config = {
       baseURL: this.baseUrl,
       headers: {
-        // 'Content-Type': 'application/x-www-form-urlencoded'
+        // 'Content-type':'multipart/form-data',
+        'Token': store.state.user.token
       }
     }
     return config

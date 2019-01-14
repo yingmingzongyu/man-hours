@@ -25,12 +25,17 @@ export default {
     messageContentStore: {}
   },
   mutations: {
-    setUserInfo (state, info) {
+    setUserInfo (state, info={
+      loginName: '',
+      userName: '',
+      userId: '',
+      imagePath: '',
+      token: '',
+      hasGetInfo: false,
+    }) {
       // 枚举state键值找到对应属性
       Object.keys(state).map((v)=>{
-        if(info&&info[v]){
-          state[v] = info[v];
-        }
+        state[v] = info[v];
       })
       setUserInfo(info)
     },
@@ -91,9 +96,9 @@ export default {
     // 退出登录
     handleLogOut ({ state, commit }) {
       return new Promise((resolve, reject) => {
-        logout().then(() => {
+        logout().then((res) => {
           // 清空userInfo缓存
-          commit('setUserInfo',null)
+          commit('setUserInfo')
           resolve()
         }).catch(err => {
           reject(err)
