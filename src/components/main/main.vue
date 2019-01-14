@@ -68,10 +68,12 @@ import Fullscreen from "./components/fullscreen";
 import Language from "./components/language";
 import ErrorStore from "./components/error-store";
 import { mapMutations, mapActions, mapGetters } from "vuex";
-import { getNewTagList, routeEqual } from "@/libs/util";
+import { getNewTagList, routeEqual, formatMenuList } from "@/libs/util";
+import { getSlideMenu } from '@/api/routers.js';
 import routers from "@/router/routers";
 import minLogo from "@/assets/images/logo-min.jpg";
 import maxLogo from "@/assets/images/logo.jpg";
+import router from '@/router/routers.js'
 import "./main.less";
 export default {
   name: "Main",
@@ -116,9 +118,6 @@ export default {
       ];
       return list;
     },
-    // menuList () {
-    //   return this.$store.getters.menuList
-    // },
     local() {
       return this.$store.state.app.local;
     },
@@ -138,133 +137,14 @@ export default {
       "setHomeRoute",
       "closeTag"
     ]),
-    ...mapActions(["handleLogin", "getUnreadMessageCount"]),
-    getMenu() {
-      //暂时模拟菜单
-      this.menuList = [
-        {
-          href: "https://lison16.github.io/iview-admin-doc/#/",
-          icon: "ios-book",
-          meta: {
-            href: "https://lison16.github.io/iview-admin-doc/#/",
-            icon: "ios-book",
-            title: "文档"
-          },
-          name: "doc"
-        },
-        {
-          icon: "ios-construct",
-          name: "project",
-          meta: {
-            icon: "ios-construct",
-            title: "项目管理"
-          },
-          children: [
-            {
-              icon: "ios-construct",
-              name: "software-development",
-              meta: {
-                icon: "ios-construct",
-                title: "软件开发"
-              },
-              children: [
-                {
-                  icon: "ios-construct",
-                  name: "product-manage",
-                  meta: {
-                    icon: "ios-construct",
-                    title: "软件产品管理"
-                  }
-                },
-                {
-                  icon: "ios-construct",
-                  name: "project-manage",
-                  meta: {
-                    icon: "ios-construct",
-                    title: "软件项目管理"
-                  }
-                },
-              ]
-            },
-            {
-              icon: "ios-construct",
-              name: "project-construction",
-              meta: {
-                icon: "ios-construct",
-                title: "项目施工"
-              },
-              children: [
-                {
-                  icon: "ios-construct",
-                  name: "intelligentize",
-                  meta: {
-                    icon: "ios-construct",
-                    title: "智能化项目管理"
-                  }
-                },
-                {
-                  icon: "ios-construct",
-                  name: "integration",
-                  meta: {
-                    icon: "ios-construct",
-                    title: "系统集成项目管理"
-                  }
-                },
-                {
-                  icon: "ios-construct",
-                  name: "multimedia",
-                  meta: {
-                    icon: "ios-construct",
-                    title: "多媒体项目管理"
-                  }
-                },
-                {
-                  icon: "ios-construct",
-                  name: "ops",
-                  meta: {
-                    icon: "ios-construct",
-                    title: "运维服务项目管理"
-                  }
-                },
-              ]
-            },
-            {
-              icon: "ios-construct",
-              name: "train-study",
-              meta: {
-                icon: "ios-construct",
-                title: "学习培训"
-              },
-              children: [
-                {
-                  icon: "ios-construct",
-                  name: "internal",
-                  meta: {
-                    icon: "ios-construct",
-                    title: "内部培训"
-                  }
-                },
-                {
-                  icon: "ios-construct",
-                  name: "external",
-                  meta: {
-                    icon: "ios-construct",
-                    title: "外部培训"
-                  }
-                },
-              ]
-            },
-            {
-              icon: "ios-construct",
-              name: "label-manage",
-              meta: {
-                icon: "ios-construct",
-                title: "标签管理"
-              },
-            }
-          ]
-        }
-      ];
+    ...mapActions(["handleLogin"]),
+    getMenu() {      
+      getSlideMenu().then(res => {
+        // 格式化返回数据
+        const data = res.data.data.top;
+        this.menuList = formatMenuList(data);
+      })
+
     },
     turnToPage(route) {
       let { name, params, query } = {};
@@ -333,8 +213,6 @@ export default {
         name: this.$config.homeName
       });
     }
-    // 获取未读消息条数
-    this.getUnreadMessageCount();
     //获取菜单
     this.getMenu();
   }

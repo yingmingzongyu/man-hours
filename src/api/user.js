@@ -7,7 +7,7 @@ export const login = ({ loginName, password }) => {
     password
   }
   return axios.request({
-    url: '/itsm/system/permission/loginTo/login',
+    url: '/api/itsm/system/permission/loginTo/login',
     params,
     method: 'post'
   })
@@ -26,7 +26,7 @@ export const getUserInfo = (token) => {
 export const logout = () => {
   const params = { loginName: store.state.user.loginName }
   return axios.request({
-    url: '/itsm/system/permission/loginTo/loginOut',
+    url: '/api/itsm/system/permission/loginTo/loginOut',
     params,
     method: 'post'
   })

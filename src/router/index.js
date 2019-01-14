@@ -39,7 +39,6 @@ router.beforeEach((to, from, next) => {
     if (store.state.user.hasGetInfo) {
       turnTo(to, store.state.user.access, next)
     } else {
-      setUserInfo(null)
       next({
         name: 'login'
       })

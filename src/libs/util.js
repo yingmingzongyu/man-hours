@@ -6,15 +6,38 @@ const { title, cookieExpires, useI18n } = config
 
 export const TOKEN_KEY = 'token'
 
-// 设置登录信息相关方法
+
+/**设置登录信息相关方法
+ * @param {Object} info 登录用户详细信息
+ * @returns {undefined}
+ */
 export const setUserInfo = (info) => {
   info = JSON.stringify(info);
   localSave('userInfo',info)
 }
-// 获取登录信息相关方法
+/**获取登录信息相关方法
+ * @param {Array} item 用户详细信息的kye值
+ * @returns {String}
+ */
 export const getUserItem = (item) => {
   const value = localRead('userInfo') && JSON.parse(localRead('userInfo'))?JSON.parse(localRead('userInfo'))[item]:'';
   return value
+}
+/**格式化菜单返回数据方法
+ * @param {Array} list 左侧菜单数据
+ * @returns {Array}
+ */
+export const formatMenuList = (list) => {
+  return list.map((v)=>{
+    console.log(v)
+    console.log(v.resourceName)
+    let { href, icon, title } = {href:v.resourceUrl, icon:'', title:v.resourceName};
+    if(v.children&&v.children.length>0){
+      return { href, icon, title, children: formatMenuList(v.children) };
+    }else{
+      return { href, icon, title };
+    }
+  })
 }
 
 
