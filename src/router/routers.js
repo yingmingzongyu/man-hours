@@ -1,8 +1,8 @@
 /*
  * @Author: yincheng
  * @Date: 2019-01-10 10:12:27
- * @LastEditors: yincheng
- * @LastEditTime: 2019-01-10 17:50:24
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2019-01-14 18:13:08
  */
 import Main from '@/components/main'
 import parentView from '@/components/parent-view'
@@ -165,6 +165,24 @@ export default [
         },
         component: () => import('@/view/project/software-development/project-manage.vue')
       }
+    ]
+  },
+  {
+    path: 'system',
+    name: 'system',
+    component: Main,
+    meta: {
+      title: '系统管理'
+    },
+    children:[
+      {
+        path: 'menu',
+        name: 'menu',
+        meta: {
+          title: '菜单管理'
+        },
+        component: () => import('@/view/system/menu-manage/index.vue'),
+      },
     ]
   },
   {

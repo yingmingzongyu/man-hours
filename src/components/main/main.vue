@@ -1,8 +1,8 @@
 <!--
  * @Author: yincheng
  * @Date: 2019-01-10 11:35:19
- * @LastEditors: yincheng
- * @LastEditTime: 2019-01-10 18:01:55
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2019-01-14 18:08:36
  -->
 <template>
   <Layout style="height: 100%" class="main">
@@ -69,11 +69,11 @@ import Language from "./components/language";
 import ErrorStore from "./components/error-store";
 import { mapMutations, mapActions, mapGetters } from "vuex";
 import { getNewTagList, routeEqual, formatMenuList } from "@/libs/util";
-import { getSlideMenu } from '@/api/routers.js';
+import { getSlideMenu } from "@/api/routers.js";
 import routers from "@/router/routers";
 import minLogo from "@/assets/images/logo-min.jpg";
 import maxLogo from "@/assets/images/logo.jpg";
-import router from '@/router/routers.js'
+import router from "@/router/routers.js";
 import "./main.less";
 export default {
   name: "Main",
@@ -138,14 +138,167 @@ export default {
       "closeTag"
     ]),
     ...mapActions(["handleLogin"]),
-    getMenu() {      
+    getMenu() {
       getSlideMenu().then(res => {
         // 格式化返回数据
-        const data = res.data.data.top;
-        this.menuList = formatMenuList(data);
-        console.log(this.menuList)
-      })
+        // const data = res.data.data.top;
 
+        // this.menuList = formatMenuList(data);
+        this.menuList = [
+          {
+            icon: "ios-construct",
+            name: "system",
+            meta: {
+              title: "系统管理"
+            },
+            children:[
+              {
+                icon: "ios-construct",
+                name: "depart",
+                meta: {
+                  icon: "ios-construct",
+                  title: "部门管理"
+                },
+              },
+              {
+                icon: "ios-construct",
+                name: "role",
+                meta: {
+                  icon: "ios-construct",
+                  title: "角色管理"
+                },
+              },
+              {
+                icon: "ios-construct",
+                name: "users",
+                meta: {
+                  icon: "ios-construct",
+                  title: "用户管理"
+                },
+              },
+              {
+                icon: "ios-construct",
+                name: "menu",
+                meta: {
+                  icon: "ios-construct",
+                  title: "菜单管理"
+                },
+              },
+            ]
+          },
+          { 
+            icon: "ios-construct",
+            name: "project",
+            meta: {
+              title: "项目管理"
+            },
+            children: [
+              {
+                icon: "ios-construct",
+                name: "software-development",
+                meta: {
+                  icon: "ios-construct",
+                  title: "软件开发"
+                },
+                children: [
+                  {
+                    icon: "ios-construct",
+                    name: "product-manage",
+                    meta: {
+                      icon: "ios-construct",
+                      title: "软件产品管理"
+                    }
+                  },
+                  {
+                    icon: "ios-construct",
+                    name: "project-manage",
+                    meta: {
+                      icon: "ios-construct",
+                      title: "软件项目管理"
+                    }
+                  }
+                ]
+              },
+              {
+                icon: "ios-construct",
+                name: "project-construction",
+                meta: {
+                  icon: "ios-construct",
+                  title: "项目施工"
+                },
+                children: [
+                  {
+                    icon: "ios-construct",
+                    name: "intelligentize",
+                    meta: {
+                      icon: "ios-construct",
+                      title: "智能化项目管理"
+                    }
+                  },
+                  {
+                    icon: "ios-construct",
+                    name: "integration",
+                    meta: {
+                      icon: "ios-construct",
+                      title: "系统集成项目管理"
+                    }
+                  },
+                  {
+                    icon: "ios-construct",
+                    name: "multimedia",
+                    meta: {
+                      icon: "ios-construct",
+                      title: "多媒体项目管理"
+                    }
+                  },
+                  {
+                    icon: "ios-construct",
+                    name: "ops",
+                    meta: {
+                      icon: "ios-construct",
+                      title: "运维服务项目管理"
+                    }
+                  }
+                ]
+              },
+              {
+                icon: "ios-construct",
+                name: "train-study",
+                meta: {
+                  icon: "ios-construct",
+                  title: "学习培训"
+                },
+                children: [
+                  {
+                    icon: "ios-construct",
+                    name: "internal",
+                    meta: {
+                      icon: "ios-construct",
+                      title: "内部培训"
+                    }
+                  },
+                  {
+                    icon: "ios-construct",
+                    name: "external",
+                    meta: {
+                      icon: "ios-construct",
+                      title: "外部培训"
+                    }
+                  }
+                ]
+              },
+              {
+                icon: "ios-construct",
+                name: "label-manage",
+                meta: {
+                  icon: "ios-construct",
+                  title: "标签管理"
+                }
+              }
+            ]
+          }
+        ];
+      });
     },
     turnToPage(route) {
       let { name, params, query } = {};
@@ -209,11 +362,11 @@ export default {
     // 设置初始语言
     this.setLocal(this.$i18n.locale);
     // 如果当前打开页面不在标签栏中，跳到homeName页
-    if (!this.tagNavList.find(item => item.name === this.$route.name)) {
-      this.$router.push({
-        name: this.$config.homeName
-      });
-    }
+    // if (!this.tagNavList.find(item => item.name === this.$route.name)) {
+    //   this.$router.push({
+    //     name: this.$config.homeName
+    //   });
+    // }
     //获取菜单
     this.getMenu();
   }
