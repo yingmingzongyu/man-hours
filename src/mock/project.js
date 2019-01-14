@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 15:10:26
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 09:28:22
+ * @LastEditTime: 2019-01-14 15:30:47
  */
 import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
@@ -99,7 +99,29 @@ export const queryLabel = req => {
       pages: 2,
     }
   }
+}
 
+export const querySystemUser = req => {
+  let list = []
+  req = JSON.parse(req.body) || {}
+  doCustomTimes(req.pageSize || 10, () => {
+    list.push(Mock.mock({
+      "userCode|1-1000": 1000,
+      "id|1-1000": 1000,
+      "userName|1": "@cname()",
+      "loginName|1": "@first()",
+    }))
+  })
+  return {
+    status: 200,
+    data: {
+      list,
+      total: 23,
+      pageSize: 10,
+      pageNum: req.pageNum || 1,
+      pages: 2,
+    }
+  }
 }
 // export const getMessageInit = () => {
 //   let unreadList = []

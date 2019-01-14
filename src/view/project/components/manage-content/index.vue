@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 11:02:36
+ * @LastEditTime: 2019-01-14 16:38:24
  -->
 <template>
   <div>
@@ -59,11 +59,12 @@
       <div slot="footer">
         <Button @click="submit" type="info" :loading="submitLoading">提交</Button>
       </div>
-      <ProjectFrom ref="form"/>
+      <ProjectFrom ref="project-form"/>
     </Modal>
   </div>
 </template>
 <script>
+import dayjs from "dayjs";
 import ProjectFrom from "../project-form";
 export default {
   props: {
@@ -189,9 +190,13 @@ export default {
     //add
     submit() {
       this.submitLoading = true;
-      this.$refs["form"].$refs["form"].validate(valid => {
+      this.$refs["project-form"].$refs["form"].validate(valid => {
         if (valid) {
-          this.$emit("submitProject", this.$refs["form"].form, () => {
+          let formData = {...this.$refs["project-form"].form}
+          formData.participants = formData.participants.toString()
+          formData.startTime = dayjs(formData.startTime).format('YYYY-MM-DD');
+          formData.endTime = dayjs(formData.endTime).format('YYYY-MM-DD');
+          this.$emit("submitProject", formData, () => {
             this.submitLoading = false;
             this.modal = false;
           });
@@ -211,7 +216,7 @@ export default {
   watch: {
     modal() {
       //重置表单状态
-      this.$refs["form"].$refs["form"].resetFields();
+      this.$refs["project-form"].$refs["form"].resetFields();
     }
   }
 };

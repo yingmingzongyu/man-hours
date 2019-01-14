@@ -2,11 +2,16 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 09:08:20
+ * @LastEditTime: 2019-01-14 16:39:16
  -->
 <template>
   <div>
-    <ManageContent @query="getData" :tableData="tableData" :tableLoading="tableLoading" @submitProject="submitProject"/>
+    <ManageContent
+      @query="getData"
+      :tableData="tableData"
+      :tableLoading="tableLoading"
+      @submitProject="submitProject"
+    />
   </div>
 </template>
 <script>
@@ -18,7 +23,7 @@ export default {
   },
   data() {
     return {
-      tableLoading:false,
+      tableLoading: false,
       tableData: {
         list: [],
         pageNum: 1,
@@ -30,31 +35,33 @@ export default {
     };
   },
   methods: {
-    getData(params={}) {
+    getData(params = {}) {
       //把params储存
-      this.params = params
-      this.tableLoading = true
-      getProject(params).then(res => {
-        if (res.data.status === 200) {
-          this.tableData = res.data.data;
-        }
-        this.tableLoading = false
-      })
-      .catch(error=>{
-        this.tableLoading = false
-      })
+      this.params = params;
+      this.tableLoading = true;
+      getProject(params)
+        .then(res => {
+          if (res.data.status === 200) {
+            this.tableData = res.data.data;
+          }
+          this.tableLoading = false;
+        })
+        .catch(error => {
+          this.tableLoading = false;
+        });
     },
-    submitProject(data, close){
-      addProject(data)
-      .then(res=>{
+    submitProject(data, callback) {
+      addProject(data).then(res => {
         if (res.data.status === 200) {
-          this.$Message.success(res.data.message)
-          this.getData(this.params)
-          close()
-        }else{
-          this.$Message.success(res.data.message)
+          this.$Message.success(res.data.message);
+          this.getData(this.params);
+          if (typeof callback === "function") {
+            callback();
+          }
+        } else {
+          this.$Message.success(res.data.message);
         }
-      })
+      });
     }
   },
   created() {

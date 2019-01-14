@@ -85,3 +85,11 @@ export const restoreTrash = msg_id => {
     }
   })
 }
+
+export const querySystemUser = data => {
+  return axios.request({
+    url: '/itsm/system/sso/user/querySystemUser',
+    method: 'get',
+    data
+  })
+}
