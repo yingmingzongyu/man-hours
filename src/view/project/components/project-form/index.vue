@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 09:21:29
+ * @LastEditTime: 2019-01-14 13:22:26
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -29,12 +29,28 @@
       <DatePicker type="date" v-model="form.endTime" :format="dateFormat"/>
     </FormItem>
     <FormItem prop="participants" label="项目参与人员：">
-      <Input v-model="form.participants" placeholder="请填写项目参与人员"/>
+      <Input v-model="form.participants" placeholder="请填写项目参与人员" readonly>
+        <span slot="append">
+          <Button type="info" @click="showUser">
+            <Icon type="ios-add-circle-outline"/>
+          </Button>
+        </span>
+      </Input>
     </FormItem>
+    <Modal v-model="userModal" title="选择人员" :width="640">
+      <div slot="footer">
+        <Button type="info" @click="setUser">提交</Button>
+      </div>
+      <SelectUser ref="select-user"/>
+    </Modal>
   </Form>
 </template>
 <script>
+import SelectUser from "../select-user";
 export default {
+  components: {
+    SelectUser
+  },
   data() {
     return {
       form: {
@@ -46,30 +62,40 @@ export default {
         participants: null
       },
       rules: {
-        projectAttribution:[
+        projectAttribution: [
           {
             required: true,
-            message: '项目归属不能为空',
-            trigger: 'change'
+            message: "项目归属不能为空",
+            trigger: "change"
           }
         ],
-        projectName:[
+        projectName: [
           {
             required: true,
-            message: '项目名称不能为空',
-            trigger: 'blur'
+            message: "项目名称不能为空",
+            trigger: "blur"
           }
         ],
         participants: [
           {
             required: true,
-            message: '项目参与人员不能为空',
-            trigger: 'blur'
+            message: "项目参与人员不能为空",
+            trigger: "change"
           }
         ]
       },
-      dateFormat: "yyyy-MM-dd"
+      dateFormat: "yyyy-MM-dd",
+      userModal: false
     };
+  },
+  methods: {
+    showUser() {
+      this.userModal = true;
+    },
+    setUser() {
+      console.log(this.$refs["select-user"].user);
+      this.userModal = false;
+    }
   }
 };
 </script>

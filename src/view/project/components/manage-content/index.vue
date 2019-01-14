@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 09:24:29
+ * @LastEditTime: 2019-01-14 11:02:36
  -->
 <template>
   <div>
@@ -73,7 +73,8 @@ export default {
     },
     tableData: {
       type: Object,
-      required: true
+      required: true,
+      default: ()=>({})
     }
   },
   components: {
