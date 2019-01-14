@@ -143,6 +143,7 @@ export default {
         // 格式化返回数据
         const data = res.data.data.top;
         this.menuList = formatMenuList(data);
+        console.log(this.menuList)
       })
 
     },

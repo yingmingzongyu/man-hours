@@ -29,13 +29,11 @@ export const getUserItem = (item) => {
  */
 export const formatMenuList = (list) => {
   return list.map((v)=>{
-    console.log(v)
-    console.log(v.resourceName)
-    let { href, icon, title } = {href:v.resourceUrl, icon:'', title:v.resourceName};
+    let { href, icon, name, title } = {href:v.resourceUrl, icon:'', name:v.resourceName, title:v.resourceName};
     if(v.children&&v.children.length>0){
-      return { href, icon, title, children: formatMenuList(v.children) };
+      return { href, icon, name, meta:{ title }, children: formatMenuList(v.children) };
     }else{
-      return { href, icon, title };
+      return { href, icon, name, meta:{ title }, };
     }
   })
 }
