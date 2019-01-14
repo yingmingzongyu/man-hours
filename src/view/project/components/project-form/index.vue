@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 16:40:37
+ * @LastEditTime: 2019-01-14 17:18:11
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -43,18 +43,11 @@
         </Option>
       </Select>
     </FormItem>
-    <Modal v-model="userModal" title="选择人员" :width="640">
-      <div slot="footer">
-        <Button type="info" @click="setUser">提交</Button>
-      </div>
-      <SelectUser ref="select-user"/>
-    </Modal>
   </Form>
 </template>
 <script>
 //搜索用户节流
 import throttle from "lodash/throttle";
-import SelectUser from "../select-user";
 import { querySystemUser } from "@/api/user";
 export default {
   components: {
