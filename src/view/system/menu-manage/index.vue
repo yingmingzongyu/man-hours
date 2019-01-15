@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-15 13:45:45
+ * @LastEditTime: 2019-01-15 13:47:39
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -70,7 +70,6 @@
 </template>
 <script>
 import SplitPane from "_c/split-pane";
-import modalComponsents from "./modalComponsents.vue";
 export default {
   components: {
     SplitPane,
