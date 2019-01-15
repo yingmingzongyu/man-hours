@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 11:35:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-01-14 18:08:36
+ * @LastEditTime: 2019-01-15 11:41:18
  -->
 <template>
   <Layout style="height: 100%" class="main">
@@ -139,12 +139,7 @@ export default {
     ]),
     ...mapActions(["handleLogin"]),
     getMenu() {
-      getSlideMenu().then(res => {
-        // 格式化返回数据
-        // const data = res.data.data.top;
-
-        // this.menuList = formatMenuList(data);
-        this.menuList = [
+      this.menuList = [
           {
             icon: "ios-construct",
             name: "system",
@@ -298,7 +293,13 @@ export default {
             ]
           }
         ];
-      });
+      // getSlideMenu().then(res => {
+      //   // 格式化返回数据
+      //   // const data = res.data.data.top;
+
+      //   // this.menuList = formatMenuList(data);
+        
+      // });
     },
     turnToPage(route) {
       let { name, params, query } = {};
