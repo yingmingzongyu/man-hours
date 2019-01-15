@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 10:12:27
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-01-14 18:13:08
+ * @LastEditTime: 2019-01-15 09:43:02
  */
 import Main from '@/components/main'
 import parentView from '@/components/parent-view'
@@ -168,10 +168,11 @@ export default [
     ]
   },
   {
-    path: 'system',
+    path: '/system',
     name: 'system',
     component: Main,
     meta: {
+      icon: 'logo-buffer',
       title: '系统管理'
     },
     children:[
