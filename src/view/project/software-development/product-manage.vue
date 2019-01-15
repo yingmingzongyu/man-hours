@@ -2,21 +2,22 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 16:39:16
+ * @LastEditTime: 2019-01-15 10:50:55
  -->
 <template>
   <div>
     <ManageContent
-      @query="getData"
       :tableData="tableData"
       :tableLoading="tableLoading"
+      @query="getData"
       @submitProject="submitProject"
     />
   </div>
 </template>
 <script>
 import ManageContent from "../components/manage-content";
-import { getProject, addProject } from "@/api/project";
+import { getProject, addProject, addLabel, delLabel } from "@/api/project";
+import project from "@/api/project";
 export default {
   components: {
     ManageContent

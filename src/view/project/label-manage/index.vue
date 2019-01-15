@@ -27,7 +27,7 @@
 </template>
 
 <script>
-	import { getLabel,deleteLabel } from "@/api/project";
+	import { getLabel,delLabel } from "@/api/project";
 	export default {
 		props: {
 			tableLoading: {
@@ -43,7 +43,7 @@
 				columns: [
 					{ title: "标签名称", key: "labelName" },
 					{ title: "标签关联项目数量", key: "relatedProjectsCount" },
-					{ 
+					{
 						title: "操作",
 						key: "handle",
 						align: "center",
@@ -61,7 +61,7 @@
 //                  						vm.$emit('input', params.tableData.filter((item, index) => index !== params.row.initRowIndex))
                   						}
                                     },
-                                }, 
+                                },
                                 '删除')
 							]);
 						}
@@ -106,7 +106,7 @@
 			}
 		},
 		watch: {
-			
+
 		}
 	};
 </script>
