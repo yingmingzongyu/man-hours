@@ -1,34 +1,29 @@
 <!--标签管理-->
 <template>
-  <div class="label-manage">
-    <Card dis-hover>
-      <p slot="title">查询条件</p>
-      <Form ref="form" :model="form" inline :label-width="80">
-        <FormItem prop="labelName" label="标签名称：">
-          <Input type="text" v-model="form.labelName" placeholder="请输入标签名称" style="width: 180px"/>
-        </FormItem>
-      </Form>
-    </Card>
-    <br>
-    <Card dis-hover>
-      <p slot="title"></p>
-      <div slot="extra">
-        <div class="btn-group">
-          <Button type="primary" @click="query()">查询</Button>
-        </div>
-      </div>
-      <Table :columns="columns" :data="tableData.list" :loading="tableLoading"></Table>
-      <br>
-      <Page
-        :total="tableData.total"
-        :current.sync="tableData.pageNum"
-        show-sizer
-        show-elevator
-        @on-change="pageChange"
-        @on-page-size-change="pageSizeChange"
-      />
-    </Card>
-  </div>
+	<div class="label-manage">
+		<Card dis-hover>
+			<p slot="title">
+				<Icon type="ios-search" />查询条件
+			</p>
+			<Form ref="form" :model="form" inline :label-width="80">
+				<FormItem prop="labelName" label="标签名称：">
+					<Input type="text" v-model="form.labelName" placeholder="请输入标签名称" style="width: 180px" />
+				</FormItem>
+			</Form>
+		</Card>
+		<br>
+		<Card dis-hover>
+			<p slot="title"></p>
+			<div slot="extra">
+				<div class="btn-group">
+					<Button type="primary" @click="query()">查询</Button>
+				</div>
+			</div>
+			<Table :columns="columns" :data="tableData.list" :loading="tableLoading"></Table>
+			<br>
+			<Page :total="tableData.total" :current.sync="tableData.pageNum" show-sizer show-elevator @on-change="pageChange" @on-page-size-change="pageSizeChange" />
+		</Card>
+	</div>
 </template>
 
 <script>
