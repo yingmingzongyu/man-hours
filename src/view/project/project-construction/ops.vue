@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 16:54:40
+ * @LastEditTime: 2019-01-16 18:55:26
  -->
 <template>
   <div>
@@ -50,6 +50,7 @@ export default {
             item.labelName = item.labelList
               .map(item => item.labelName)
               .join("、");
+            return item
           });
           this.tableData = data;
         }

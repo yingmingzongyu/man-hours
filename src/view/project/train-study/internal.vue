@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 17:13:41
+ * @LastEditTime: 2019-01-16 18:55:43
  -->
 <template>
   <div>
@@ -52,8 +52,8 @@ export default {
               .map(item => item.labelName)
               .join("、");
           });
-          console.log(data)
           this.tableData = data;
+          return item
         }
         this.tableLoading = false;
       });
