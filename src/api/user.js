@@ -7,7 +7,7 @@ export const login = ({ loginName, password }) => {
     password
   }
   return axios.request({
-    url: '/api/itsm/system/permission/loginTo/login',
+    url: '/itsm/system/permission/loginTo/login',
     params,
     method: 'post'
   })

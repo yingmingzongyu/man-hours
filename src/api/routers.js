@@ -13,7 +13,7 @@ export const getRouterReq = (access) => {
 // 获取右侧菜单
 export const getSlideMenu = ({usability, parentId} = {usability: 1, parentId: 0}) => {
   return axios.request({
-    url: '/api/itsm/system/permission/resource/queryResourceByAll',
+    url: '/itsm/system/permission/resource/queryResourceByAll',
     params: {
       usability, parentId
     },

@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-16 14:03:20
+ * @LastEditTime: 2019-01-16 16:38:23
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -30,7 +30,7 @@
           <p slot="title"></p>
           <div slot="extra">
             <div class="btn-group">
-              <Button type="primary" @click="reset()">删除</Button>
+              <Button type="primary" @click="deleteHandelr()">删除</Button>
               <Button type="primary" @click="showAdd()">新增</Button>
             </div>
           </div>
@@ -45,6 +45,45 @@
             @on-page-size-change="pageSizeChange"
           />
         </Card>
+        <!--弹窗-->
+          <Modal v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增菜单':'编辑菜单'" :loading="true">
+            <div slot="footer">
+              <Button @click="submit" type="info" :loading="addEditDialog.submitLoading">保存</Button>
+            </div>
+            <Form ref="addEditDialog" :model="addEditDialog.params" inline :label-width="130" :rules="addEditDialog.ruleValidate">
+              <FormItem prop="resourceName" label="菜单名称：">
+                <Input type="text" v-model="addEditDialog.params.resourceName" placeholder="请输入菜单名称" style="width: 250px" />
+              </FormItem>
+              <FormItem prop="resourceUrl" label="菜单链接：">
+                <Input type="text" v-model="addEditDialog.params.resourceUrl" placeholder="请输入菜单链接" style="width: 250px" />
+              </FormItem>
+              <FormItem prop="permissionUrl" label="权限URL：">
+                <Input type="text" v-model="addEditDialog.params.permissionUrl" placeholder="请输入权限链接" style="width: 250px" />
+              </FormItem>
+              <FormItem prop="resourceType" label="页面类型：">
+                <Radio-group :model.sync="addEditDialog.params.resourceType">
+                  <Radio value="1">
+                    <span>父级页面</span>
+                  </Radio>
+                  <Radio value="2">
+                    <span>功能视图</span>
+                  </Radio>
+                  <Radio value="3">
+                    <span>功能按钮</span>
+                  </Radio>
+                </Radio-group>
+              </FormItem>
+              <FormItem prop="operatingAuthorization" label="权限标签：">
+                <Input type="textarea" v-model="addEditDialog.params.description" placeholder="请输入描述" style="width: 250px" />
+                <Checkbox-group :model.sync="addEditDialog.params.operatingAuthorization">
+                  <Checkbox value="1">查询</Checkbox>
+                  <Checkbox value="2">新增</Checkbox>
+                  <Checkbox value="3">更新</Checkbox>
+                  <Checkbox value="4">删除</Checkbox>
+                </Checkbox-group>
+              </FormItem>
+            </Form>
+          </Modal>
       </div>
     </split-pane>
 </template>
@@ -116,7 +155,7 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.show(params.index);
+                      this.edit(params.index);
                     }
                   }
                 }, "编辑"),
@@ -124,7 +163,7 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.remove(params.index);
+                      this.start(params.index);
                     }
                   }
                 }, "启用"),
@@ -132,7 +171,7 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.remove(params.index);
+                      this.ban(params.index);
                     }
                   }
                 }, "禁用"),
@@ -140,7 +179,7 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.remove(params.index);
+                      this.asc(params.index);
                     }
                   }
                 }, "升序"),
@@ -148,7 +187,7 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.remove(params.index);
+                      this.desc(params.index);
                     }
                   }
                 }, "降序")
@@ -161,22 +200,36 @@ export default {
         total: 0,
         pageNum: 1,
         pageSize: 10
+      },
+      addEditDialog:{
+        show:false,
+        params:{
+
+        }
       }
     };
   },
   methods: {
     /***********************表格操作***************************/
     /**
-     * @description: 重置函数：将searchForm的数据重置
-     * @param {type} 
+     * @description: 删除方法
+     * @param {type} --
      * @return: 
      */
-    reset() {
-      this.$refs["form"].resetFields();
+    deleteHandler() {
+      let ids = this.table.selection.join(',');
+    },
+    /**
+     * @description: 新增方法
+     * @param {type} --
+     * @return: 
+     */
+    addHandler() {
+      
     },
     /**
      * @description: 查询函数：将searchForm的数据与实际搜索数据合并惊醒查询
-     * @param {type} 
+     * @param {type} --
      * @return: 
      */
     query() {
@@ -186,6 +239,7 @@ export default {
       this.table.pageNum = 1;
       this.initTablbe();
     },
+
     /***********************树方法***************************/
     /**
      * @description: 初始化树函数
@@ -198,6 +252,11 @@ export default {
         this.tree.data = [{ id:0, title:'菜单树', expand: true, children:list }]
       })
     },
+    /**
+     * @description: 选取树节点事件
+     * @param {type} 
+     * @return: 
+     */
     onSelectChange(nodelist,node){
       this.tree.selectNode = node;
       this.initTablbe(node.id);
@@ -223,8 +282,14 @@ export default {
         }
       })
     },
-    onSelectionChange() {
-
+    /**
+     * @description: 初始化表格函数
+     * @param {Array} selection选中的数据集合
+     * @return: 
+     */
+    onSelectionChange(selection) {
+      this.table.selection = selection.map(v=> v.id);
+      console.log(this.table.selection);
     },
     /**
      * @description: pageNum变动函数
