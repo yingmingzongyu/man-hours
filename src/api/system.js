@@ -27,3 +27,18 @@ export const getMenuTable = (params) => {
     method: 'post'
   })
 }
+/**
+ * @description: 
+ * @param {String} ids：删除菜单的id集合
+ * @param {String} status：-1删除 1启用 0禁用
+ * @return: 
+ */
+ export const deleteMenuFun = (ids,status) => {
+  return axios.request({
+    url: '/api/itsm/system/permission/resource/batchDeleteChildResourceById',
+    params:{
+      ids,status
+    },
+    method: 'post'
+  })
+}
