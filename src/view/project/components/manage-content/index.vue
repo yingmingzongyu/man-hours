@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 13:23:46
+ * @LastEditTime: 2019-01-16 16:31:57
  -->
 <template>
   <div>
@@ -112,7 +112,25 @@ export default {
         },
         {
           title: "项目归属",
-          key: "projectAttribution"
+          key: "projectAttribution",
+          render: (h, params) => {
+            const data = params.row.projectAttribution
+            let projectAttribution = ''
+            switch (data) {
+              case 'ZHX':
+                projectAttribution = '智恒信'
+                break;
+              case 'GX':
+                projectAttribution = '智信共创'
+                break;
+              case 'PT':
+                projectAttribution = '平台公司'
+                break;
+              default:
+                break;
+            }
+            return h('span', {}, projectAttribution)
+          }
         },
         {
           title: "创建人",
@@ -120,14 +138,8 @@ export default {
         },
         {
           title: "标签",
-          key: "label",
-          tooltip: true,
-          render: (h, params) =>
-            h(
-              "span",
-              {},
-              params.row.labelList.map(item => item.labelName).join("、")
-            )
+          key: "labelName",
+          tooltip: true
         },
         {
           title: "创建时间",
@@ -162,8 +174,8 @@ export default {
                     on: {
                       click: () => {
                         this.delTag({
-                          labelId: item.labelId,
-                          projectId: params.row.projectId
+                          id: item.labelId,
+                          projectId: params.row.id
                         });
                       }
                     }
@@ -200,7 +212,7 @@ export default {
                 on: {
                   click: () => {
                     this.projectType = "edit";
-                    this.editProjectId = params.row.projectId;
+                    this.editProjectId = params.row.id;
                     this.modal = true;
                     // this.show(params.index);
                   }
@@ -216,7 +228,7 @@ export default {
                 on: {
                   click: () => {
                     this.treeLoading = true;
-                    this.editProjectId = params.row.projectId;
+                    this.editProjectId = params.row.id;
                     this.phaseVisible = true;
                     this.treeData = []
                     const ids = params.row.phaseId.split(',').map(item=>Number(item))
@@ -350,6 +362,7 @@ export default {
         this.$Message.error("标签内容不能为空");
         return;
       }
+      console.log(projectId)
       addLabel({
         projectId,
         labelName: this.tagVal
@@ -367,7 +380,7 @@ export default {
       this.$Modal.confirm({
         title: "添加标签",
         onOk: () => {
-          this.addTag(data.row.projectId);
+          this.addTag(data.row.id);
         },
         render: h => {
           return h("Input", {

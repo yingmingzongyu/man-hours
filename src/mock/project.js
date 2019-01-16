@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 15:10:26
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 11:07:00
+ * @LastEditTime: 2019-01-16 15:31:50
  */
 import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
@@ -32,7 +32,7 @@ export const projectDetails = () => {
       "loginName|1": "@first()",
     }))
   })
-  const data = Mock.mock({
+  const project = Mock.mock({
     "projectNumber|1-300000": 3,
     "projectAttribution|1": ["ZHX", "GX", "PT"],
     "projectType|1-3": 3,
@@ -47,7 +47,9 @@ export const projectDetails = () => {
   })
   return {
     status: 200,
-    data
+    data: {
+      project
+    }
   }
 }
 export const queryDetails = req => {
@@ -58,7 +60,7 @@ export const queryDetails = req => {
       "projectNumber|1-300000": 300000,
       "projectName": "@cword(3, 10)",
       "projectAttribution|1": ["ZHX", "GX", "PT"],
-      "projectId|1-300000": 300000,
+      "id|1-300000": 300000,
       "labelList": [
         {
           "labelId": 1,

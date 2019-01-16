@@ -35,7 +35,7 @@ Mock.mock(/\/project\/label\/add/, addLabel)
 Mock.mock(/\/project\/label\/delete/, delLabel)
 Mock.mock(/\/project\/label\/query/, queryLabel)
 Mock.mock(/\/itsm\/system\/sso\/user\/querySystemUser/, querySystemUser)
-Mock.mock(/\/project\/phase\/detail/, getPhase)
-Mock.mock(/\/project\/phase\/bind/, bindPhase)
+Mock.mock(/\/project\/phase\/query/, getPhase)
+Mock.mock(/\/project\/management\/bindPhase/, bindPhase)
 
 export default Mock

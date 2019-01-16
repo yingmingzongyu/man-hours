@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 13:14:45
+ * @LastEditTime: 2019-01-16 16:45:39
  -->
 <template>
   <div>
@@ -38,21 +38,26 @@ export default {
   methods: {
     getData(params = {}) {
       //把params储存
-      params.projectType = 1
-      params.businessType = 4
+      params.projectType = 1;
+      params.businessType = 4;
       this.params = params;
       this.tableLoading = true;
-      getProject(params)
-        .then(res => {
-          if (res.data.status === 200) {
-            this.tableData = res.data.data;
-          }
-          this.tableLoading = false;
-        })
+      getProject(params).then(res => {
+        if (res.data.status === 200) {
+          let data = res.data.data;
+          data.list = data.list.map(item => {
+            item.labelName = item.labelList
+              .map(item => item.labelName)
+              .join("、");
+          });
+          this.tableData = data;
+        }
+        this.tableLoading = false;
+      });
     },
     submitProject(data, callback) {
-      data.projectType = 1
-      data.businessType = 4
+      data.projectType = 1;
+      data.businessType = 4;
       addProject(data).then(res => {
         if (res.data.status === 200) {
           this.$Message.success(res.data.message);
