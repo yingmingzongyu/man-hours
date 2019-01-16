@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-15 17:58:36
+ * @LastEditTime: 2019-01-16 16:25:53
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -31,9 +31,9 @@
     <FormItem prop="endTime" label="结束时间：" key="endTime">
       <DatePicker type="date" v-model="form.endTime" :style="`width:${formWidth}px`"/>
     </FormItem>
-    <FormItem prop="participants" label="项目参与人员：" key="participants">
+    <FormItem prop="user" label="项目参与人员：" key="user">
       <Select
-        v-model="form.participants"
+        v-model="form.user"
         multiple
         filterable
         remote
@@ -73,7 +73,7 @@ export default {
         timeEvaluation: null,
         startTime: null,
         endTime: null,
-        participants: [1,2,3]
+        user: []
       },
       rules: {
         projectAttribution: [
@@ -90,7 +90,7 @@ export default {
             trigger: "blur"
           }
         ],
-        participants: [
+        user: [
           {
             required: true,
             trigger: "change",
@@ -152,9 +152,10 @@ export default {
           id: newVal
         }).then(res => {
           if (res.data.status === 200) {
-            let formData = res.data.data
-            this.selectLabel = formData.participants.map(item=>`${item.userName}(工号${item.userCode})`)
-            formData.participants = formData.participants.map(item=>item.id)
+            let formData = res.data.data.project
+            formData.user = res.data.data.user
+            this.selectLabel = formData.user.map(item=>`${item.userName}(工号${item.userCode})`)
+            formData.user = formData.user.map(item=>item.id)
             this.tempRemoteMethod = this.searchUser
             this.form = formData;
           } else {
@@ -171,7 +172,7 @@ export default {
           timeEvaluation: null,
           startTime: null,
           endTime: null,
-          participants: []
+          user: []
         };
       }
     }

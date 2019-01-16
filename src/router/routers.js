@@ -1,8 +1,8 @@
 /*
  * @Author: yincheng
  * @Date: 2019-01-10 10:12:27
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-01-15 09:43:02
+ * @LastEditors: yincheng
+ * @LastEditTime: 2019-01-16 13:17:00
  */
 import Main from '@/components/main'
 import parentView from '@/components/parent-view'
@@ -103,7 +103,7 @@ export default [
             meta: {
               title: '智能化项目管理'
             },
-            component: () => import('@/view/project/software-development/product-manage.vue')
+            component: () => import('@/view/project/project-construction/intelligentize.vue')
           },
           {
             path: 'integration',
@@ -111,7 +111,7 @@ export default [
             meta: {
               title: '系统集成项目管理'
             },
-            component: () => import('@/view/project/software-development/project-manage.vue')
+            component: () => import('@/view/project/project-construction/integration.vue')
           },
           {
             path: 'multimedia',
@@ -119,7 +119,7 @@ export default [
             meta: {
               title: '多媒体项目管理'
             },
-            component: () => import('@/view/project/software-development/project-manage.vue')
+            component: () => import('@/view/project/project-construction/multimedia.vue')
           },
           {
             path: 'ops',
@@ -127,7 +127,7 @@ export default [
             meta: {
               title: '运维服务项目管理'
             },
-            component: () => import('@/view/project/software-development/project-manage.vue')
+            component: () => import('@/view/project/project-construction/ops.vue')
           }
         ]
       },
@@ -145,7 +145,7 @@ export default [
             meta: {
               title: '内部培训'
             },
-            component: () => import('@/view/project/software-development/product-manage.vue')
+            component: () => import('@/view/project/train-study/internal.vue')
           },
           {
             path: 'external',
@@ -153,7 +153,7 @@ export default [
             meta: {
               title: '外部培训'
             },
-            component: () => import('@/view/project/software-development/project-manage.vue')
+            component: () => import('@/view/project/train-study/external.vue')
           }
         ]
       },

@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 16:45:44
+ * @LastEditTime: 2019-01-16 16:46:05
  -->
 <template>
   <div>
@@ -11,6 +11,7 @@
       :tableLoading="tableLoading"
       @query="getData"
       @submitProject="submitProject"
+      :phaseDisable="true"
     />
   </div>
 </template>
@@ -38,8 +39,8 @@ export default {
   methods: {
     getData(params = {}) {
       //把params储存
-      params.projectType = 2;
-      params.businessType = 6;
+      params.projectType = 3;
+      params.businessType = 7;
       this.params = params;
       this.tableLoading = true;
       getProject(params).then(res => {
@@ -56,8 +57,8 @@ export default {
       });
     },
     submitProject(data, callback) {
-      data.projectType = 2;
-      data.businessType = 6;
+      data.projectType = 3;
+      data.businessType = 7;
       addProject(data).then(res => {
         if (res.data.status === 200) {
           this.$Message.success(res.data.message);

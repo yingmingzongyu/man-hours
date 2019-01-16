@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-15 16:33:49
+ * @LastEditTime: 2019-01-16 16:31:57
  -->
 <template>
   <div>
@@ -55,18 +55,25 @@
         @on-page-size-change="pageSizeChange"
       />
     </Card>
-    <Modal v-model="modal" title="新增项目" :loading="true">
+    <Modal v-model="modal" :title="(projectType ==='add' ? '新增':'编辑')+'项目'">
       <div slot="footer">
         <Button @click="submit" type="info" :loading="submitLoading">提交</Button>
       </div>
       <ProjectFrom ref="project-form" :type="projectType" :projectId="editProjectId"/>
+    </Modal>
+    <Modal v-model="phaseVisible" title="配置阶段可用性">
+      <div slot="footer">
+        <Button @click="submitPhase" type="info" :loading="submitPhaseLoading">提交</Button>
+      </div>
+      <Tree :data="treeData" show-checkbox></Tree>
+      <Spin size="large" fix v-if="treeLoading"></Spin>
     </Modal>
   </div>
 </template>
 <script>
 import dayjs from "dayjs";
 import ProjectFrom from "../project-form";
-import { addLabel, delLabel } from "@/api/project";
+import { addLabel, delLabel, getPhase, bindPhase } from "@/api/project";
 export default {
   props: {
     tableLoading: {
@@ -77,6 +84,10 @@ export default {
       type: Object,
       required: true,
       default: () => ({})
+    },
+    phaseDisable: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -101,7 +112,25 @@ export default {
         },
         {
           title: "项目归属",
-          key: "projectAttribution"
+          key: "projectAttribution",
+          render: (h, params) => {
+            const data = params.row.projectAttribution
+            let projectAttribution = ''
+            switch (data) {
+              case 'ZHX':
+                projectAttribution = '智恒信'
+                break;
+              case 'GX':
+                projectAttribution = '智信共创'
+                break;
+              case 'PT':
+                projectAttribution = '平台公司'
+                break;
+              default:
+                break;
+            }
+            return h('span', {}, projectAttribution)
+          }
         },
         {
           title: "创建人",
@@ -109,58 +138,9 @@ export default {
         },
         {
           title: "标签",
-          key: "label",
-          tooltip: true,
-          render: (h, params) =>
-            h(
-              "span",
-              {},
-              params.row.labelList.map(item => item.labelName).join("、")
-            )
+          key: "labelName",
+          tooltip: true
         },
-        // {
-        //   title: "标签",
-        //   key: "label",
-        //   minWidth: 70,
-        //   render: (h, params) => {
-        //     const data = params.row.label;
-        //     const renderDom = data.map(item =>
-        //       h(
-        //         "Tag",
-        //         {
-        //           props: {
-        //             key: item.labelId,
-        //             closable: true
-        //           },
-        //           on: {
-        //             "on-close": () => {
-        //               this.delTag({
-        //                 id: item.labelId,
-        //                 projectId: params.row.projectId
-        //               });
-        //             }
-        //           }
-        //         },
-        //         item.labelName
-        //       )
-        //     );
-        //     renderDom.push(
-        //       h("Button", {
-        //         props: {
-        //           icon: "ios-add",
-        //           type: "dashed",
-        //           size: "small"
-        //         },
-        //         on: {
-        //           click: () => {
-        //             this.shwoAddTag(params);
-        //           }
-        //         }
-        //       })
-        //     );
-        //     return renderDom;
-        //   }
-        // },
         {
           title: "创建时间",
           key: "createTime"
@@ -194,8 +174,8 @@ export default {
                     on: {
                       click: () => {
                         this.delTag({
-                          labelId: item.labelId,
-                          projectId: params.row.projectId
+                          id: item.labelId,
+                          projectId: params.row.id
                         });
                       }
                     }
@@ -232,7 +212,7 @@ export default {
                 on: {
                   click: () => {
                     this.projectType = "edit";
-                    this.editProjectId = params.row.projectId;
+                    this.editProjectId = params.row.id;
                     this.modal = true;
                     // this.show(params.index);
                   }
@@ -242,12 +222,18 @@ export default {
                 props: {
                   type: "text",
                   size: "small",
-                  icon: "ios-search"
+                  icon: "ios-search",
+                  disabled: this.phaseDisable
                 },
                 on: {
                   click: () => {
-                    console.log(123);
-                    // this.remove(params.index);
+                    this.treeLoading = true;
+                    this.editProjectId = params.row.id;
+                    this.phaseVisible = true;
+                    this.treeData = []
+                    const ids = params.row.phaseId.split(',').map(item=>Number(item))
+                    this.treeData = this.mapPhaseData(this.phaseData, ids)
+                    this.treeLoading = false;
                   }
                 }
               }),
@@ -298,7 +284,12 @@ export default {
       pageSize: this.tableData.pageSize,
       tagVal: "",
       tagList: [],
-      editProjectId: null
+      editProjectId: null,
+      phaseVisible: false,
+      phaseData: [],
+      treeData: [],
+      treeLoading: false,
+      submitPhaseLoading: false,
     };
   },
   methods: {
@@ -371,6 +362,7 @@ export default {
         this.$Message.error("标签内容不能为空");
         return;
       }
+      console.log(projectId)
       addLabel({
         projectId,
         labelName: this.tagVal
@@ -388,7 +380,7 @@ export default {
       this.$Modal.confirm({
         title: "添加标签",
         onOk: () => {
-          this.addTag(data.row.projectId);
+          this.addTag(data.row.id);
         },
         render: h => {
           return h("Input", {
@@ -408,15 +400,67 @@ export default {
           });
         }
       });
+    },
+    mapPhaseData(data, ids) {
+      return data.map(item=>{
+        let itemData = {
+          expand: true,
+          title: item.phaseName,
+          id: item.id,
+          checked: ids.indexOf(item.id) === -1 ? false : true,
+        }
+        if(item.childList) {
+          itemData.children = this.mapPhaseData(item.childList, ids)
+        }
+        return itemData
+      })
+    },
+    mapPhaseId(data){
+      return data.map(item=>{
+        let arr = []
+        if(item.checked){
+          arr.push(item.id)
+        }
+        if(item.children){
+          arr.push(this.mapPhaseId(item.children))
+        }
+        return arr
+      })
+    },
+    submitPhase() {
+      this.submitPhaseLoading = true
+      const phaseId = this.mapPhaseId(this.treeData).toString()
+      bindPhase({
+        projectId: this.editProjectId,
+        phaseId
+      })
+      .then(res=>{
+        if(res.data.status === 200){
+          this.phaseVisible = false
+          this.$Message.success('保存成功')
+        }else{
+          this.$Message.error(res.data.message)
+        }
+        this.submitPhaseLoading = false
+      })
     }
   },
   watch: {
     modal(newVal) {
       //重置表单状态
-      if(!this.editProjectId){
+      if (!this.editProjectId) {
         this.$refs["project-form"].$refs["form"].resetFields();
       }
     }
+  },
+  created() {
+    getPhase().then(res => {
+      if (res.data.status === 200) {
+        this.phaseData = res.data.data;
+      } else {
+        this.$Message.error(res.data.message);
+      }
+    });
   }
 };
 </script>

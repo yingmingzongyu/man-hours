@@ -40,11 +40,18 @@ module.exports = {
   devServer: {
     proxy: {
       // 跨域设置
-      '/api': {
+      '/zsy': {
         target: 'http://192.168.3.32:8762/',
-				changeOrigin: true,
-				pathRewrite: {
-          '^/api': ''
+        changeOrigin: true,
+        pathRewrite: {
+          '^/zsy': ''
+        }
+      },
+      '/yc': {
+        target: 'http://192.168.3.36:8080/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/yc': ''
         }
       }
     }

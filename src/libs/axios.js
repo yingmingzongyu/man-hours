@@ -11,6 +11,18 @@ const addErrorLog = errorInfo => {
   }
   if (!responseURL.includes('save_error_logger')) store.dispatch('addErrorLog', info)
 }
+function checkUrl(url) {
+	if( !(/^http:/.test(url)) ) {
+		if( /^(\/project\/)/.test(url) ) {
+      url = '/yc' + url;
+		} else {
+			if(url.indexOf('/zsy/') <= -1){
+				url = '/zsy' + url;
+			}
+		}
+	}
+	return url;
+}
 
 class HttpRequest {
   constructor (baseUrl = baseURL) {
@@ -66,6 +78,7 @@ class HttpRequest {
     })
   }
   request (options) {
+    options.url = checkUrl(options.url)
     const instance = axios.create()
     options = Object.assign(this.getInsideConfig(), options)
     return instance(options)

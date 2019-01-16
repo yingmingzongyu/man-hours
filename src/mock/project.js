@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 15:10:26
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-15 16:43:51
+ * @LastEditTime: 2019-01-16 15:31:50
  */
 import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
@@ -32,7 +32,7 @@ export const projectDetails = () => {
       "loginName|1": "@first()",
     }))
   })
-  const data = Mock.mock({
+  const project = Mock.mock({
     "projectNumber|1-300000": 3,
     "projectAttribution|1": ["ZHX", "GX", "PT"],
     "projectType|1-3": 3,
@@ -47,7 +47,9 @@ export const projectDetails = () => {
   })
   return {
     status: 200,
-    data
+    data: {
+      project
+    }
   }
 }
 export const queryDetails = req => {
@@ -58,7 +60,7 @@ export const queryDetails = req => {
       "projectNumber|1-300000": 300000,
       "projectName": "@cword(3, 10)",
       "projectAttribution|1": ["ZHX", "GX", "PT"],
-      "projectId|1-300000": 300000,
+      "id|1-300000": 300000,
       "labelList": [
         {
           "labelId": 1,
@@ -68,6 +70,7 @@ export const queryDetails = req => {
           "labelName": "test2"
         }
       ],
+      "phaseId|1": ["4","5","4,5","6","4,5,6"],
       "summarize": "@cword(4, 20)",
       "createTime": "@datetime",
       "createUser": "@cname"
@@ -138,6 +141,70 @@ export const querySystemUser = req => {
       pageNum: req.pageNum || 1,
       pages: 2,
     }
+  }
+}
+
+export const getPhase = () => {
+  return {
+    status: 200,
+    data: [
+      {
+        "id": 1,
+        "phaseName": "需求阶段",
+        "parentId": 0,
+        "parentFlag": 1,
+        "status": 0,
+        "childList": [
+          {
+            "id": 3,
+            "phaseName": "需求对接",
+            "parentId": 1,
+            "parentFlag": 0,
+            "status": 0,
+            "childList": null
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "phaseName": "方案设计阶段",
+        "parentId": 0,
+        "parentFlag": 1,
+        "status": 0,
+        "childList": [
+          {
+            "id": 4,
+            "phaseName": "需求评审",
+            "parentId": 1,
+            "parentFlag": 0,
+            "status": 0,
+            "childList": null
+          },
+          {
+            "id": 5,
+            "phaseName": "原型设计",
+            "parentId": 1,
+            "parentFlag": 0,
+            "status": 0,
+            "childList": null
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "phaseName": "方案设计阶段",
+        "parentId": 0,
+        "parentFlag": 1,
+        "status": 0,
+        "childList": null
+      }
+    ]
+  }
+}
+export const bindPhase = () => {
+  return {
+    "status": 200,
+    "message": "流程绑定成功"
   }
 }
 // export const getMessageInit = () => {

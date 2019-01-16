@@ -7,7 +7,7 @@ import axios from '@/libs/api.request'
  */
 export const getTreeList = ({ usability, parentId } = { usability: 1, parentId: 0 }) => {
   return axios.request({
-    url: '/api/itsm/system/permission/resource/queryResourceByAll',
+    url: '/itsm/system/permission/resource/queryResourceByAll',
     params: {
       usability, parentId
     },
@@ -22,8 +22,24 @@ export const getTreeList = ({ usability, parentId } = { usability: 1, parentId: 
  */
 export const getMenuTable = (params) => {
   return axios.request({
-    url: '/api/itsm/system/permission/resource/queryResourceByPage',
+    url: '/itsm/system/permission/resource/queryResourceByPage',
     params,
+    method: 'post'
+  })
+}
+
+/**
+ * @description: 
+ * @param {String} ids：删除菜单的id集合
+ * @param {String} status：-1删除 1启用 0禁用
+ * @return: 
+ */
+ export const deleteMenuFun = (ids,status) => {
+  return axios.request({
+    url: '/itsm/system/permission/resource/batchDeleteChildResourceById',
+    params:{
+      ids,status
+    },
     method: 'post'
   })
 }
@@ -31,15 +47,16 @@ export const getMenuTable = (params) => {
 /*
  * 部门管理
  */
-export const getDepartmentTree = ({ usability, parentId } = { usability: 1, parentId: 0 }) => {
+export const getDepartmentTree = ({ parentId } = { parentId: 0 }) => {
   return axios.request({
     url: '/api/itsm/system/permission/organization/queryAll',
     params: {
-      usability, parentId
-    },
+      parentId
+	},
     method: 'post'
   })
 }
+
 
 export const getDepartmentTable = (params) => {
   return axios.request({
@@ -64,3 +81,4 @@ export const editDepartment = (params) => {
     method: 'post'
   })
 }
+

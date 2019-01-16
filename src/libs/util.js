@@ -41,11 +41,11 @@ export const formatMenuList = (list) => {
  * @param {Array} list 树数据
  * @returns {Array}
  */
-export const formatTreeList = (list,parentNode=null) => {
+export const formatTreeList = (list,parentNode={id:0, title:'菜单树',children:list}) => {
   return list.map((v)=>{
     let { id, title } = {id:v.id, title:v.resourceName};
     if(v.children&&v.children.length>0){
-      return { id, title, parentNode, children: formatTreeList(v.children) };
+      return { id, title, parentNode, children: formatTreeList(v.children,{id, title, children:v.children}) };
     }else{
       return { id, title, parentNode };
     }

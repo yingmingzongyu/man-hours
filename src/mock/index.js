@@ -3,7 +3,7 @@ import { login, logout, getUserInfo } from './login'
 import { getTableData, getDragList, uploadImage, getOrgData } from './data'
 import { getMessageInit, getContentByMsgId, hasRead, removeReaded, restoreTrash, messageCount } from './user'
 
-import { addProject, updateProject, projectDetails, queryDetails, addLabel, delLabel, queryLabel, querySystemUser } from './project'
+import { addProject, updateProject, projectDetails, queryDetails, addLabel, delLabel, queryLabel, querySystemUser, getPhase, bindPhase } from './project'
 
 // 配置Ajax请求延时，可用来测试网络延迟大时项目中一些效果
 Mock.setup({
@@ -35,5 +35,7 @@ Mock.mock(/\/project\/label\/add/, addLabel)
 Mock.mock(/\/project\/label\/delete/, delLabel)
 Mock.mock(/\/project\/label\/query/, queryLabel)
 Mock.mock(/\/itsm\/system\/sso\/user\/querySystemUser/, querySystemUser)
+Mock.mock(/\/project\/phase\/query/, getPhase)
+Mock.mock(/\/project\/management\/bindPhase/, bindPhase)
 
 export default Mock
