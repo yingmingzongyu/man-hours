@@ -27,6 +27,7 @@ export const getMenuTable = (params) => {
     method: 'post'
   })
 }
+
 /**
  * @description: 
  * @param {String} ids：删除菜单的id集合
@@ -42,3 +43,42 @@ export const getMenuTable = (params) => {
     method: 'post'
   })
 }
+
+/*
+ * 部门管理
+ */
+export const getDepartmentTree = ({ parentId } = { parentId: 0 }) => {
+  return axios.request({
+    url: '/itsm/system/permission/organization/queryAll',
+    params: {
+      parentId
+	},
+    method: 'post'
+  })
+}
+
+
+export const getDepartmentTable = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/organization/queryOrganizationByPage',
+    params,
+    method: 'post'
+  })
+}
+
+export const addDepartment = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/organization/addOrganization',
+    params,
+    method: 'post'
+  })
+}
+
+export const editDepartment = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/organization/updateOrganization',
+    params,
+    method: 'post'
+  })
+}
+
