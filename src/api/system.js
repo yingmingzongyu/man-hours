@@ -27,3 +27,40 @@ export const getMenuTable = (params) => {
     method: 'post'
   })
 }
+
+/*
+ * 部门管理
+ */
+export const getDepartmentTree = ({ usability, parentId } = { usability: 1, parentId: 0 }) => {
+  return axios.request({
+    url: '/api/itsm/system/permission/organization/queryAll',
+    params: {
+      usability, parentId
+    },
+    method: 'post'
+  })
+}
+
+export const getDepartmentTable = (params) => {
+  return axios.request({
+    url: '/api/itsm/system/permission/organization/queryOrganizationByPage',
+    params,
+    method: 'post'
+  })
+}
+
+export const addDepartment = (params) => {
+  return axios.request({
+    url: '/api/itsm/system/permission/organization/addOrganization',
+    params,
+    method: 'post'
+  })
+}
+
+export const editDepartment = (params) => {
+  return axios.request({
+    url: '/api/itsm/system/permission/organization/updateOrganization',
+    params,
+    method: 'post'
+  })
+}
