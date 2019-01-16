@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 15:10:26
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 15:30:47
+ * @LastEditTime: 2019-01-15 16:43:51
  */
 import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
@@ -23,6 +23,15 @@ export const updateProject = () => {
 }
 
 export const projectDetails = () => {
+  const participants = []
+  doCustomTimes(3, () => {
+    participants.push(Mock.mock({
+      "userCode|1-1000": 1000,
+      "id|1-1000": 1000,
+      "userName|1": "@cname()",
+      "loginName|1": "@first()",
+    }))
+  })
   const data = Mock.mock({
     "projectNumber|1-300000": 3,
     "projectAttribution|1": ["ZHX", "GX", "PT"],
@@ -34,7 +43,7 @@ export const projectDetails = () => {
     "summarize": "@cword(4, 20)",
     "startTime": "@datetime",
     "endTime": "@datetime",
-    "participants": "张三、李四"
+    "participants": participants
   })
   return {
     status: 200,
@@ -46,11 +55,19 @@ export const queryDetails = req => {
   req = JSON.parse(req.body) || {}
   doCustomTimes(req.pageSize || 10, () => {
     list.push(Mock.mock({
-      "projectNumber|1-300000": 3,
+      "projectNumber|1-300000": 300000,
       "projectName": "@cword(3, 10)",
       "projectAttribution|1": ["ZHX", "GX", "PT"],
-      "labelId|1": ["1", "2", "5", "1,3,5", "1,2,4"],
-      "labelName|1": ["test1", "test2", "test5", "test1,test3,test5", "test1,test2,test4"],
+      "projectId|1-300000": 300000,
+      "labelList": [
+        {
+          "labelId": 1,
+          "labelName": "test1"
+        }, {
+          "labelId": 2,
+          "labelName": "test2"
+        }
+      ],
       "summarize": "@cword(4, 20)",
       "createTime": "@datetime",
       "createUser": "@cname"

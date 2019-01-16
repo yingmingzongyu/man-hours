@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 11:35:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-01-15 11:41:18
+ * @LastEditTime: 2019-01-15 14:27:56
  -->
 <template>
   <Layout style="height: 100%" class="main">
@@ -293,13 +293,13 @@ export default {
             ]
           }
         ];
-      // getSlideMenu().then(res => {
-      //   // 格式化返回数据
-      //   // const data = res.data.data.top;
+      getSlideMenu().then(res => {
+        // 格式化返回数据
+        // const data = res.data.data.top;
 
-      //   // this.menuList = formatMenuList(data);
+        // this.menuList = formatMenuList(data);
         
-      // });
+      });
     },
     turnToPage(route) {
       let { name, params, query } = {};

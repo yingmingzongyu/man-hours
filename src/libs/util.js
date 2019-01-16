@@ -23,7 +23,7 @@ export const getUserItem = (item) => {
   const value = localRead('userInfo') && JSON.parse(localRead('userInfo'))?JSON.parse(localRead('userInfo'))[item]:'';
   return value
 }
-/**格式化菜单返回数据方法
+/**格式化menu返回数据方法
  * @param {Array} list 左侧菜单数据
  * @returns {Array}
  */
@@ -34,6 +34,20 @@ export const formatMenuList = (list) => {
       return { href, icon, name, meta:{ title }, children: formatMenuList(v.children) };
     }else{
       return { href, icon, name, meta:{ title }, };
+    }
+  })
+}
+/**格式化tree返回数据方法
+ * @param {Array} list 树数据
+ * @returns {Array}
+ */
+export const formatTreeList = (list) => {
+  return list.map((v)=>{
+    let { id, title } = {id:v.id, title:v.resourceName};
+    if(v.children&&v.children.length>0){
+      return { id, title, children: formatTreeList(v.children) };
+    }else{
+      return { id, title };
     }
   })
 }

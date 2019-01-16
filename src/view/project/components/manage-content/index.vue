@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-14 17:31:28
+ * @LastEditTime: 2019-01-15 16:33:49
  -->
 <template>
   <div>
@@ -59,13 +59,14 @@
       <div slot="footer">
         <Button @click="submit" type="info" :loading="submitLoading">提交</Button>
       </div>
-      <ProjectFrom ref="project-form"/>
+      <ProjectFrom ref="project-form" :type="projectType" :projectId="editProjectId"/>
     </Modal>
   </div>
 </template>
 <script>
 import dayjs from "dayjs";
 import ProjectFrom from "../project-form";
+import { addLabel, delLabel } from "@/api/project";
 export default {
   props: {
     tableLoading: {
@@ -75,7 +76,7 @@ export default {
     tableData: {
       type: Object,
       required: true,
-      default: ()=>({})
+      default: () => ({})
     }
   },
   components: {
@@ -108,8 +109,58 @@ export default {
         },
         {
           title: "标签",
-          key: "labelName"
+          key: "label",
+          tooltip: true,
+          render: (h, params) =>
+            h(
+              "span",
+              {},
+              params.row.labelList.map(item => item.labelName).join("、")
+            )
         },
+        // {
+        //   title: "标签",
+        //   key: "label",
+        //   minWidth: 70,
+        //   render: (h, params) => {
+        //     const data = params.row.label;
+        //     const renderDom = data.map(item =>
+        //       h(
+        //         "Tag",
+        //         {
+        //           props: {
+        //             key: item.labelId,
+        //             closable: true
+        //           },
+        //           on: {
+        //             "on-close": () => {
+        //               this.delTag({
+        //                 id: item.labelId,
+        //                 projectId: params.row.projectId
+        //               });
+        //             }
+        //           }
+        //         },
+        //         item.labelName
+        //       )
+        //     );
+        //     renderDom.push(
+        //       h("Button", {
+        //         props: {
+        //           icon: "ios-add",
+        //           type: "dashed",
+        //           size: "small"
+        //         },
+        //         on: {
+        //           click: () => {
+        //             this.shwoAddTag(params);
+        //           }
+        //         }
+        //       })
+        //     );
+        //     return renderDom;
+        //   }
+        // },
         {
           title: "创建时间",
           key: "createTime"
@@ -119,6 +170,58 @@ export default {
           key: "address",
           align: "center",
           render: (h, params) => {
+            const DropdownItems = params.row.labelList.map(item =>
+              h(
+                "DropdownItem",
+                {
+                  props: {
+                    name: item.labelId
+                  },
+                  style: {
+                    textAlign: "left"
+                  }
+                },
+                [
+                  item.labelName,
+                  h("Icon", {
+                    props: {
+                      type: "ios-trash-outline",
+                      size: 20
+                    },
+                    style: {
+                      float: "right"
+                    },
+                    on: {
+                      click: () => {
+                        this.delTag({
+                          labelId: item.labelId,
+                          projectId: params.row.projectId
+                        });
+                      }
+                    }
+                  })
+                ]
+              )
+            );
+            DropdownItems.push(
+              h(
+                "DropdownItem",
+                {
+                  props: {
+                    divided: true,
+                    name: "add"
+                  }
+                },
+                [
+                  h("Icon", {
+                    props: {
+                      type: "md-add"
+                    }
+                  }),
+                  "新建标签并标记"
+                ]
+              )
+            );
             return h("div", [
               h("Button", {
                 props: {
@@ -128,7 +231,10 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.show(params.index);
+                    this.projectType = "edit";
+                    this.editProjectId = params.row.projectId;
+                    this.modal = true;
+                    // this.show(params.index);
                   }
                 }
               }),
@@ -140,30 +246,59 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.remove(params.index);
+                    console.log(123);
+                    // this.remove(params.index);
                   }
                 }
               }),
-              h("Button", {
-                props: {
-                  type: "text",
-                  size: "small",
-                  icon: "ios-search"
-                },
-                on: {
-                  click: () => {
-                    this.remove(params.index);
+              h(
+                "Dropdown",
+                {
+                  props: {
+                    trigger: "click"
+                  },
+                  on: {
+                    "on-click": name => {
+                      switch (name) {
+                        case "add":
+                          this.shwoAddTag(params);
+                          break;
+                        default:
+                          console.log("default");
+                          break;
+                      }
+                    }
                   }
-                }
-              })
+                },
+                [
+                  h("Button", {
+                    props: {
+                      type: "text",
+                      size: "small",
+                      icon: "ios-pricetag-outline"
+                    }
+                  }),
+                  h(
+                    "DropdownMenu",
+                    {
+                      slot: "list"
+                    },
+                    DropdownItems
+                  )
+                ]
+              )
             ]);
           }
         }
       ],
       modal: false,
+      projectType: "",
       submitLoading: false,
       pageNum: this.tableData.pageNum,
-      pageSize: this.tableData.pageSize
+      pageSize: this.tableData.pageSize,
+      tagVal: "",
+      tagList: [],
+      editProjectId: null
     };
   },
   methods: {
@@ -185,6 +320,8 @@ export default {
     },
     //显示add
     showAdd() {
+      this.projectType = "add";
+      this.editProjectId = null;
       this.modal = true;
     },
     //add
@@ -192,8 +329,8 @@ export default {
       this.submitLoading = true;
       this.$refs["project-form"].$refs["form"].validate(valid => {
         if (valid) {
-          let formData = {...this.$refs["project-form"].form}
-          formData.participants = formData.participants.toString()
+          let formData = { ...this.$refs["project-form"].form };
+          formData.participants = formData.participants.toString();
           formData.startTime = this.formatTime(formData.startTime);
           formData.endTime = this.formatTime(formData.endTime);
           this.$emit("submitProject", formData, () => {
@@ -212,18 +349,73 @@ export default {
       this.pageSize = pageSize;
       this.query();
     },
-    formatTime(date, type="YYYY-MM-DD") {
-      if(date instanceof Date){
-        return dayjs(date).format(type)
-      }else{
-        return null
+    formatTime(date, type = "YYYY-MM-DD") {
+      if (date instanceof Date) {
+        return dayjs(date).format(type);
+      } else {
+        return null;
       }
+    },
+    delTag(data) {
+      delLabel(data).then(res => {
+        if (res.data.status === 200) {
+          this.$Message.success(res.data.message);
+          this.query();
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      });
+    },
+    addTag(projectId) {
+      if (this.tagVal.length === 0) {
+        this.$Message.error("标签内容不能为空");
+        return;
+      }
+      addLabel({
+        projectId,
+        labelName: this.tagVal
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.$Message.success(res.data.message);
+          this.query();
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      });
+    },
+    shwoAddTag(data) {
+      this.tagVal = "";
+      this.$Modal.confirm({
+        title: "添加标签",
+        onOk: () => {
+          this.addTag(data.row.projectId);
+        },
+        render: h => {
+          return h("Input", {
+            props: {
+              value: this.tagVal,
+              autofocus: true,
+              placeholder: "请输入标签名..."
+            },
+            style: {
+              marginTop: "15px"
+            },
+            on: {
+              input: val => {
+                this.tagVal = val;
+              }
+            }
+          });
+        }
+      });
     }
   },
   watch: {
-    modal() {
+    modal(newVal) {
       //重置表单状态
-      this.$refs["project-form"].$refs["form"].resetFields();
+      if(!this.editProjectId){
+        this.$refs["project-form"].$refs["form"].resetFields();
+      }
     }
   }
 };

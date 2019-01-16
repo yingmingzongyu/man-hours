@@ -2,45 +2,26 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-15 13:47:39
+ * @LastEditTime: 2019-01-15 17:58:22
  * @LastEditors: Please set LastEditors
  -->
 <template>
-    <split-pane v-model="split.offset">
-      <div slot="left" style="height:100%;background:#fff">
+    <split-pane v-model="split.offset" min="200px" max="500px">
+      <div slot="left" style="height:100%;background:#fff;padding-left:20px;padding-top:10px">
+        <Tree :data="tree.data" ></Tree>
       </div>
 
       <div slot="right">
         <Card dis-hover>
           <p slot="title">
-            <Icon type="ios-search"/>查询条件
+            当前分类信息
           </p>
           <Form ref="form" :model="form.params" inline :label-width="80">
-            <FormItem prop="projectName" label="项目名称：">
-              <Input
-                type="text"
-                v-model="form.projectName"
-                placeholder="请输入关键词"
-                style="width: 180px"
-              />
+            <FormItem  label="上级菜单:">
+              {{form.params.parentName}}
             </FormItem>
-            <FormItem prop="createTime" label="创建时间：">
-              <DatePicker
-                type="daterange"
-                v-model="form.createTime"
-                placeholder="请选择时间"
-                style="width: 180px"
-              />
-            </FormItem>
-            <FormItem prop="projectAttribution" label="项目归属：">
-              <Select v-model="form.projectAttribution" style="width: 182px">
-                <Option value="ZHX" key="ZHX">智恒信</Option>
-                <Option value="GX" key="GX">智信共创</Option>
-                <Option value="PT" key="PT">平台公司</Option>
-              </Select>
-            </FormItem>
-            <FormItem prop="labelName" label="标签：">
-              <Input type="text" v-model="form.labelName" style="width: 180px"/>
+            <FormItem  label="菜单名称:">
+              {{form.params.parentName}}
             </FormItem>
           </Form>
         </Card>
@@ -49,9 +30,8 @@
           <p slot="title"></p>
           <div slot="extra">
             <div class="btn-group">
-              <Button type="primary" icon="ios-search" @click="reset()">重置</Button>
-              <Button type="primary" icon="ios-search" @click="query()">查询</Button>
-              <Button type="primary" icon="ios-search" @click="showAdd()">新增</Button>
+              <Button type="primary" @click="reset()">删除</Button>
+              <Button type="primary" @click="showAdd()">新增</Button>
             </div>
           </div>
           <Table :columns="table.columns" :data="table.data"></Table>
@@ -69,6 +49,12 @@
     </split-pane>
 </template>
 <script>
+import {
+  getTreeList, getMenuTable
+} from '@/api/system.js'
+import {
+  formatTreeList
+} from '@/libs/util.js';
 import SplitPane from "_c/split-pane";
 export default {
   components: {
@@ -78,11 +64,12 @@ export default {
     return {
       split:{
         offset: 0.2,
-        offsetVertical: '250px'
+      },
+      tree:{
+        data:[],
       },
       form: {
-        params: {},
-        query:{}
+        params: {}
       },
       table: {
         columns: [
@@ -158,12 +145,12 @@ export default {
         ],
         data: [],
         total: 0,
-        pageNum: 0
+        pageNum: 0,
+        pageSize: 10
       }
     };
   },
   methods: {
-    
     /**
      * @description: 重置函数：将searchForm的数据重置
      * @param {type} 
@@ -185,17 +172,36 @@ export default {
       this.initTablbe();
     },
     /**
-     * @description: 获取表格数据实体函数
+     * @description: 初始化树函数
      * @param   
      * @return: 
      */
-    initTablbe(){
+    initTree(){
+      getTreeList().then(res => {
+        let list = formatTreeList(res.data.data.top);
+        this.tree.data = [{ id:0, title:'菜单树', expand: true, children:list }]
+      })
+      
+    },
+    /**
+     * @description: 获取表格数据实体函数
+     * @param {Number} parentId当前分页页面ID
+     * @return: 
+     */
+    initTablbe(parentId=0){
       let params = {
         ...this.form.query,
+        parentId,
         pageNum: this.table.pageNum,
         pageSize: this.table.pageSize
       }
-      console.log(params);
+      getMenuTable(params).then(res=>{
+        let { list, total, pages, pageNum} = res.data.data;
+        this.table.data = list;
+        if(pages < pageNum && pages!= 0){
+          this.table.pageNum = pages;
+        }
+      })
     },
     /**
      * @description: pageNum变动函数
@@ -215,8 +221,10 @@ export default {
       this.initTablbe();
     }
   },
-  watch: {
+  mounted() {
+    this.initTablbe();
 
+    this.initTree();
   }
 };
 </script>
