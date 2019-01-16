@@ -49,7 +49,7 @@ export const getMenuTable = (params) => {
  */
 export const getDepartmentTree = ({ parentId } = { parentId: 0 }) => {
   return axios.request({
-    url: '/api/itsm/system/permission/organization/queryAll',
+    url: '/itsm/system/permission/organization/queryAll',
     params: {
       parentId
 	},
@@ -60,7 +60,7 @@ export const getDepartmentTree = ({ parentId } = { parentId: 0 }) => {
 
 export const getDepartmentTable = (params) => {
   return axios.request({
-    url: '/api/itsm/system/permission/organization/queryOrganizationByPage',
+    url: '/itsm/system/permission/organization/queryOrganizationByPage',
     params,
     method: 'post'
   })
@@ -68,7 +68,7 @@ export const getDepartmentTable = (params) => {
 
 export const addDepartment = (params) => {
   return axios.request({
-    url: '/api/itsm/system/permission/organization/addOrganization',
+    url: '/itsm/system/permission/organization/addOrganization',
     params,
     method: 'post'
   })
@@ -76,7 +76,7 @@ export const addDepartment = (params) => {
 
 export const editDepartment = (params) => {
   return axios.request({
-    url: '/api/itsm/system/permission/organization/updateOrganization',
+    url: '/itsm/system/permission/organization/updateOrganization',
     params,
     method: 'post'
   })
