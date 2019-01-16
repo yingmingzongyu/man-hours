@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 11:23:23
+ * @LastEditTime: 2019-01-16 13:15:47
  -->
 <template>
   <div>
@@ -51,6 +51,8 @@ export default {
         })
     },
     submitProject(data, callback) {
+      data.projectType = 2
+      data.businessType = 5
       addProject(data).then(res => {
         if (res.data.status === 200) {
           this.$Message.success(res.data.message);
