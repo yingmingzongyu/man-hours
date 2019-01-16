@@ -42,10 +42,14 @@ module.exports = {
       // 跨域设置
       '/api': {
         target: 'http://192.168.3.32:8762/',
-				changeOrigin: true,
-				pathRewrite: {
+        changeOrigin: true,
+        pathRewrite: {
           '^/api': ''
         }
+      },
+      '/project': {
+        target: 'http://192.168.3.36:8080/',
+        changeOrigin: true
       }
     }
   }
