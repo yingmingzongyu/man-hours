@@ -78,15 +78,13 @@
 						render: (h, params) => {
 							return h("div", [
 							h('span', {
-                                    style: {
-                                        marginRight: '10px', color: '#2d8cf0', cursor: 'pointer'
-                                    },
+                                    class: 'operation-btn',
                                     on: {
                   						click: () => {
                                             this.openDialog('edit',params)
                                         }
                                     },
-                               }, '编辑'),
+                               	}, '编辑'),
 								h('Poptip', {
                                     props: {
                                     	confirm: true, title: '你确定要删除吗?'

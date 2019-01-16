@@ -97,9 +97,7 @@
 							render: (h, params) => {
 								return h("div", [
 									h("span", {
-										style: {
-	                                        color: '#2d8cf0', cursor: 'pointer'
-	                                   	},
+	                                   	class: 'operation-btn',
 										on: {
 											click: () => {
 												this.openDialog('edit',params);
