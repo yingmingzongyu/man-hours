@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 13:16:07
+ * @LastEditTime: 2019-01-16 13:22:00
  -->
 <template>
   <div>
@@ -11,6 +11,7 @@
       :tableLoading="tableLoading"
       @query="getData"
       @submitProject="submitProject"
+      :phaseDisable="true"
     />
   </div>
 </template>
