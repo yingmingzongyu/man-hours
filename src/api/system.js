@@ -7,7 +7,7 @@ import axios from '@/libs/api.request'
  */
 export const getTreeList = ({ usability, parentId } = { usability: 1, parentId: 0 }) => {
   return axios.request({
-    url: '/api/itsm/system/permission/resource/queryResourceByAll',
+    url: '/itsm/system/permission/resource/queryResourceByAll',
     params: {
       usability, parentId
     },
@@ -22,7 +22,7 @@ export const getTreeList = ({ usability, parentId } = { usability: 1, parentId: 
  */
 export const getMenuTable = (params) => {
   return axios.request({
-    url: '/api/itsm/system/permission/resource/queryResourceByPage',
+    url: '/itsm/system/permission/resource/queryResourceByPage',
     params,
     method: 'post'
   })
@@ -35,7 +35,7 @@ export const getMenuTable = (params) => {
  */
  export const deleteMenuFun = (ids,status) => {
   return axios.request({
-    url: '/api/itsm/system/permission/resource/batchDeleteChildResourceById',
+    url: '/itsm/system/permission/resource/batchDeleteChildResourceById',
     params:{
       ids,status
     },
