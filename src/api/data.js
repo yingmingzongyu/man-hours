@@ -44,10 +44,10 @@ export const getOrgData = () => {
 }
 
 
-export const getProject = formData => {
+export const getProject = params => {
   return axios.request({
     url: '/project/management/query',
     method: 'get',
-    data: formData
+    params
   })
 }

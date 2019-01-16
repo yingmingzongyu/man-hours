@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 16:31:57
+ * @LastEditTime: 2019-01-16 17:35:20
  -->
 <template>
   <div>
@@ -114,22 +114,22 @@ export default {
           title: "项目归属",
           key: "projectAttribution",
           render: (h, params) => {
-            const data = params.row.projectAttribution
-            let projectAttribution = ''
+            const data = params.row.projectAttribution;
+            let projectAttribution = "";
             switch (data) {
-              case 'ZHX':
-                projectAttribution = '智恒信'
+              case "ZHX":
+                projectAttribution = "智恒信";
                 break;
-              case 'GX':
-                projectAttribution = '智信共创'
+              case "GX":
+                projectAttribution = "智信共创";
                 break;
-              case 'PT':
-                projectAttribution = '平台公司'
+              case "PT":
+                projectAttribution = "平台公司";
                 break;
               default:
                 break;
             }
-            return h('span', {}, projectAttribution)
+            return h("span", {}, projectAttribution);
           }
         },
         {
@@ -230,9 +230,11 @@ export default {
                     this.treeLoading = true;
                     this.editProjectId = params.row.id;
                     this.phaseVisible = true;
-                    this.treeData = []
-                    const ids = params.row.phaseId.split(',').map(item=>Number(item))
-                    this.treeData = this.mapPhaseData(this.phaseData, ids)
+                    this.treeData = [];
+                    const ids = params.row.phaseId
+                      .split(",")
+                      .map(item => Number(item));
+                    this.treeData = this.mapPhaseData(this.phaseData, ids);
                     this.treeLoading = false;
                   }
                 }
@@ -289,7 +291,7 @@ export default {
       phaseData: [],
       treeData: [],
       treeLoading: false,
-      submitPhaseLoading: false,
+      submitPhaseLoading: false
     };
   },
   methods: {
@@ -319,9 +321,10 @@ export default {
     submit() {
       this.submitLoading = true;
       this.$refs["project-form"].$refs["form"].validate(valid => {
+        console.log(valid);
         if (valid) {
           let formData = { ...this.$refs["project-form"].form };
-          formData.participants = formData.participants.toString();
+          formData.user = formData.user.toString();
           formData.startTime = this.formatTime(formData.startTime);
           formData.endTime = this.formatTime(formData.endTime);
           this.$emit("submitProject", formData, () => {
@@ -362,7 +365,7 @@ export default {
         this.$Message.error("标签内容不能为空");
         return;
       }
-      console.log(projectId)
+      console.log(projectId);
       addLabel({
         projectId,
         labelName: this.tagVal
@@ -402,47 +405,46 @@ export default {
       });
     },
     mapPhaseData(data, ids) {
-      return data.map(item=>{
+      return data.map(item => {
         let itemData = {
           expand: true,
           title: item.phaseName,
           id: item.id,
-          checked: ids.indexOf(item.id) === -1 ? false : true,
+          checked: ids.indexOf(item.id) === -1 ? false : true
+        };
+        if (item.childList) {
+          itemData.children = this.mapPhaseData(item.childList, ids);
         }
-        if(item.childList) {
-          itemData.children = this.mapPhaseData(item.childList, ids)
-        }
-        return itemData
-      })
+        return itemData;
+      });
     },
-    mapPhaseId(data){
-      return data.map(item=>{
-        let arr = []
-        if(item.checked){
-          arr.push(item.id)
+    mapPhaseId(data) {
+      return data.map(item => {
+        let arr = [];
+        if (item.checked) {
+          arr.push(item.id);
         }
-        if(item.children){
-          arr.push(this.mapPhaseId(item.children))
+        if (item.children) {
+          arr.push(this.mapPhaseId(item.children));
         }
-        return arr
-      })
+        return arr;
+      });
     },
     submitPhase() {
-      this.submitPhaseLoading = true
-      const phaseId = this.mapPhaseId(this.treeData).toString()
+      this.submitPhaseLoading = true;
+      const phaseId = this.mapPhaseId(this.treeData).toString();
       bindPhase({
         projectId: this.editProjectId,
         phaseId
-      })
-      .then(res=>{
-        if(res.data.status === 200){
-          this.phaseVisible = false
-          this.$Message.success('保存成功')
-        }else{
-          this.$Message.error(res.data.message)
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.phaseVisible = false;
+          this.$Message.success("保存成功");
+        } else {
+          this.$Message.error(res.data.message);
         }
-        this.submitPhaseLoading = false
-      })
+        this.submitPhaseLoading = false;
+      });
     }
   },
   watch: {
