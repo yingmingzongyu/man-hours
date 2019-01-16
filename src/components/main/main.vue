@@ -149,7 +149,7 @@ export default {
             children:[
               {
                 icon: "ios-construct",
-                name: "depart",
+                name: "department",
                 meta: {
                   icon: "ios-construct",
                   title: "部门管理"
@@ -165,7 +165,7 @@ export default {
               },
               {
                 icon: "ios-construct",
-                name: "users",
+                name: "user",
                 meta: {
                   icon: "ios-construct",
                   title: "用户管理"

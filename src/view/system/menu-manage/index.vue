@@ -72,8 +72,7 @@
 import SplitPane from "_c/split-pane";
 export default {
   components: {
-    SplitPane,
-    modalComponsents
+    SplitPane
   },
   data() {
     return {

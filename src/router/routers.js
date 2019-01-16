@@ -184,6 +184,30 @@ export default [
         },
         component: () => import('@/view/system/menu-manage/index.vue'),
       },
+      {
+        path: 'department',
+        name: 'department',
+        meta: {
+          title: '部门管理'
+        },
+        component: () => import('@/view/system/department-manage/index.vue'),
+      },
+      {
+        path: 'role',
+        name: 'role',
+        meta: {
+          title: '角色管理'
+        },
+        component: () => import('@/view/system/role-manage/index.vue'),
+      },
+      {
+        path: 'user',
+        name: 'user',
+        meta: {
+          title: '用户管理'
+        },
+        component: () => import('@/view/system/user-manage/index.vue'),
+      },
     ]
   },
   {

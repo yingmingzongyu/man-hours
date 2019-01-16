@@ -3,7 +3,7 @@
 	<div class="label-manage">
 		<Card dis-hover>
 			<p slot="title">
-				查询条件
+				<Icon type="ios-search" />查询条件
 			</p>
 			<Form ref="form" :model="form" inline :label-width="80">
 				<FormItem prop="labelName" label="标签名称：">
