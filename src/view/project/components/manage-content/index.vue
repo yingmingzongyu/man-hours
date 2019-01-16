@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 17:35:20
+ * @LastEditTime: 2019-01-16 18:10:28
  -->
 <template>
   <div>
@@ -321,10 +321,10 @@ export default {
     submit() {
       this.submitLoading = true;
       this.$refs["project-form"].$refs["form"].validate(valid => {
-        console.log(valid);
         if (valid) {
           let formData = { ...this.$refs["project-form"].form };
-          formData.user = formData.user.toString();
+          formData.participants = formData.user.toString();
+          delete formData.user
           formData.startTime = this.formatTime(formData.startTime);
           formData.endTime = this.formatTime(formData.endTime);
           this.$emit("submitProject", formData, () => {
@@ -365,7 +365,6 @@ export default {
         this.$Message.error("标签内容不能为空");
         return;
       }
-      console.log(projectId);
       addLabel({
         projectId,
         labelName: this.tagVal

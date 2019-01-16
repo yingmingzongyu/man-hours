@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-14 17:46:51
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 17:39:45
+ * @LastEditTime: 2019-01-16 17:57:51
  */
 import axios from '@/libs/api.request'
 
