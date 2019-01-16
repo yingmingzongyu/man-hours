@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 16:46:05
+ * @LastEditTime: 2019-01-16 17:13:41
  -->
 <template>
   <div>
@@ -47,10 +47,12 @@ export default {
         if (res.data.status === 200) {
           let data = res.data.data;
           data.list = data.list.map(item => {
+            item.labelList = item.labelList || []
             item.labelName = item.labelList
               .map(item => item.labelName)
               .join("、");
           });
+          console.log(data)
           this.tableData = data;
         }
         this.tableLoading = false;

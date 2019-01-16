@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-14 17:46:51
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 15:27:18
+ * @LastEditTime: 2019-01-16 17:57:51
  */
 import axios from '@/libs/api.request'
 
@@ -14,11 +14,11 @@ export const getProject = params => {
   })
 }
 
-export const addProject = data => {
+export const addProject = params => {
   return axios.request({
     url: '/project/management/add',
     method: 'post',
-    data
+    params
   })
 }
 
@@ -41,19 +41,19 @@ export const getLabel = params => {
   })
 }
 
-export const delLabel = data => {
+export const delLabel = params => {
   return axios.request({
     url: '/project/label/delete',
     method: 'delete',
-    data
+    params
   })
 }
 
-export const addLabel = data => {
+export const addLabel = params => {
   return axios.request({
     url: '/project/label/add',
     method: 'post',
-    data
+    params
   })
 }
 
@@ -66,10 +66,10 @@ export const getPhase = () => {
   })
 }
 
-export const bindPhase = data => {
+export const bindPhase = params => {
   return axios.request({
     url: '/project/management/bindPhase',
     method: 'post',
-    data
+    params
   })
 }

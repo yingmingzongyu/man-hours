@@ -267,6 +267,7 @@ export default {
       getTreeList().then(res => {
         let list = formatTreeList(res.data.data.top);
         this.tree.data = [{ id:0, title:'菜单树', expand: true, children:list }]
+        console.log(JSON.stringify(this.tree.data))
       })
     },
     /**
