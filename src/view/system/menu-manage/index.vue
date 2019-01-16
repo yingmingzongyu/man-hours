@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-16 16:38:23
+ * @LastEditTime: 2019-01-16 18:50:59
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -31,7 +31,7 @@
           <div slot="extra">
             <div class="btn-group">
               <Button type="primary" @click="deleteHandelr()">删除</Button>
-              <Button type="primary" @click="showAdd()">新增</Button>
+              <Button type="primary" @click="addHandler()">新增</Button>
             </div>
           </div>
           <Table :columns="table.columns" :data="table.data" @on-selection-change="onSelectionChange"></Table>
@@ -50,7 +50,10 @@
             <div slot="footer">
               <Button @click="submit" type="info" :loading="addEditDialog.submitLoading">保存</Button>
             </div>
-            <Form ref="addEditDialog" :model="addEditDialog.params" inline :label-width="130" :rules="addEditDialog.ruleValidate">
+            <Form ref="addEditDialog" :model="addEditDialog.params" inline :label-width="130" >
+              <FormItem prop="resourceName" label="菜单名称：">
+                {{tree.selectNode.title}}
+              </FormItem>
               <FormItem prop="resourceName" label="菜单名称：">
                 <Input type="text" v-model="addEditDialog.params.resourceName" placeholder="请输入菜单名称" style="width: 250px" />
               </FormItem>
@@ -59,28 +62,29 @@
               </FormItem>
               <FormItem prop="permissionUrl" label="权限URL：">
                 <Input type="text" v-model="addEditDialog.params.permissionUrl" placeholder="请输入权限链接" style="width: 250px" />
+                {{addEditDialog.params.permissionUrl}}
               </FormItem>
               <FormItem prop="resourceType" label="页面类型：">
-                <Radio-group :model.sync="addEditDialog.params.resourceType">
-                  <Radio value="1">
+                <Radio-group v-model="addEditDialog.params.resourceType">
+                  <Radio :label="1">
                     <span>父级页面</span>
                   </Radio>
-                  <Radio value="2">
+                  <Radio :label="2">
                     <span>功能视图</span>
                   </Radio>
-                  <Radio value="3">
-                    <span>功能按钮</span>
+                  <Radio :label="3">
+                    <span>{{addEditDialog.params.resourceType}}</span>
                   </Radio>
                 </Radio-group>
               </FormItem>
-              <FormItem prop="operatingAuthorization" label="权限标签：">
-                <Input type="textarea" v-model="addEditDialog.params.description" placeholder="请输入描述" style="width: 250px" />
-                <Checkbox-group :model.sync="addEditDialog.params.operatingAuthorization">
-                  <Checkbox value="1">查询</Checkbox>
-                  <Checkbox value="2">新增</Checkbox>
-                  <Checkbox value="3">更新</Checkbox>
-                  <Checkbox value="4">删除</Checkbox>
+              <FormItem prop="operatingAuthorization" label="权限标签：" >
+                <Checkbox-group v-model="addEditDialog.params.operatingAuthorization">
+                  <Checkbox :label="1">查询</Checkbox>
+                  <Checkbox :label="2">新增</Checkbox>
+                  <Checkbox :label="3">更新</Checkbox>
+                  <Checkbox :label="4">删除</Checkbox>
                 </Checkbox-group>
+                {{addEditDialog.params.operatingAuthorization}}
               </FormItem>
             </Form>
           </Modal>
@@ -101,6 +105,7 @@ export default {
   },
   data() {
     return {
+      button2:'',
       split:{
         offset: 0.2,
       },
@@ -203,8 +208,12 @@ export default {
       },
       addEditDialog:{
         show:false,
+        type:'add',
         params:{
-
+          resourceName:'',
+          resourceType:1,
+          resourceUrl:'',
+          operatingAuthorization:[1]
         }
       }
     };
@@ -225,7 +234,12 @@ export default {
      * @return: 
      */
     addHandler() {
-      
+      this.addEditDialog.show = true;
+      this.addEditDialog.type = 'add';
+    },
+    editHandler() {
+      this.addEditDialog.show = true;
+      this.addEditDialog.type = 'edit';
     },
     /**
      * @description: 查询函数：将searchForm的数据与实际搜索数据合并惊醒查询
@@ -239,7 +253,10 @@ export default {
       this.table.pageNum = 1;
       this.initTablbe();
     },
+    /***********************moadl方法***************************/
+    submit(){
 
+    },
     /***********************树方法***************************/
     /**
      * @description: 初始化树函数
