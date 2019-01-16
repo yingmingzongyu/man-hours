@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-15 17:58:22
+ * @LastEditTime: 2019-01-16 10:08:29
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -145,7 +145,7 @@ export default {
         ],
         data: [],
         total: 0,
-        pageNum: 0,
+        pageNum: 1,
         pageSize: 10
       }
     };
