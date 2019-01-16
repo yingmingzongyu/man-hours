@@ -22,18 +22,18 @@
 				<p slot="title"></p>
 				<div slot="extra">
 					<div class="btn-group">
-						<Button type="primary" @click="del()">删除</Button>
+						<Button type="primary" @click="del">删除</Button>
 						<Button type="primary" @click="openDialog('add')">新增</Button>
-						<Button type="primary">禁用</Button>
-						<Button type="primary">启用</Button>
+						<Button type="primary" @click="changeOpenFlag(1)">禁用</Button>
+						<Button type="primary" @click="changeOpenFlag(0)">启用</Button>
 					</div>
 				</div>
-				<Table :columns="table.columns" :data="table.data"></Table>
+				<Table :columns="table.columns" :data="table.data" @on-selection-change="onSelectionChange"></Table>
 				<br>
 				<Page :total="table.total" :current.sync="table.pageNum" show-sizer show-elevator @on-change="pageChange" @on-page-size-change="pageSizeChange" />
 			</Card>
 			
-			<!--弹窗-->
+			<!--新增、编辑弹窗-->
 			<Modal v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增部门':'编辑部门'" :loading="true">
 	      		<div slot="footer">
 	        		<Button @click="submit" type="info" :loading="addEditDialog.submitLoading">保存</Button>
@@ -50,25 +50,12 @@
 					</FormItem>
 				</Form>
 	    	</Modal>
-	    	
-	    	<Modal v-model="delDialog.show" width="360">
-		        <p slot="header" style="color:#f60;text-align:center">
-		            <Icon type="information-circled"></Icon>
-		            <span>删除确认</span>
-		        </p>
-		        <div style="text-align:center">
-		            <p>是否确认删除？</p>
-		        </div>
-		        <div slot="footer">
-		            <i-button type="error" size="large" long :loading="delDialog.modalLoading" @click="del">删除</i-button>
-		        </div>
-		    </Modal>
 		</div>
 	</split-pane>
 </template>
 
 <script>
-	import { getDepartmentTree, getDepartmentTable, addDepartment, editDepartment } from '@/api/system.js'
+	import { getDepartmentTree, getDepartmentTable, addDepartment, editDepartment, delDepartment, changeDepartmentFlag } from '@/api/system.js'
 	import SplitPane from "_c/split-pane";
 	export default {
 		components: {
@@ -122,7 +109,8 @@
 					data: [],
 					total: 0,
 					pageNum: 1,
-					pageSize: 10
+					pageSize: 10,
+					selection: []
 				},
 				delDialog: {
 					show: false,
@@ -172,15 +160,12 @@
   				})
 		   	},
 		   	// 点击树节点
-		   	onSelectChange(v) {
-		   		console.log(v)
-		   		
-		   		
-		   		
-		   		if((v.length < 1) || (v[0] && v[0].id == 0)) {
+		   	onSelectChange(nodelist, node) {
+		   		if(node.id == 0) {
 		   			Object.keys(this.form).forEach(key => key != 'id' ? this.form[key] = "" : "");
+		   			this.form.id = 0;
 		   		} else {
-		   			Object.assign(this.form, v[0]);
+		   			Object.assign(this.form, node);
 		   		}
 		   		this.query();
 		   	},
@@ -195,9 +180,9 @@
         			let { list, total, pages, pageNum} = res.data.data;
         			this.table.data = list;
         			this.table.total = total;
-        			if(pages < pageNum && pages != 0) {
-          				this.table.pageNum = pages;
-        			}
+//      			if(pages < pageNum && pages != 0) {
+//        				this.table.pageNum = pages;
+//      			}
       			})
 			},
 			// 翻页
@@ -210,10 +195,61 @@
 				this.table.pageSize = pageSize;
 				this.query();
 			},
+			// 表格勾选
+			onSelectionChange(selection) {
+				this.table.selection = selection.map(v=> v.id);
+			},
 			// 删除
 			del() {
-				console.log(1111111111)
-				this.delDialog.show = true;
+				if(this.table.selection.length < 1) {
+					this.$Message.info("请至少选择一条数据");
+					return;
+				}
+				this.$Modal.confirm({
+                    title: '确认对话框标题',
+                    content: '<p>确认删除这些数据吗？</p>',
+                    onOk: () => {
+                    	let params = {
+                    		parentId: this.form.id,
+                    		ids: this.table.selection.toString()
+                    	}
+                        delDepartment(params).then(res => {
+		        			if(res.data.status == 200) {
+		          				this.$Message.success(res.data.message);
+		          				this.initTree();
+								this.query();
+		        			} else {
+		        				this.$Message.error(res.data.message);
+		        			}
+		        		})
+                    }
+               	});
+			},
+			// 禁用、启用
+			changeOpenFlag(type) {
+				if(this.table.selection.length < 1) {
+					this.$Message.info("请至少选择一条数据");
+					return;
+				}
+				let tip = type == 1 ? '禁用' : '启用';
+				this.$Modal.confirm({
+                    title: '确认对话框标题',
+                    content: '<p>确认'+tip+'这些数据吗？</p>',
+                    onOk: () => {
+                    	let params = {
+                    		openFlag: type,
+                    		ids: this.table.selection.toString()
+                    	}
+                        changeDepartmentFlag(params).then(res => {
+		        			if(res.data.status == 200) {
+		          				this.$Message.success(res.data.message);
+								this.query();
+		        			} else {
+		        				this.$Message.error(res.data.message);
+		        			}
+		        		})
+                    }
+               	});
 			},
 			// 打开新增编辑弹窗
 			openDialog(type, data) {
@@ -243,7 +279,9 @@
 				this.addEditDialog.submitLoading = true;
 				let params = {
         			parentId: this.form.id,
-        			...this.addEditDialog.form,
+        			organizationCode: this.addEditDialog.form.organizationCode,
+        			organizationName: this.addEditDialog.form.organizationName,
+        			description: this.addEditDialog.form.description,
       			}
             	addDepartment(params).then(res => {
         			if(res.data.status == 200) {
@@ -260,8 +298,12 @@
 			// 编辑
 			edit(data) {
 				this.addEditDialog.submitLoading = true;
-				let params = this.addEditDialog.form
-            	editDepartment(this.addEditDialog.form).then(res => {
+				let params = {
+					id: this.addEditDialog.form.id,
+        			organizationName: this.addEditDialog.form.organizationName,
+        			description: this.addEditDialog.form.description,
+        		}
+            	editDepartment(params).then(res => {
         			if(res.data.status == 200) {
           				this.$Message.success(res.data.message);
           				this.addEditDialog.show = false;

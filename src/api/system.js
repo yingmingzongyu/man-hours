@@ -82,3 +82,18 @@ export const editDepartment = (params) => {
   })
 }
 
+export const delDepartment = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/organization/deleteOrganization',
+    params,
+    method: 'post'
+  })
+}
+
+export const changeDepartmentFlag = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/organization/updateOpenFlagOrganization',
+    params,
+    method: 'post'
+  })
+}
