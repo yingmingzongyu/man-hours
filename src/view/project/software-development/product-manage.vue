@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-15 10:50:55
+ * @LastEditTime: 2019-01-16 11:23:19
  -->
 <template>
   <div>
@@ -38,6 +38,8 @@ export default {
   methods: {
     getData(params = {}) {
       //把params储存
+      params.projectType = 2
+      params.businessType = 6
       this.params = params;
       this.tableLoading = true;
       getProject(params)
@@ -47,9 +49,6 @@ export default {
           }
           this.tableLoading = false;
         })
-        .catch(error => {
-          this.tableLoading = false;
-        });
     },
     submitProject(data, callback) {
       addProject(data).then(res => {

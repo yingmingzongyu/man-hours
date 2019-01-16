@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-14 17:46:51
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-15 16:03:56
+ * @LastEditTime: 2019-01-16 11:14:44
  */
 import axios from '@/libs/api.request'
 
@@ -52,6 +52,23 @@ export const delLabel = data => {
 export const addLabel = data => {
   return axios.request({
     url: '/project/label/add',
+    method: 'post',
+    data
+  })
+}
+
+// 树结构
+
+export const getPhase = () => {
+  return axios.request({
+    url: '/project/phase/detail',
+    method: 'get'
+  })
+}
+
+export const bindPhase = data => {
+  return axios.request({
+    url: '/project/phase/bind',
     method: 'post',
     data
   })

@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-15 16:33:49
+ * @LastEditTime: 2019-01-16 11:15:20
  -->
 <template>
   <div>
@@ -55,18 +55,25 @@
         @on-page-size-change="pageSizeChange"
       />
     </Card>
-    <Modal v-model="modal" title="新增项目" :loading="true">
+    <Modal v-model="modal" :title="(projectType ==='add' ? '新增':'编辑')+'项目'">
       <div slot="footer">
         <Button @click="submit" type="info" :loading="submitLoading">提交</Button>
       </div>
       <ProjectFrom ref="project-form" :type="projectType" :projectId="editProjectId"/>
+    </Modal>
+    <Modal v-model="phaseVisible" title="配置阶段可用性">
+      <div slot="footer">
+        <Button @click="submitPhase" type="info" :loading="submitPhaseLoading">提交</Button>
+      </div>
+      <Tree :data="treeData" show-checkbox></Tree>
+      <Spin size="large" fix v-if="treeLoading"></Spin>
     </Modal>
   </div>
 </template>
 <script>
 import dayjs from "dayjs";
 import ProjectFrom from "../project-form";
-import { addLabel, delLabel } from "@/api/project";
+import { addLabel, delLabel, getPhase, bindPhase } from "@/api/project";
 export default {
   props: {
     tableLoading: {
@@ -118,49 +125,6 @@ export default {
               params.row.labelList.map(item => item.labelName).join("、")
             )
         },
-        // {
-        //   title: "标签",
-        //   key: "label",
-        //   minWidth: 70,
-        //   render: (h, params) => {
-        //     const data = params.row.label;
-        //     const renderDom = data.map(item =>
-        //       h(
-        //         "Tag",
-        //         {
-        //           props: {
-        //             key: item.labelId,
-        //             closable: true
-        //           },
-        //           on: {
-        //             "on-close": () => {
-        //               this.delTag({
-        //                 id: item.labelId,
-        //                 projectId: params.row.projectId
-        //               });
-        //             }
-        //           }
-        //         },
-        //         item.labelName
-        //       )
-        //     );
-        //     renderDom.push(
-        //       h("Button", {
-        //         props: {
-        //           icon: "ios-add",
-        //           type: "dashed",
-        //           size: "small"
-        //         },
-        //         on: {
-        //           click: () => {
-        //             this.shwoAddTag(params);
-        //           }
-        //         }
-        //       })
-        //     );
-        //     return renderDom;
-        //   }
-        // },
         {
           title: "创建时间",
           key: "createTime"
@@ -246,8 +210,13 @@ export default {
                 },
                 on: {
                   click: () => {
-                    console.log(123);
-                    // this.remove(params.index);
+                    this.treeLoading = true;
+                    this.editProjectId = params.row.projectId;
+                    this.phaseVisible = true;
+                    this.treeData = []
+                    const ids = params.row.phaseId.split(',').map(item=>Number(item))
+                    this.treeData = this.mapPhaseData(this.phaseData, ids)
+                    this.treeLoading = false;
                   }
                 }
               }),
@@ -298,7 +267,12 @@ export default {
       pageSize: this.tableData.pageSize,
       tagVal: "",
       tagList: [],
-      editProjectId: null
+      editProjectId: null,
+      phaseVisible: false,
+      phaseData: [],
+      treeData: [],
+      treeLoading: false,
+      submitPhaseLoading: false,
     };
   },
   methods: {
@@ -408,15 +382,67 @@ export default {
           });
         }
       });
+    },
+    mapPhaseData(data, ids) {
+      return data.map(item=>{
+        let itemData = {
+          expand: true,
+          title: item.phaseName,
+          id: item.id,
+          checked: ids.indexOf(item.id) === -1 ? false : true,
+        }
+        if(item.childList) {
+          itemData.children = this.mapPhaseData(item.childList, ids)
+        }
+        return itemData
+      })
+    },
+    mapPhaseId(data){
+      return data.map(item=>{
+        let arr = []
+        if(item.checked){
+          arr.push(item.id)
+        }
+        if(item.children){
+          arr.push(this.mapPhaseId(item.children))
+        }
+        return arr
+      })
+    },
+    submitPhase() {
+      this.submitPhaseLoading = true
+      const phaseId = this.mapPhaseId(this.treeData).toString()
+      bindPhase({
+        projectId: this.editProjectId,
+        phaseId
+      })
+      .then(res=>{
+        if(res.data.status === 200){
+          this.phaseVisible = false
+          this.$Message.success('保存成功')
+        }else{
+          this.$Message.error(res.data.message)
+        }
+        this.submitPhaseLoading = false
+      })
     }
   },
   watch: {
     modal(newVal) {
       //重置表单状态
-      if(!this.editProjectId){
+      if (!this.editProjectId) {
         this.$refs["project-form"].$refs["form"].resetFields();
       }
     }
+  },
+  created() {
+    getPhase().then(res => {
+      if (res.data.status === 200) {
+        this.phaseData = res.data.data;
+      } else {
+        this.$Message.error(res.data.message);
+      }
+    });
   }
 };
 </script>
