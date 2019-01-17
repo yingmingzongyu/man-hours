@@ -41,11 +41,11 @@ module.exports = {
     proxy: {
       // 跨域设置
       '/api': {
-        target: 'http://192.168.2.11:8762/',
+        target: 'http://192.168.2.11/',
         changeOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
+        // pathRewrite: {
+        //   '^/api': ''
+        // }
       }
     }
   }

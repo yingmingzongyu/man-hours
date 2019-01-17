@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
-// import { Spin } from 'iview'
+import { Spin, Message } from 'iview'
 const addErrorLog = errorInfo => {
   const { statusText, status, request: { responseURL } } = errorInfo
   let info = {
@@ -12,36 +12,37 @@ const addErrorLog = errorInfo => {
   if (!responseURL.includes('save_error_logger')) store.dispatch('addErrorLog', info)
 }
 function checkUrl(url) {
-	if( !(/^http:/.test(url)) ) {
-		if(url.indexOf('/api/') <= -1){
+  if (!(/^http:/.test(url))) {
+    if (url.indexOf('/api/') <= -1) {
       url = '/api' + url;
     }
-	}
-	return url;
+  }
+  return url;
 }
 
 class HttpRequest {
-  constructor (baseUrl = baseURL) {
+  constructor(baseUrl = baseURL) {
     this.baseUrl = ''
     this.queue = {}
   }
-  getInsideConfig () {
+  getInsideConfig() {
     const config = {
       baseURL: this.baseUrl,
       headers: {
         // 'Content-type':'multipart/form-data',
+        timeout: 30000,
         'Token': store.state.user.token
       }
     }
     return config
   }
-  destroy (url) {
+  destroy(url) {
     delete this.queue[url]
     if (!Object.keys(this.queue).length) {
       // Spin.hide()
     }
   }
-  interceptors (instance, url) {
+  interceptors(instance, url) {
     // 请求拦截
     instance.interceptors.request.use(config => {
       // 添加全局的loading...
@@ -57,6 +58,27 @@ class HttpRequest {
     instance.interceptors.response.use(res => {
       this.destroy(url)
       const { data, status } = res
+      if (data.status !== 200) {
+        switch (data.status) {
+          case 401:
+            //删除token
+            store.commit('setUserInfo')
+            window.location.href = '/#/login'
+            Message.error(data.message)
+            break;
+          case 403:
+            window.location.href = '/#/403'
+            Message.error(data.message)
+            break;
+          case 404:
+            window.location.href = '/#/404'
+            Message.error(data.message)
+            break;
+          default:
+            Message.error(data.message)
+            break;
+        }
+      }
       return { data, status }
     }, error => {
       this.destroy(url)
@@ -73,10 +95,11 @@ class HttpRequest {
       return Promise.reject(error)
     })
   }
-  request (options) {
+  request(options) {
     options.url = checkUrl(options.url)
     const instance = axios.create()
     options = Object.assign(this.getInsideConfig(), options)
+    this.interceptors(instance, options.url)
     return instance(options)
   }
 }

@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-14 17:46:51
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-17 10:36:54
+ * @LastEditTime: 2019-01-17 18:04:28
  */
 import axios from '@/libs/api.request'
 
@@ -52,7 +52,7 @@ export const getLabel = params => {
 export const delLabel = data => {
   return axios.request({
     url: '/project/label/delete',
-    method: 'delete',
+    method: 'post',
     data
   })
 }

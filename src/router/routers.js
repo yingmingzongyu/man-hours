@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 10:12:27
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 13:17:00
+ * @LastEditTime: 2019-01-17 18:15:29
  */
 import Main from '@/components/main'
 import parentView from '@/components/parent-view'
@@ -217,6 +217,14 @@ export default [
       hideInMenu: true
     },
     component: () => import('@/view/error-page/401.vue')
+  },
+  {
+    path: '/403',
+    name: 'error_403',
+    meta: {
+      hideInMenu: true
+    },
+    component: () => import('@/view/error-page/403.vue')
   },
   {
     path: '/500',
