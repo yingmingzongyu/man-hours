@@ -30,7 +30,7 @@
 				</div>
 				<Table :columns="table.columns" :data="table.data" @on-selection-change="onSelectionChange"></Table>
 				<br>
-				<Page :total="table.total" :current.sync="table.pageNum" show-sizer show-elevator @on-change="pageChange" @on-page-size-change="pageSizeChange" />
+				<Page show-total :total="table.total" :current.sync="table.pageNum" show-sizer show-elevator @on-change="pageChange" @on-page-size-change="pageSizeChange" />
 			</Card>
 			
 			<!--新增、编辑弹窗-->

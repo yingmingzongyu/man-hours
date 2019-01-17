@@ -67,12 +67,12 @@
         		<TabPane label="人员信息" name="name3">
         			<Button type="primary" style="margin: 0 10px 10px 0;" @click="deletePerson">删除</Button>
 					<Button type="primary" style="margin: 0 10px 10px 0;" @click="openPeopleDialog">新增</Button>
-					<Table :columns="editDialog.columns" :data="editDialog.personList" @on-selection-change="onSelectionChange"></Table>
+					<Table height="255" :columns="editDialog.columns" :data="editDialog.personList" @on-selection-change="onSelectionChange"></Table>
         		</TabPane>
     		</Tabs>
     	</Modal>
     	
-    	<person-check ref="personCheck" @selectPersonHandler="selectPersonHandler"></person-check>
+    	<person-check ref="personCheck" v-if="editDialog.personDialogShow" @selectPersonHandler="selectPersonHandler" :defaultSelect="editDialog.personList"></person-check>
 	</div>
 </template>
 
@@ -161,11 +161,8 @@
 						{ title: "用户名", key: "userName" }
 	                ],
 	                personList: [],
-	                selection: []
-				},
-				// 人员弹窗
-				personDialog: {
-					
+	                selection: [],
+	                personDialogShow: false
 				}
 			};
 		},
@@ -309,10 +306,20 @@
 		   	},
 		   	// 打开人员弹窗
 			openPeopleDialog() {
-				this.$refs.personCheck.open();
+				const self = this;
+				this.editDialog.personDialogShow = true;
+				setTimeout(function() {
+					self.$refs.personCheck.open();
+				},100)
+//				this.$refs.personCheck.open();
 			},
 			// 选择人员弹窗回调
 			selectPersonHandler(data) {
+				data.forEach(function(item) {
+					if(item["_checked"]) {
+						delete item["_checked"]
+					}
+				})
 				this.editDialog.personList = data;
 			}
 		},
