@@ -112,10 +112,6 @@
 					pageSize: 10,
 					selection: []
 				},
-				delDialog: {
-					show: false,
-					modalLoading: false
-				},
 				addEditDialog: {
 					show: false,
 					type: 'add',

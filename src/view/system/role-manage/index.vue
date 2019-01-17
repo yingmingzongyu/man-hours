@@ -55,14 +55,8 @@
 </template>
 
 <script>
-	import { getLabel,deleteLabel } from "@/api/project";
+	import { getRole } from "@/api/system.js";
 	export default {
-		props: {
-			tableLoading: {
-				type: Boolean,
-				default: false
-			},
-		},
 		data() {
 			return {
 				form: {
@@ -102,10 +96,7 @@
 					}
 				],
 				tableData: {
-					list: [
-						{roleName: "项目经理", description: "项目管理"},
-						{roleName: "项目经理", description: "项目管理"},
-					],
+					list: [],
 					total: 0,
 					pageNum: 1,
 					pageSize: 10
@@ -192,11 +183,11 @@
 			// 查询
 			query() {
 				let data = {
-					...this.form,
+					roleName: this.form.roleName,
 					pageNum: this.tableData.pageNum,
 					pageSize: this.tableData.pageSize
 				};
-				getLabel(data).then(res => {
+				getRole(data).then(res => {
         			if(res.data.status === 200) {
           				this.tableData.list = res.data.data;
           				this.tableData.total = res.data.total;
