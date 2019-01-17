@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 18:55:31
+ * @LastEditTime: 2019-01-17 10:30:09
  -->
 <template>
   <div>
@@ -60,7 +60,10 @@ export default {
     submitProject(data, callback) {
       data.projectType = 2;
       data.businessType = 5;
-      addProject(data).then(res => {
+      //判断新增or修改项目
+      const func = data.type === 'add' ? addProject : updateProject
+      delete data.type
+      func(data).then(res => {
         if (res.data.status === 200) {
           this.$Message.success(res.data.message);
           this.getData(this.params);
