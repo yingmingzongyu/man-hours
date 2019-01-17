@@ -437,3 +437,16 @@ export const setTitle = (routeItem, vm) => {
   const resTitle = pageTitle ? `${title} - ${pageTitle}` : title
   window.document.title = resTitle
 }
+
+/**	
+ * syncValue 同步对象的源数据到目标对象
+ * @param {targetObj} 目标对象
+ * @param {sourceObj} 源对象
+ */
+export const syncValue = (targetObj, sourceObj) => {
+	for(var key in targetObj) {
+		if( key in sourceObj ){
+			targetObj[key] = sourceObj[key];
+		}
+	}
+}
