@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 16:25:53
+ * @LastEditTime: 2019-01-17 17:20:15
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -104,13 +104,7 @@ export default {
       },
       userList: [],
       searchUserLoading: false,
-      selectLabel: [{
-        label: "123"
-      },{
-        label: "234"
-      },{
-        label: "456"
-      }],
+      selectLabel: [],
       userModal: false,
       loading: false,
       tempRemoteMethod: null
@@ -152,11 +146,19 @@ export default {
           id: newVal
         }).then(res => {
           if (res.data.status === 200) {
-            let formData = res.data.data.project
-            formData.user = res.data.data.user
-            this.selectLabel = formData.user.map(item=>`${item.userName}(工号${item.userCode})`)
-            formData.user = formData.user.map(item=>item.id)
-            this.tempRemoteMethod = this.searchUser
+            let formData = res.data.data.project;
+            formData.user = res.data.data.user;
+            this.selectLabel = formData.user.map(item => ({
+              label: `${item.userName}(工号${item.userCode})`,
+              value: item.id
+            }));
+            //过滤掉userList已经存在的用户
+            const moreUserList = formData.user.filter(
+              item => formData.user.map(d => d.id).indexOf(item.id) === -1
+            );
+            this.userList = moreUserList.concat(this.userList);
+            formData.user = formData.user.map(item => item.id);
+            this.tempRemoteMethod = this.searchUser;
             this.form = formData;
           } else {
             this.$Message.error(res.data.message);

@@ -86,10 +86,10 @@ export const restoreTrash = msg_id => {
   })
 }
 
-export const querySystemUser = data => {
+export const querySystemUser = params => {
   return axios.request({
     url: '/itsm/system/sso/user/querySystemUser',
     method: 'get',
-    data
+    params
   })
 }

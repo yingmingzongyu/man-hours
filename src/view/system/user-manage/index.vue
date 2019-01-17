@@ -185,27 +185,38 @@ export default {
         tabs: "",
         submitLoading: false,
         // 基本信息
-        form: {
-          roleName: "", // 角色名称
-          description: "" // 描述
+        params: {
+          loginName: "", // 登录名
+          userName: "", // 姓名
+          userCode: "", // 工号
+          organizationId:"", // 部门
+          mobile: "", // 手机
+          phone: "", // 联系电话
+          email:"", // 电子邮件
+          position: "", // 职位
+          sex: "", // 性别
+          accountStatus:"", // 账号状态
+          availableStatus: "", // 组织状态
+          roleIds: "", // 角色id数组
         },
-        ruleValidate: {
-          roleName: [
-            { required: true, message: "请输入角色名称", trigger: "blur" }
-          ]
-        },
+        rules:{
+          loginName: [
+            
+          ], // 登录名
+          userName: "", // 姓名
+          userCode: "", // 工号
+          organizationId:"", // 部门
+          mobile: "", // 手机
+          phone: "", // 联系电话
+          email:"", // 电子邮件
+          position: "", // 职位
+          sex: "", // 性别
+          accountStatus:"", // 账号状态
+          availableStatus: "", // 组织状态
+          roleIds: "", // 角色id数组
+        }
         
         // 角色
-        columns: [
-          { type: "selection", width: 60, align: "center" },
-          { title: "工号", key: "no" },
-          { title: "登录ID", key: "loginId" },
-          { title: "用户名", key: "username" }
-        ],
-        personList: [
-          { no: "001001", loginId: "admin", username: "admin" },
-          { no: "001001", loginId: "admin", username: "admin" }
-        ]
       }
     };
   },

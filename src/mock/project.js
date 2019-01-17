@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 15:10:26
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 15:31:50
+ * @LastEditTime: 2019-01-17 13:59:30
  */
 import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
@@ -23,9 +23,9 @@ export const updateProject = () => {
 }
 
 export const projectDetails = () => {
-  const participants = []
+  const user = []
   doCustomTimes(3, () => {
-    participants.push(Mock.mock({
+    user.push(Mock.mock({
       "userCode|1-1000": 1000,
       "id|1-1000": 1000,
       "userName|1": "@cname()",
@@ -42,13 +42,13 @@ export const projectDetails = () => {
     "labelId|1": ["1", "2", "5", "1,3,5", "1,2,4"],
     "summarize": "@cword(4, 20)",
     "startTime": "@datetime",
-    "endTime": "@datetime",
-    "participants": participants
+    "endTime": "@datetime"
   })
   return {
     status: 200,
     data: {
-      project
+      project,
+      user
     }
   }
 }
