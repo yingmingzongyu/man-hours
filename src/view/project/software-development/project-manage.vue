@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-17 10:30:09
+ * @LastEditTime: 2019-01-17 11:32:17
  -->
 <template>
   <div>
@@ -16,7 +16,7 @@
 </template>
 <script>
 import ManageContent from "../components/manage-content";
-import { getProject, addProject, addLabel, delLabel } from "@/api/project";
+import { getProject, addProject, updateProject, addLabel, delLabel } from "@/api/project";
 import project from "@/api/project";
 export default {
   components: {
