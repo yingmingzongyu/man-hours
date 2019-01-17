@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-16 18:50:59
+ * @LastEditTime: 2019-01-17 15:21:57
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -30,7 +30,7 @@
           <p slot="title"></p>
           <div slot="extra">
             <div class="btn-group">
-              <Button type="primary" @click="deleteHandelr()">删除</Button>
+              <Button type="primary" @click="deleteHandler()">删除</Button>
               <Button type="primary" @click="addHandler()">新增</Button>
             </div>
           </div>
@@ -46,11 +46,11 @@
           />
         </Card>
         <!--弹窗-->
-          <Modal v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增菜单':'编辑菜单'" :loading="true">
+          <Modal v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增菜单':'编辑菜单'" :loading="true" @on-visible-change="onVisibleChange">
             <div slot="footer">
               <Button @click="submit" type="info" :loading="addEditDialog.submitLoading">保存</Button>
             </div>
-            <Form ref="addEditDialog" :model="addEditDialog.params" inline :label-width="130" >
+            <Form ref="addEditDialogForm" :model="addEditDialog.params" :rules="addEditDialog.rules" inline :label-width="130" >
               <FormItem prop="resourceName" label="菜单名称：">
                 {{tree.selectNode.title}}
               </FormItem>
@@ -62,7 +62,6 @@
               </FormItem>
               <FormItem prop="permissionUrl" label="权限URL：">
                 <Input type="text" v-model="addEditDialog.params.permissionUrl" placeholder="请输入权限链接" style="width: 250px" />
-                {{addEditDialog.params.permissionUrl}}
               </FormItem>
               <FormItem prop="resourceType" label="页面类型：">
                 <Radio-group v-model="addEditDialog.params.resourceType">
@@ -73,18 +72,17 @@
                     <span>功能视图</span>
                   </Radio>
                   <Radio :label="3">
-                    <span>{{addEditDialog.params.resourceType}}</span>
+                    <span>功能按钮</span>
                   </Radio>
                 </Radio-group>
               </FormItem>
-              <FormItem prop="operatingAuthorization" label="权限标签：" >
+              <FormItem prop="operatingAuthorization" label="权限标签：" v-if="addEditDialog.params.resourceType==3" >
                 <Checkbox-group v-model="addEditDialog.params.operatingAuthorization">
                   <Checkbox :label="1">查询</Checkbox>
                   <Checkbox :label="2">新增</Checkbox>
                   <Checkbox :label="3">更新</Checkbox>
                   <Checkbox :label="4">删除</Checkbox>
                 </Checkbox-group>
-                {{addEditDialog.params.operatingAuthorization}}
               </FormItem>
             </Form>
           </Modal>
@@ -93,7 +91,7 @@
 </template>
 <script>
 import {
-  getTreeList, getMenuTable
+  getTreeList, getMenuTable, addMenuFun, editMenuFun, batchDeleteMenu, sortMenuFun
 } from '@/api/system.js'
 import {
   formatTreeList
@@ -144,11 +142,11 @@ export default {
           },
           {
             title: "菜单链接",
-            key: "permissionUrl"
+            key: "resourceUrl"
           },
           {
             title: "权限链接",
-            key: "resourceUrl"
+            key: "permissionUrl"
           },
           {
             title: "操作",
@@ -160,23 +158,23 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.edit(params.index);
+                      this.editHandler(params.row);
                     }
                   }
                 }, "编辑"),
                 h("span",  {
-                  class: "operation-btn",
+                  class: params.row.visible?"operation-btn ban-btn":"operation-btn",
                   on: {
                     click: () => {
-                      this.start(params.index);
+                      this.toggleHandler(params.row,1);
                     }
                   }
                 }, "启用"),
-                h("span", {
-                  class: "operation-btn",
+                h("span",  {
+                  class: params.row.visible?"operation-btn":"operation-btn ban-btn",
                   on: {
                     click: () => {
-                      this.ban(params.index);
+                      this.toggleHandler(params.row,0);
                     }
                   }
                 }, "禁用"),
@@ -184,7 +182,7 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.asc(params.index);
+                      this.sortHandler(params.row.id,1);
                     }
                   }
                 }, "升序"),
@@ -192,7 +190,7 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.desc(params.index);
+                      this.sortHandler(params.row.id,2);
                     }
                   }
                 }, "降序")
@@ -209,11 +207,30 @@ export default {
       addEditDialog:{
         show:false,
         type:'add',
+        submitLoading: false,
         params:{
           resourceName:'',
-          resourceType:1,
+          resourceType:'',
           resourceUrl:'',
-          operatingAuthorization:[1]
+          permissionUrl:'',
+          operatingAuthorization:[]
+        },
+        rules:{
+          resourceName:[
+            { required: true, message: '请输入菜单名称', trigger: 'blur' }
+          ],
+          resourceType:[
+            { required: true, message: '请选择菜单类型', trigger: 'blur' }
+          ],
+          resourceUrl:[
+            { required: true, message: '请输入菜单链接', trigger: 'blur' }
+          ],
+          permissionUrl:[
+            { required: true, message: '请输入权限URL', trigger: 'blur' }
+          ],
+          operatingAuthorization:[
+            { required: true, message: '请选择权限标签', trigger: 'blur' }
+          ]
         }
       }
     };
@@ -227,6 +244,16 @@ export default {
      */
     deleteHandler() {
       let ids = this.table.selection.join(',');
+      batchDeleteMenu(ids,-1).then(res=>{
+        let {status, message} = res.data;
+        if(status==200){
+          this.$Message.success(message);
+          this.initTree();
+          this.initTablbe();
+        }else{
+          this.$Message.warning(message);
+        }
+      })
     },
     /**
      * @description: 新增方法
@@ -237,12 +264,59 @@ export default {
       this.addEditDialog.show = true;
       this.addEditDialog.type = 'add';
     },
-    editHandler() {
+    /**
+     * @description: 编辑方法
+     * @param {Object} row 表格该列数据
+     * @return: 
+     */
+    editHandler(row) {
       this.addEditDialog.show = true;
       this.addEditDialog.type = 'edit';
+      // 从row选取回显值
+      let {id,resourceName,resourceType,resourceUrl,permissionUrl,operatingAuthorization} = row;
+      // 加工选取的回显值
+      operatingAuthorization = operatingAuthorization&&operatingAuthorization.length>0?operatingAuthorization.split(','):[]
+      // 赋值给addEditDialog.params回显
+      this.addEditDialog.params = {id,resourceName,resourceType,resourceUrl,permissionUrl,operatingAuthorization}
     },
     /**
-     * @description: 查询函数：将searchForm的数据与实际搜索数据合并惊醒查询
+     * @description: 启禁用方法
+     * @param {Number} status 1启用 0禁用
+     * @param {Object} row 该列数据
+     * @return: 
+     */
+    toggleHandler(row, status){
+      batchDeleteMenu(row.id,status).then(res=>{
+        let {status, message} = res.data;
+        if(status==200){
+          this.$Message.success(message);
+          this.initTree();
+          this.initTablbe();
+        }else{
+          this.$Message.warning(message);
+        }
+      })
+    },
+    /**
+     * @description: 排序方法
+     * @param {Number} id 排序数据的id
+     * @param {Number} sort 1升序 2降序
+     * @return: 
+     */
+    sortHandler(id, sort){
+      sortMenuFun(id,sort).then(res=>{
+        let {status, message} = res.data;
+        if(status==200){
+          this.$Message.success(message);
+          this.initTree();
+          this.initTablbe();
+        }else{
+          this.$Message.warning(message);
+        }
+      });
+    },
+    /**
+     * @description: 查询函数：将searchForm的数据与实际搜索数据合并进行查询
      * @param {type} --
      * @return: 
      */
@@ -255,7 +329,40 @@ export default {
     },
     /***********************moadl方法***************************/
     submit(){
-
+      let params = {
+        parentResourceId: this.tree.selectNode.id,
+        ...this.addEditDialog.params,
+        parentFlag: this.addEditDialog.params.resourceType===1?true:false
+      }
+      params.operatingAuthorization =  params.operatingAuthorization.join(',');
+      this.addEditDialog.type==="add"?
+      addMenuFun(params).then(res=>{
+        let {status, message} = res.data;
+        if(status==200){
+          this.$Message.success(message);
+          this.addEditDialog.show = false;
+          this.initTree();
+          this.initTablbe();
+        }else{
+          this.$Message.warning(message);
+        }
+      }):
+      editMenuFun(params).then(res=>{
+        let {status, message} = res.data;
+        if(status==200){
+          this.$Message.success(message);
+          this.addEditDialog.show = false;
+          this.initTree();
+          this.initTablbe();
+        }else{
+          this.$Message.warning(message);
+        }
+      });
+    },
+    onVisibleChange(visible) {
+      if(!visible){
+        this.$refs['addEditDialogForm'].resetFields();
+      }
     },
     /***********************树方法***************************/
     /**
@@ -267,7 +374,6 @@ export default {
       getTreeList().then(res => {
         let list = formatTreeList(res.data.data.top);
         this.tree.data = [{ id:0, title:'菜单树', expand: true, children:list }]
-        console.log(JSON.stringify(this.tree.data))
       })
     },
     /**
