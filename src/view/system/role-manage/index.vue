@@ -16,98 +16,118 @@
 			<p slot="title"></p>
 			<div slot="extra">
 				<div class="btn-group">
-					<Button type="primary" @click="query()">查询</Button>
+					<Button type="primary" @click="query">查询</Button>
 					<Button type="primary" @click="openDialog('add')">新增</Button>
 				</div>
 			</div>
-			<Table :columns="columns" :data="tableData.list" :loading="tableLoading"></Table>
-			<br>
-			<Page :total="tableData.total" :current.sync="tableData.pageNum" show-sizer show-elevator @on-change="pageChange" @on-page-size-change="pageSizeChange" />
+			<Table :columns="table.columns" :data="table.data"></Table>
 		</Card>
 		
-		<!--弹窗-->
-		<Modal v-model="addEditRole.show" :title="addEditRole.type=='add'?'新增角色':'编辑角色'" :loading="true">
+		<!--新增弹窗-->
+		<Modal v-model="addDialog.show" title="新增角色" :loading="true" class-name="role-add-dialog">
       		<div slot="footer">
-        		<Button @click="saveSubmit" type="info" :loading="addEditRole.submitLoading">保存</Button>
+        		<Button @click="save" type="info" :loading="addDialog.submitLoading">保存</Button>
       		</div>
-      		<Tabs :value="addEditRole.tabs">
+      		<Tabs value="name1">
         		<TabPane label="基本信息" name="name1">
-        			<Form ref="addEditRole" :model="addEditRole" inline :label-width="130" :rules="addEditRole.ruleValidate">
+        			<Form ref="addDialog" :model="addDialog.form" inline :label-width="130" :rules="addDialog.ruleValidate">
 						<FormItem prop="roleName" label="角色名称：">
-							<Input type="text" v-model="addEditRole.form.roleName" placeholder="请输入角色名称" style="width: 250px" />
+							<Input type="text" v-model="addDialog.form.roleName" placeholder="请输入角色名称" style="width: 250px" />
 						</FormItem>
 						<FormItem prop="description" label="描述：">
-							<Input type="textarea" v-model="addEditRole.form.description" placeholder="请输入描述" style="width: 250px" />
+							<Input type="textarea" v-model="addDialog.form.description" placeholder="请输入描述" style="width: 250px" />
 						</FormItem>
 					</Form>
         		</TabPane>
-        		<TabPane label="权限设置" name="name2" :disabled="addEditRole.type == 'add'">
-        			 <Tree :data="addEditRole.treeData" show-checkbox></Tree>
+    		</Tabs>
+    	</Modal>
+		
+		<!--编辑弹窗-->
+		<Modal v-model="editDialog.show" title="编辑角色" :loading="true" class-name="role-edit-dialog">
+      		<div slot="footer">
+        		<Button @click="submit" type="info" :loading="editDialog.submitLoading">保存</Button>
+      		</div>
+      		<Tabs value="name1" ref="tabs">
+      			<!--基本信息-->
+        		<TabPane label="基本信息" name="name1">
+        			<Form ref="editDialog" :model="editDialog.form" inline :label-width="130" :rules="editDialog.ruleValidate">
+						<FormItem prop="roleName" label="角色名称：">
+							<Input type="text" v-model="editDialog.form.roleName" style="width: 250px" disabled/>
+						</FormItem>
+						<FormItem prop="description" label="描述：">
+							<Input type="textarea" v-model="editDialog.form.description" placeholder="请输入描述" style="width: 250px" />
+						</FormItem>
+					</Form>
         		</TabPane>
-        		<TabPane label="人员信息" name="name3" :disabled="addEditRole.type == 'add'">
-        			<Button type="primary" style="margin: 0 10px 10px 0;">删除</Button>
-					<Button type="primary" style="margin: 0 10px 10px 0;">新增</Button>
-					<Table :columns="addEditRole.columns" :data="addEditRole.personList"></Table>
+        		<!--权限设置-->
+        		<TabPane label="权限设置" name="name2">
+        			 <Tree ref="tree" :data="editDialog.treeData" show-checkbox></Tree>
+        		</TabPane>
+        		<!--人员信息-->
+        		<TabPane label="人员信息" name="name3">
+        			<Button type="primary" style="margin: 0 10px 10px 0;" @click="deletePerson">删除</Button>
+					<Button type="primary" style="margin: 0 10px 10px 0;" @click="openPeopleDialog">新增</Button>
+					<Table :columns="editDialog.columns" :data="editDialog.personList" @on-selection-change="onSelectionChange"></Table>
         		</TabPane>
     		</Tabs>
     	</Modal>
+    	
+    	<person-check ref="personCheck" @selectPersonHandler="selectPersonHandler"></person-check>
 	</div>
 </template>
 
 <script>
-	import { getRole } from "@/api/system.js";
+	import { getRole, delRole, addRole, detailRole, editRole } from "@/api/system.js";
+	import { getSlideMenu } from "@/api/routers.js";
+	import { syncValue } from '@/libs/util.js';
+	import personCheck from "./component/person-check.vue";
 	export default {
+		components: {
+    		personCheck
+  		},
 		data() {
 			return {
+				// 查询条件
 				form: {
-					roleName: null
+					roleName: ''
 				},
-				columns: [
-					{ title: "角色名称", key: "roleName" },
-					{ title: "描述", key: "description" },
-					{ 
-						title: "操作",
-						key: "handle",
-						align: "center",
-						render: (h, params) => {
-							return h("div", [
-							h('span', {
-                                    class: 'operation-btn',
-                                    on: {
-                  						click: () => {
-                                            this.openDialog('edit',params)
-                                        }
-                                    },
-                               	}, '编辑'),
-								h('Poptip', {
-                                    props: {
-                                    	confirm: true, title: '你确定要删除吗?'
-                                    },
-                                    on: {
-                                        'on-ok': () => {
-                                        	this.deleteData(params)
-//                  						vm.$emit('on-delete', params)
-//                  						vm.$emit('input', params.tableData.filter((item, index) => index !== params.row.initRowIndex))
-                  						}
-                                    },
-                               }, '删除')
-							]);
+				// 表格
+				table: {
+					columns: [
+						{ title: "角色名称", key: "roleName" },
+						{ title: "描述", key: "description" },
+						{ 
+							title: "操作",
+							key: "handle",
+							align: "center",
+							render: (h, params) => {
+								return h("div", [
+									h('span', {
+	                                    class: 'operation-btn',
+	                                    on: {
+	                  						click: () => {
+	                                            this.openDialog('edit',params.row)
+	                                        }
+	                                    },
+	                               	}, '编辑'),
+	                               	h('span', {
+	                                    class: 'operation-btn',
+	                                    on: {
+	                  						click: () => {
+	                  							this.deleteData(params.row.id)
+	                                        }
+	                                    },
+	                               	}, '删除')
+								]);
+							}
 						}
-					}
-				],
-				tableData: {
-					list: [],
-					total: 0,
-					pageNum: 1,
-					pageSize: 10
+					],
+					data: []
 				},
-				// 新增角色
-				addEditRole: {
+				// 新增
+				addDialog: {
 					show: false,
-					type: "add",	// 新增还是编辑
-					tabs: '',
 					submitLoading: false,
-					// 基本信息
 					form: {
 						roleName: "",		// 角色名称
 						description: ""		// 描述
@@ -116,66 +136,36 @@
 						 roleName: [
                         	{ required: true, message: '请输入角色名称', trigger: 'blur' }
                     	],
+					}
+				},
+				// 编辑
+				editDialog: {
+					show: false,
+					submitLoading: false,
+					id: '',
+					// 基本信息
+					form: {
+						roleName: "",		// 角色名称
+						description: ""		// 描述
+					},
+					ruleValidate: {
+						
 					},
 					// 权限设置
-					treeData: [
-                    	{
-	                        title: '全选/全取消',
-	                        expand: true,
-	                        children: [
-	                            {
-	                                title: '系统管理',
-	                                expand: true,
-	                                children: [
-	                                    {
-	                                        title: '部门管理'
-	                                    },
-	                                    {
-	                                        title: '角色管理'
-	                                    },
-	                                    {
-	                                        title: '用户管理'
-	                                    },
-	                                    {
-	                                        title: '菜单管理'
-	                                    }
-	                                ]
-	                            },
-	                            {
-	                                title: '项目管理',
-	                                expand: true,
-	                                children: [
-	                                    {
-	                                        title: '项目施工',
-	                                        expand: true,
-	                                        children: [
-	                                        	{
-	                                        		title: '智能化项目管理'
-	                                        	},
-	                                        	{
-	                                        		title: '系统集成项目管理'
-	                                        	}
-	                                        ]
-	                                    },
-	                                    {
-	                                        title: '软件工程'
-	                                    }
-	                                ]
-	                            }
-	                        ]
-	                    }
-	                ],
+					treeData: [],
 	                // 人员信息
 	                columns: [
 	                	{ type: 'selection', width: 60, align: 'center' },
-	                	{ title: "工号", key: "no" },
-						{ title: "登录ID", key: "loginId" },
-						{ title: "用户名", key: "username" }
+	                	{ title: "工号", key: "userCode" },
+						{ title: "登录ID", key: "loginName" },
+						{ title: "用户名", key: "userName" }
 	                ],
-	                personList: [
-	                	{no: "001001", loginId: "admin", username: "admin"},
-						{no: "001001", loginId: "admin", username: "admin"},
-	                ]
+	                personList: [],
+	                selection: []
+				},
+				// 人员弹窗
+				personDialog: {
+					
 				}
 			};
 		},
@@ -184,55 +174,151 @@
 			query() {
 				let data = {
 					roleName: this.form.roleName,
-					pageNum: this.tableData.pageNum,
-					pageSize: this.tableData.pageSize
+					pageNum: this.table.pageNum,
+					pageSize: this.table.pageSize
 				};
 				getRole(data).then(res => {
         			if(res.data.status === 200) {
-          				this.tableData.list = res.data.data;
-          				this.tableData.total = res.data.total;
+          				this.table.data = res.data.data;
         			}
       			})
 			},
-			pageChange(pageNum) {
-				this.tableData.pageNum = pageNum;
-				this.query();
-			},
-			pageSizeChange(pageSize) {
-				this.tableData.pageSize = pageSize;
-				this.query();
-			},
 			// 删除
 			deleteData(data) {
-				console.log(data)
+				this.$Modal.confirm({
+                    title: '确认对话框标题',
+                    content: '<p>确认删除这条数据吗？</p>',
+                    onOk: () => {
+                        delRole({id:data}).then(res => {
+		        			if(res.data.status == 200) {
+		          				this.$Message.success(res.data.message);
+								this.query();
+		        			} else {
+		        				this.$Message.error(res.data.message);
+		        			}
+		        		})
+                    }
+               	});
 			},
-			// 新增、编辑
-			openDialog(type) {
-				this.addEditRole.show = true;
-				this.addEditRole.type = type;
-				console.log(this.addEditRole.tabs)
-//				this.$refs['addEditRole'].resetFields();
+			// 打开弹窗
+			openDialog(type,data) {
+				if(type == 'add') {
+					this.addDialog.show = true;
+					this.$refs['addDialog'].resetFields();
+				} else {
+					this.editDialog.show = true;
+					this.$refs['editDialog'].resetFields();
+					this.editDialog.selection = [];
+					this.$refs.tabs.activeKey = 'name1';
+					this.editDialog.id = data.id;
+					this.detail(data.id);
+				}
 			},
-			// 切换tab
-			changeView(item) {
-				this.editRoleDialog.basicInfo = true ? item == "basicInfo" : false;
-				this.editRoleDialog.permissionsSet = true ? item == "permissionsSet" : false;
-				this.editRoleDialog.personManage = true ? item == "personManage" : false;
-				this.editRoleDialog.currentView = item;
-			},		
-			saveSubmit() {
-				this.$refs['addEditRole'].validate((valid) => {
+			// 新增
+			save() {
+				this.$refs['addDialog'].validate((valid) => {
                     if(valid) {
-                        this.$Message.success('Success!');
-                    } else {
-                        this.$Message.error('Fail!');
+                    	this.addDialog.submitLoading = true;
+                    	addRole(this.addDialog.form).then(res => {
+                    		this.addDialog.submitLoading = false;
+		        			if(res.data.status == 200) {
+		        				this.addDialog.show = false;
+		          				this.$Message.success(res.data.message);
+								this.query();
+		        			} else {
+		        				this.$Message.error(res.data.message);
+		        			}
+		        		})
                     }
                 })
 			},
+			// 编辑
+			submit() {
+				this.$refs['editDialog'].validate((valid) => {
+                    if(valid) {
+                    	let nodes = this.$refs.tree.getCheckedNodes().map(v => v.id);
+                    	let ids = this.editDialog.personList.map(v => v.id)
+                    	let params = {
+                    		id: this.editDialog.id,
+                    		description: this.editDialog.form.description,
+                    		resourceIds: nodes.toString(),
+                    		userIds: ids.toString()
+                    	}
+                    	this.editDialog.submitLoading = true;
+                    	editRole(params).then(res => {
+                    		this.editDialog.submitLoading = false;
+		        			if(res.data.status == 200) {
+		        				this.editDialog.show = false;
+		          				this.$Message.success(res.data.message);
+								this.query();
+		        			} else {
+		        				this.$Message.error(res.data.message);
+		        			}
+		        		})
+                    }
+                })
+			},
+			// 角色详情
+			detail(id) {
+				detailRole({roleId: id}).then(res => {
+            		if(res.data.status == 200) {
+            			syncValue(this.editDialog.form, res.data.data.roleList);
+            			this.editDialog.personList = res.data.data.userList;
+            			let ids = res.data.data.resourceList.length > 0 ? res.data.data.resourceList.map(v=>v.id) : [];
+            			this.getTree(ids);
+            		} 
+        		})
+			},
+			// 获取权限树
+			getTree(ids) {
+				let params = {
+					usability: 1,
+					parentId: 0
+				}
+				getSlideMenu().then(res => {
+					if(res.data.status == 200) {
+						let list = this.formatTree(res.data.data.top, ids);
+						this.editDialog.treeData = [{ id:0, title:'全选/全取消', expand: true, children:list }];
+					} else {
+						this.editDialog.treeData = [{ id:0, title:'全选/全取消', expand: true, children:[] }];
+					}
+      			});
+			},
+			// 格式化树
+			formatTree(list, ids) {
+		   		return list.map( (v) => {
+    				let { id, title, expand, checked } = { id:v.id, title:v.resourceName, expand:true, checked:ids.indexOf(v.id)>=0?true:false };
+					if( v.children && v.children.length > 0 ) {
+					    return { id, title, expand, children: this.formatTree(v.children,ids), checked };
+					} else {
+					    return { id, title, expand, checked };
+					}
+  				})
+		   	},
+		   	// 表格勾选
+			onSelectionChange(selection) {
+				this.editDialog.selection = selection.map(v=> v.id);
+			},
+		   	// 删除人员
+		   	deletePerson() {
+		   		if(this.editDialog.selection.length < 1) {
+					this.$Message.info("请至少选择一条数据");
+					return;
+				}
+		   		this.editDialog.personList = this.editDialog.personList.filter(v => this.editDialog.selection.indexOf(v.id)<0);
+		   	},
+		   	// 打开人员弹窗
+			openPeopleDialog() {
+				this.$refs.personCheck.open();
+			},
+			// 选择人员弹窗回调
+			selectPersonHandler(data) {
+				this.editDialog.personList = data;
+			}
 		},
-		watch: {
-			
-		}
+		mounted() {
+    		this.query();
+  		}
 	};
 </script>
 
@@ -241,14 +327,18 @@
 		button {
 			margin-top: -5px; margin-left: 4px;
 		}
-		.ivu-poptip-rel {
-			cursor: pointer; color: #2d8cf0;
+	}
+	.role-add-dialog {
+		textarea.ivu-input {
+			height: 210px; resize: none;
 		}
-		.ivu-poptip-confirm .ivu-poptip-footer {
-			text-align: center;
+	}
+	.role-edit-dialog {
+		.ivu-tabs-tabpane {
+			height: 300px; overflow: auto;
 		}
-		.ivu-poptip-confirm .ivu-poptip-body .ivu-icon {
-			left: 20px;
+		textarea.ivu-input {
+			height: 210px; resize: none;
 		}
 	}
 </style>

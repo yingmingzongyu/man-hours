@@ -57,7 +57,6 @@ export const getDepartmentTree = ({ parentId } = { parentId: 0 }) => {
   })
 }
 
-
 export const getDepartmentTable = (params) => {
   return axios.request({
     url: '/itsm/system/permission/organization/queryOrganizationByPage',
@@ -93,6 +92,49 @@ export const delDepartment = (params) => {
 export const changeDepartmentFlag = (params) => {
   return axios.request({
     url: '/itsm/system/permission/organization/updateOpenFlagOrganization',
+    params,
+    method: 'post'
+  })
+}
+
+/*
+ * 角色管理
+ */
+export const getRole = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/role/queryRoleByPage',
+    params,
+    method: 'post'
+  })
+}
+
+export const delRole = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/role/deleteRole',
+    params,
+    method: 'post'
+  })
+}
+
+export const addRole = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/role/addRole',
+    params,
+    method: 'post'
+  })
+}
+
+export const detailRole = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/role/queryRoleInfo',
+    params,
+    method: 'post'
+  })
+}
+
+export const editRole = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/role/updateRole',
     params,
     method: 'post'
   })
