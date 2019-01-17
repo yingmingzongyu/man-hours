@@ -15,6 +15,8 @@ export const getTreeList = ({ usability, parentId } = { usability: 1, parentId: 
   })
 }
 
+/************ 菜单管理 ************/
+
 /**
  * @description: 获取菜单分页数据
  * @param {Object} params
@@ -29,12 +31,12 @@ export const getMenuTable = (params) => {
 }
 
 /**
- * @description: 
+ * @description: 删除 启用 禁用菜单
  * @param {String} ids：删除菜单的id集合
  * @param {String} status：-1删除 1启用 0禁用
  * @return: 
  */
- export const deleteMenuFun = (ids,status) => {
+ export const batchDeleteMenu = (ids,status) => {
   return axios.request({
     url: '/itsm/system/permission/resource/batchDeleteChildResourceById',
     params:{
@@ -43,6 +45,49 @@ export const getMenuTable = (params) => {
     method: 'post'
   })
 }
+
+/**
+ * @description: 排序菜单
+ * @param {String} ids：删除菜单的id集合
+ * @param {String} sortType 1上移 2下移
+ * @return: 
+ */
+export const sortMenuFun = (ids,status) => {
+  return axios.request({
+    url: '/itsm/system/permission/resource/updateResourceBySort',
+    params:{
+      ids,status
+    },
+    method: 'post'
+  })
+}
+
+/**
+ * @description: 新增菜单
+ * @param {Object} params: 新增菜单数据 
+ * @return: 
+ */
+export const addMenuFun = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/resource/addResource',
+    params,
+    method: 'post'
+  })
+}
+
+/**
+ * @description: 编辑菜单
+ * @param {Object} params: 新增菜单数据 
+ * @return: 
+ */
+export const editMenuFun = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/resource/updateResource',
+    params,
+    method: 'post'
+  })
+}
+
 
 /*
  * 部门管理

@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-16 18:54:17
+ * @LastEditTime: 2019-01-17 10:23:40
  -->
 <template>
   <div>
@@ -39,9 +39,9 @@
       <p slot="title"></p>
       <div slot="extra">
         <div class="btn-group">
-          <Button type="primary" icon="ios-search" @click="reset()">重置</Button>
-          <Button type="primary" icon="ios-search" @click="query()">查询</Button>
-          <Button type="primary" icon="ios-search" @click="showAdd()">新增</Button>
+          <Button type="primary" icon="ios-search" @click="reset">重置</Button>
+          <Button type="primary" icon="ios-search" @click="query">查询</Button>
+          <Button type="primary" icon="ios-search" @click="showAdd">新增</Button>
         </div>
       </div>
       <Table :columns="columns" :data="tableData.list" :loading="tableLoading"></Table>
@@ -188,7 +188,7 @@ export default {
                 "DropdownItem",
                 {
                   props: {
-                    divided: true,
+                    divided: DropdownItems.length > 0 ? true : false,
                     name: "add"
                   }
                 },
@@ -228,10 +228,10 @@ export default {
                 on: {
                   click: () => {
                     this.treeLoading = true;
-                    this.editProjectId = params.row.id;
+                    this.phaseProjectId = params.row.id;
                     this.phaseVisible = true;
                     this.treeData = [];
-                    const ids = params.row.phaseId
+                    const ids = (params.row.phaseId || '')
                       .split(",")
                       .map(item => Number(item));
                     this.treeData = this.mapPhaseData(this.phaseData, ids);
@@ -287,6 +287,7 @@ export default {
       tagVal: "",
       tagList: [],
       editProjectId: null,
+      phaseProjectId: null,
       phaseVisible: false,
       phaseData: [],
       treeData: [],
@@ -323,6 +324,7 @@ export default {
       this.$refs["project-form"].$refs["form"].validate(valid => {
         if (valid) {
           let formData = { ...this.$refs["project-form"].form };
+          formData.type = this.projectType
           formData.participants = formData.user.toString();
           delete formData.user
           formData.startTime = this.formatTime(formData.startTime);
@@ -433,7 +435,7 @@ export default {
       this.submitPhaseLoading = true;
       const phaseId = this.mapPhaseId(this.treeData).toString();
       bindPhase({
-        projectId: this.editProjectId,
+        projectId: this.phaseProjectId,
         phaseId
       }).then(res => {
         if (res.data.status === 200) {
