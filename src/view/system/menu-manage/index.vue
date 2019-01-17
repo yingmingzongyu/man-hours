@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-17 15:21:57
+ * @LastEditTime: 2019-01-17 17:05:01
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -103,7 +103,6 @@ export default {
   },
   data() {
     return {
-      button2:'',
       split:{
         offset: 0.2,
       },
@@ -315,18 +314,7 @@ export default {
         }
       });
     },
-    /**
-     * @description: 查询函数：将searchForm的数据与实际搜索数据合并进行查询
-     * @param {type} --
-     * @return: 
-     */
-    query() {
-      this.form.query = {
-        ...this.form.params,
-      };
-      this.table.pageNum = 1;
-      this.initTablbe();
-    },
+    
     /***********************moadl方法***************************/
     submit(){
       let params = {
@@ -401,6 +389,7 @@ export default {
       getMenuTable(params).then(res=>{
         let { list, total, pages, pageNum} = res.data.data;
         this.table.data = list;
+        this.table.total = total;
         if(pages < pageNum && pages!= 0){
           this.table.pageNum = pages;
         }

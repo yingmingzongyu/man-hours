@@ -13,13 +13,9 @@ const addErrorLog = errorInfo => {
 }
 function checkUrl(url) {
 	if( !(/^http:/.test(url)) ) {
-		if( /^(\/project\/)/.test(url) ) {
-      url = '/yc' + url;
-		} else {
-			if(url.indexOf('/zsy/') <= -1){
-				url = '/zsy' + url;
-			}
-		}
+		if(url.indexOf('/api/') <= -1){
+      url = '/api' + url;
+    }
 	}
 	return url;
 }

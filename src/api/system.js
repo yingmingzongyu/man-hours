@@ -88,6 +88,32 @@ export const editMenuFun = (params) => {
   })
 }
 
+/************ 用户管理 ************/
+/**
+ * @description: 获取用户分页数据
+ * @param {Object} params
+ * @return: 
+ */
+export const getUserTable = (params) => {
+  return axios.request({
+    url: '/itsm/system/sso/user/queryUserPageByCondition',
+    params,
+    method: 'post'
+  })
+}
+
+/**
+ * @description: 新增菜单
+ * @param {Object} params: 新增菜单数据 
+ * @return: 
+ */
+export const addUserFun = (params) => {
+  return axios.request({
+    url: '/itsm/system/sso/user/saveUser',
+    params,
+    method: 'post'
+  })
+}
 
 /*
  * 部门管理
