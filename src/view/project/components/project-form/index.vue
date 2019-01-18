@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 14:54:08
+ * @LastEditTime: 2019-01-18 14:59:48
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -114,10 +114,7 @@ export default {
             validator: (rule, value, callback) => {
               const { startTime } = this.form;
               if (startTime && value) {
-                if (
-                  dayjs(startTime).unix() >
-                  dayjs(value).unix()
-                ) {
+                if (dayjs(startTime).unix() > dayjs(value).unix()) {
                   callback(new Error("结束时间不能小于开始时间"));
                 } else {
                   callback();
@@ -201,6 +198,9 @@ export default {
           endTime: null,
           user: []
         };
+        this.$nextTick(()=>{
+          this.$refs["form"].resetFields();
+        })
       }
     }
   },
