@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 09:58:33
+ * @LastEditTime: 2019-01-18 10:33:08
  -->
 <template>
   <div>
@@ -232,8 +232,9 @@ export default {
                     this.phaseProjectId = params.row.id;
                     this.phaseVisible = true;
                     this.treeData = [];
-                    const ids = (params.row.phaseId || '')
+                    const ids = (params.row.phaseId || "")
                       .split(",")
+                      .filter(Boolean)
                       .map(item => Number(item));
                     this.treeData = this.mapPhaseData(this.phaseData, ids);
                     this.treeLoading = false;
@@ -325,9 +326,9 @@ export default {
       this.$refs["project-form"].$refs["form"].validate(valid => {
         if (valid) {
           let formData = { ...this.$refs["project-form"].form };
-          formData.type = this.projectType
+          formData.type = this.projectType;
           formData.participants = formData.user.toString();
-          delete formData.user
+          delete formData.user;
           formData.startTime = this.formatTime(formData.startTime);
           formData.endTime = this.formatTime(formData.endTime);
           this.$emit("submitProject", formData, () => {
@@ -430,12 +431,17 @@ export default {
     },
     submitPhase() {
       this.submitPhaseLoading = true;
-      const phaseId = this.mapPhaseId(this.treeData).toString().split(',').filter(Boolean).toString();
+      const phaseId = this.mapPhaseId(this.treeData)
+        .toString()
+        .split(",")
+        .filter(Boolean)
+        .toString();
       bindPhase({
         id: this.phaseProjectId,
         phaseId
       }).then(res => {
         if (res.data.status === 200) {
+          this.query();
           this.phaseVisible = false;
           this.$Message.success("保存成功");
         }
