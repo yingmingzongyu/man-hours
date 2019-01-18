@@ -61,12 +61,13 @@ class HttpRequest {
       if (data.status !== 200) {
         switch (data.status) {
           case 401:
+          case 403:
             //删除token
             store.commit('setUserInfo')
             window.location.href = '/#/login'
             Message.error(data.message)
             break;
-          case 403:
+          case 411:
             window.location.href = '/#/403'
             Message.error(data.message)
             break;

@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-17 10:23:40
+ * @LastEditTime: 2019-01-18 09:33:09
  -->
 <template>
   <div>
@@ -357,8 +357,6 @@ export default {
         if (res.data.status === 200) {
           this.$Message.success(res.data.message);
           this.query();
-        } else {
-          this.$Message.error(res.data.message);
         }
       });
     },
@@ -374,8 +372,6 @@ export default {
         if (res.data.status === 200) {
           this.$Message.success(res.data.message);
           this.query();
-        } else {
-          this.$Message.error(res.data.message);
         }
       });
     },
@@ -433,16 +429,14 @@ export default {
     },
     submitPhase() {
       this.submitPhaseLoading = true;
-      const phaseId = this.mapPhaseId(this.treeData).toString();
+      const phaseId = this.mapPhaseId(this.treeData).toString().split(',').filter(Boolean).toString();
       bindPhase({
-        projectId: this.phaseProjectId,
+        id: this.phaseProjectId,
         phaseId
       }).then(res => {
         if (res.data.status === 200) {
           this.phaseVisible = false;
           this.$Message.success("保存成功");
-        } else {
-          this.$Message.error(res.data.message);
         }
         this.submitPhaseLoading = false;
       });
@@ -460,8 +454,6 @@ export default {
     getPhase().then(res => {
       if (res.data.status === 200) {
         this.phaseData = res.data.data;
-      } else {
-        this.$Message.error(res.data.message);
       }
     });
   }

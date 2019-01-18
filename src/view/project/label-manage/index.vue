@@ -104,8 +104,6 @@ export default {
           this.tableData.list = this.tableData.list.filter(item=>item.id !== id)
           this.tableData.total -= 1
           this.$Message.success(res.data.message)
-        }else{
-          this.$Message.error(res.data.message)
         }
       })
     }

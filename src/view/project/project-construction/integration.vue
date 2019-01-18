@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 13:02:31
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-17 10:16:12
+ * @LastEditTime: 2019-01-18 09:36:39
  -->
 <template>
   <div>
@@ -70,8 +70,6 @@ export default {
           if (typeof callback === "function") {
             callback();
           }
-        } else {
-          this.$Message.error(res.data.message);
         }
       });
     }

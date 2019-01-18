@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-17 17:20:15
+ * @LastEditTime: 2019-01-18 09:42:22
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -23,7 +23,7 @@
       <Input v-model="form.summarize" type="textarea" :rows="4" :style="`width:${formWidth}px`"/>
     </FormItem>
     <FormItem prop="timeEvaluation" label="项目预估总耗时：" key="timeEvaluation">
-      <InputNumber :min="0" v-model="form.timeEvaluation" :style="`width:${formWidth}px`"/>
+      <InputNumber :min="0" :max="999999999" :precision="0" v-model="form.timeEvaluation" :style="`width:${formWidth}px`"/>
     </FormItem>
     <FormItem prop="startTime" label="开始时间：" key="startTime">
       <DatePicker type="date" v-model="form.startTime" :style="`width:${formWidth}px`"/>
@@ -160,8 +160,6 @@ export default {
             formData.user = formData.user.map(item => item.id);
             this.tempRemoteMethod = this.searchUser;
             this.form = formData;
-          } else {
-            this.$Message.error(res.data.message);
           }
           this.loading = false;
         });
