@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 14:59:48
+ * @LastEditTime: 2019-01-18 17:10:03
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -17,15 +17,15 @@
       </Select>
     </FormItem>
     <FormItem prop="projectName" label="项目名称：" key="projectName">
-      <Input v-model="form.projectName" placeholder="请填写项目名称" :style="`width:${formWidth}px`"/>
+      <Input v-model="form.projectName" placeholder="请填写项目名称" :maxlength="16" :style="`width:${formWidth}px`"/>
     </FormItem>
     <FormItem prop="summarize" label="概述：" key="summarize">
-      <Input v-model="form.summarize" type="textarea" :rows="4" :style="`width:${formWidth}px`"/>
+      <Input v-model="form.summarize" type="textarea" :rows="4"  :maxlength="200" :style="`width:${formWidth}px`"/>
     </FormItem>
     <FormItem prop="timeEvaluation" label="项目预估总耗时：" key="timeEvaluation">
       <InputNumber
         :min="0"
-        :max="999999999"
+        :max="999"
         :precision="0"
         v-model="form.timeEvaluation"
         :style="`width:${formWidth}px`"
@@ -105,6 +105,23 @@ export default {
               value.length > 0
                 ? callback()
                 : callback(new Error("项目参与人员不能为空"));
+            }
+          }
+        ],
+        startTime: [
+          {
+            trigger: "change",
+            validator: (rule, value, callback) => {
+              const { endTime } = this.form;
+              if (endTime && value) {
+                if (dayjs(endTime).unix() < dayjs(value).unix()) {
+                  callback(new Error("开始时间不能大于结束时间"));
+                } else {
+                  callback();
+                }
+              } else {
+                callback();
+              }
             }
           }
         ],

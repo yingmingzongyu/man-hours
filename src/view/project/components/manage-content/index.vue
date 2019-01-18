@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 16:00:01
+ * @LastEditTime: 2019-01-18 17:04:38
  -->
 <template>
   <div>
@@ -394,6 +394,7 @@ export default {
             props: {
               value: this.tagVal,
               autofocus: true,
+              maxlength: 8,
               placeholder: "请输入标签名..."
             },
             style: {
