@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 11:02:32
+ * @LastEditTime: 2019-01-18 16:00:01
  -->
 <template>
   <div>
@@ -163,14 +163,13 @@ export default {
                   }
                 },
                 [
-                  item.labelName,
                   h("Icon", {
                     props: {
                       type: "ios-trash-outline",
-                      size: 20
+                      size: 18
                     },
                     style: {
-                      float: "right"
+                      float: "right",
                     },
                     on: {
                       click: () => {
@@ -180,7 +179,13 @@ export default {
                         });
                       }
                     }
-                  })
+                  }),
+                  h("span", {
+                    style: {
+                      display: 'block',
+                      paddingRight: '24px'
+                    }
+                  }, item.labelName)
                 ]
               )
             );
@@ -214,7 +219,7 @@ export default {
                   click: () => {
                     this.projectType = "edit";
                     this.editProjectId = params.row.id;
-                    this.$refs["project-form"].getData(params.row.id)
+                    this.$refs["project-form"].getData(params.row.id);
                     this.modal = true;
                   }
                 }
@@ -447,14 +452,6 @@ export default {
         }
         this.submitPhaseLoading = false;
       });
-    }
-  },
-  watch: {
-    modal(newVal) {
-      //重置表单状态
-      if (!this.editProjectId) {
-        this.$refs["project-form"].$refs["form"].resetFields();
-      }
     }
   },
   created() {
