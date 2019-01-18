@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 10:33:08
+ * @LastEditTime: 2019-01-18 11:02:32
  -->
 <template>
   <div>
@@ -214,8 +214,8 @@ export default {
                   click: () => {
                     this.projectType = "edit";
                     this.editProjectId = params.row.id;
+                    this.$refs["project-form"].getData(params.row.id)
                     this.modal = true;
-                    // this.show(params.index);
                   }
                 }
               }),
