@@ -103,8 +103,8 @@ export const getUserTable = (params) => {
 }
 
 /**
- * @description: 新增菜单
- * @param {Object} params: 新增菜单数据 
+ * @description: 新增用户
+ * @param {Object} params: 新增用户数据 
  * @return: 
  */
 export const addUserFun = (params) => {
@@ -115,6 +115,18 @@ export const addUserFun = (params) => {
   })
 }
 
+/**
+ * @description: 编辑用户
+ * @param {Object} params: 编辑用户数据 
+ * @return: 
+ */
+export const editUserFun = (params) => {
+  return axios.request({
+    url: '/itsm/system/sso/user/updateUser',
+    params,
+    method: 'post'
+  })
+}
 /*
  * 部门管理
  */

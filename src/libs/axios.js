@@ -65,20 +65,17 @@ class HttpRequest {
             //删除token
             store.commit('setUserInfo')
             window.location.href = '/#/login'
-            Message.error(data.message)
             break;
           case 411:
             window.location.href = '/#/403'
-            Message.error(data.message)
             break;
           case 404:
             window.location.href = '/#/404'
-            Message.error(data.message)
             break;
           default:
-            Message.error(data.message)
             break;
         }
+        Message.error(data.message)
       }
       return { data, status }
     }, error => {
