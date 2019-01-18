@@ -11,10 +11,10 @@
 					当前组织部门信息
 				</p>
 				<Form ref="form" :model="form.params" inline :label-width="120">
-            		<FormItem label="部门编号：">{{this.form.organizationCode}}</FormItem>
-            		<FormItem label="部门名称：">{{this.form.organizationName}}</FormItem>
+            		<FormItem label="部门编号：">{{ this.form.organizationCode }}</FormItem>
+            		<FormItem label="部门名称：">{{ this.form.organizationName }}</FormItem>
             		<br>
-            		<FormItem label="描述：">{{this.form.description}}</FormItem>
+            		<FormItem label="描述：">{{ this.form.description }}</FormItem>
           		</Form>
 			</Card>
 			<br>
@@ -34,7 +34,7 @@
 			</Card>
 			
 			<!--新增、编辑弹窗-->
-			<Modal v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增部门':'编辑部门'" :loading="true">
+			<Modal v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增部门':'编辑部门'" :loading="true" class-name="department-dialog" draggable>
 	      		<div slot="footer">
 	        		<Button @click="submit" type="info" :loading="addEditDialog.submitLoading">保存</Button>
 	      		</div>
@@ -55,8 +55,9 @@
 </template>
 
 <script>
-	import { getDepartmentTree, getDepartmentTable, addDepartment, editDepartment, delDepartment, changeDepartmentFlag } from '@/api/system.js'
+	import { getDepartmentTree, getDepartmentTable, addDepartment, editDepartment, delDepartment, changeDepartmentFlag } from '@/api/system.js';
 	import SplitPane from "_c/split-pane";
+	import { syncValue, deepCopy } from '@/libs/util.js';
 	export default {
 		components: {
 			SplitPane
@@ -69,11 +70,13 @@
 				tree: {
         			data: [],
       			},
+      			// 当前部门信息
 				form: {
 					organizationCode: "",
 					organizationName: "",
 					description: "",
-					id: 0
+					id: 0,
+					openFlag: ''
 				},
 				table: {
 					columns: [
@@ -133,36 +136,65 @@
                         	{ required: true, message: '请输入描述', trigger: 'blur' }
                     	],
 					}
-				}
+				},
 			};
 		},
+		mounted() {
+    		this.initTree('init');
+    		/*
+    		 * tips:
+    		 * 1、字段验证不全
+    		 * 2、树一共几级？？
+    		 * 3、父节点禁用，子节点全部禁用，且子节点无法进行任何操作
+    		 * 4、父节点启用，子节点禁用，可以对该子节点进行删除、编辑操作
+    		 */
+  		},
 		methods: {
 			// 左侧树
-			initTree() {
+			initTree(type) {
 		    	getDepartmentTree().then(res => {
-		    		let list = this.formatTreeList(res.data.data.top);
-		    		this.tree.data = [{ id:0, title:'企业部门组织结构', expand: true, children:list }]
+		    		if(res.data.status == 200) {
+		    			this.tree.data = this.formatTreeList(res.data.data.top);
+		    			if(type == 'init') {
+		    				// 初始化时，停留在最大的节点
+		    				syncValue(this.form, this.tree.data[0]);
+		    				console.log(this.tree.data)
+		    				this.query();
+		    			} else if(type == 1) {
+		    				// 各种操作时，停留在当前节点，并且当前页置为1
+		    				this.table.pageNum = 1;
+		    				this.query();
+		    			} else {
+		    				// 各种操作时，停留在当前节点
+		    				this.query();
+		    			}
+		    		} else {
+		    			this.tree.data = [];
+		    			Object.keys(this.form).forEach(key => this.form[key] = '');
+		    		}
 		    	})
 		   	},
 		   	// 格式化树
-		   	formatTreeList(list, parentNode = null) {
+		   	formatTreeList(list) {
 		   		return list.map( (v) => {
-    				let { id, title, organizationCode, description, organizationName } = { id:v.id, title:v.organizationName, organizationCode:v.organizationCode, description:v.description, organizationName:v.organizationName };
+    				let { id, title, organizationCode, description, organizationName, openFlag } = { 
+    					id: v.id, 
+    					title: v.organizationName, 
+    					organizationCode: v.organizationCode, 
+    					description: v.description, 
+    					organizationName: v.organizationName,
+    					openFlag: v.openFlag
+    				};
 					if( v.children && v.children.length > 0 ) {
-					    return { id, title, parentNode, children: this.formatTreeList(v.children), organizationCode, description, organizationName };
+					    return { id, title, children: this.formatTreeList(v.children), organizationCode, description, organizationName, openFlag, expand: true };
 					} else {
-					    return { id, title, parentNode, organizationCode, description, organizationName };
+					    return { id, title, organizationCode, description, organizationName, openFlag, expand: true, };
 					}
   				})
 		   	},
 		   	// 点击树节点
 		   	onSelectChange(nodelist, node) {
-		   		if(node.id == 0) {
-		   			Object.keys(this.form).forEach(key => key != 'id' ? this.form[key] = "" : "");
-		   			this.form.id = 0;
-		   		} else {
-		   			Object.assign(this.form, node);
-		   		}
+		   		syncValue(this.form, node);
 		   		this.query();
 		   	},
 		   	// 表格
@@ -173,12 +205,13 @@
         			pageSize: this.table.pageSize
       			}
       			getDepartmentTable(params).then(res => {
-        			let { list, total, pages, pageNum} = res.data.data;
-        			this.table.data = list;
-        			this.table.total = total;
-//      			if(pages < pageNum && pages != 0) {
-//        				this.table.pageNum = pages;
-//      			}
+      				if(res.data.status == 200) {
+      					this.table.data = res.data.data.list;
+        				this.table.total = res.data.data.total;
+      				} else {
+      					this.table.data = [];
+        				this.table.total = 0;
+      				}
       			})
 			},
 			// 翻页
@@ -193,10 +226,14 @@
 			},
 			// 表格勾选
 			onSelectionChange(selection) {
-				this.table.selection = selection.map(v=> v.id);
+				this.table.selection = selection.map(v => v.id);
 			},
 			// 删除
 			del() {
+				if(this.form.openFlag == 1) {
+                    this.$Message.info("父节点已被禁用，禁止操作");
+                    return false;
+                }
 				if(this.table.selection.length < 1) {
 					this.$Message.info("请至少选择一条数据");
 					return;
@@ -204,16 +241,17 @@
 				this.$Modal.confirm({
                     title: '确认对话框标题',
                     content: '<p>确认删除这些数据吗？</p>',
+                    loading: true,
                     onOk: () => {
                     	let params = {
                     		parentId: this.form.id,
                     		ids: this.table.selection.toString()
                     	}
                         delDepartment(params).then(res => {
+                        	this.$Modal.remove();
 		        			if(res.data.status == 200) {
 		          				this.$Message.success(res.data.message);
 		          				this.initTree();
-								this.query();
 		        			} else {
 		        				this.$Message.error(res.data.message);
 		        			}
@@ -223,6 +261,10 @@
 			},
 			// 禁用、启用
 			changeOpenFlag(type) {
+				if(this.form.openFlag == 1) {
+                    this.$Message.info("父节点已被禁用，禁止操作");
+                    return false;
+                }
 				if(this.table.selection.length < 1) {
 					this.$Message.info("请至少选择一条数据");
 					return;
@@ -230,13 +272,15 @@
 				let tip = type == 1 ? '禁用' : '启用';
 				this.$Modal.confirm({
                     title: '确认对话框标题',
-                    content: '<p>确认'+tip+'这些数据吗？</p>',
+                    content: '<p>确认'+tip+'这些部门及其子分类吗？</p>',
+                    loading: true,
                     onOk: () => {
                     	let params = {
                     		openFlag: type,
                     		ids: this.table.selection.toString()
                     	}
                         changeDepartmentFlag(params).then(res => {
+                        	this.$Modal.remove();
 		        			if(res.data.status == 200) {
 		          				this.$Message.success(res.data.message);
 								this.query();
@@ -249,11 +293,15 @@
 			},
 			// 打开新增编辑弹窗
 			openDialog(type, data) {
+				if(this.form.openFlag == 1) {
+                    this.$Message.info("父节点已被禁用，禁止操作");
+                    return false;
+                }
 				this.$refs['addEditDialog'].resetFields();
 				this.addEditDialog.show = true;
 				this.addEditDialog.type = type;
 				if(type == 'edit') {
-					Object.assign(this.addEditDialog.form, data);
+					syncValue(this.addEditDialog.form, data);
 				} else {
 					Object.keys(this.addEditDialog.form).forEach(key => this.addEditDialog.form[key] = '');
 				}
@@ -262,60 +310,44 @@
 			submit() {
 				this.$refs['addEditDialog'].validate((valid) => {
                     if(valid) {
-                    	if(this.addEditDialog.type == 'add') {
-                    		this.add();
-                    	} else {
-                    		this.edit();
-                    	}
+                    	this.addEditDialog.type == 'add' ? this.add() : this.edit();
                     } 
                 })
 			},
 			// 新增
 			add() {
+				let params = deepCopy(this.addEditDialog.form);
+				params['parentId'] = this.form.id;
+				delete params['id'];
 				this.addEditDialog.submitLoading = true;
-				let params = {
-        			parentId: this.form.id,
-        			organizationCode: this.addEditDialog.form.organizationCode,
-        			organizationName: this.addEditDialog.form.organizationName,
-        			description: this.addEditDialog.form.description,
-      			}
             	addDepartment(params).then(res => {
+            		this.addEditDialog.submitLoading = false;  
         			if(res.data.status == 200) {
           				this.$Message.success(res.data.message);
           				this.addEditDialog.show = false;
-          				this.initTree();
-						this.query();
+          				this.initTree(1);
         			} else {
         				this.$Message.error(res.data.message);
         			}
-        			this.addEditDialog.submitLoading = false;  
         		})
 			},
 			// 编辑
 			edit(data) {
+				let params = deepCopy(this.addEditDialog.form);
+				delete params['organizationCode'];
 				this.addEditDialog.submitLoading = true;
-				let params = {
-					id: this.addEditDialog.form.id,
-        			organizationName: this.addEditDialog.form.organizationName,
-        			description: this.addEditDialog.form.description,
-        		}
             	editDepartment(params).then(res => {
+            		this.addEditDialog.submitLoading = false;  
         			if(res.data.status == 200) {
           				this.$Message.success(res.data.message);
           				this.addEditDialog.show = false;
           				this.initTree();
-						this.query();
         			} else {
         				this.$Message.error(res.data.message);
         			}
-        			this.addEditDialog.submitLoading = false;  
         		})
 			}
-		},
-		mounted() {
-    		this.initTree();
-    		this.query();
-  		}
+		}
 	};
 </script>
 
@@ -326,6 +358,11 @@
 		}
 		button {
 			margin-top: -5px; margin-left: 4px;
+		}
+	}
+	.department-dialog {
+		textarea.ivu-input {
+			height: 210px; resize: none;
 		}
 	}
 </style>
