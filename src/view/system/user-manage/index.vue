@@ -40,7 +40,7 @@
           <Button type="primary">下载导入模板</Button>
           <Button type="primary">导出</Button>
           <Button type="primary">删除</Button>
-          <Button type="primary" style="float: right;" @click="addHandler()">新增</Button>
+          <Button type="primary" style="float: right;" @click="addEditOpen('add')">新增</Button>
           <Button type="primary" style="float: right;" @click="queryHandler()">查询</Button>
           <Button type="primary" style="float: right;" @click="resetFields()">重置</Button>
         </div>
@@ -53,40 +53,93 @@
         show-sizer
         show-elevator
         @on-change="pageChange"
-        @on-page-size-change="pageSizeChange"
       />
     </Card>
 
     <!--弹窗-->
     <Modal
-      v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增用户':'编辑用户'" :loading="true">
+      v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增用户':'编辑用户'" class-name="user-dialog" :loading="true" @on-visible-change="onVisibleChange">
       <div slot="footer">
-        <Button @click="saveSubmit" type="info" :loading="addEditDialog.submitLoading">保存</Button>
+        <Button @click="addEditSave()" type="info" :loading="addEditDialog.submitLoading">保存</Button>
       </div>
       <Tabs :value="addEditDialog.tabs">
         <TabPane label="基本信息" name="name1">
-          <Form ref="addEditDialogForm" :model="addEditDialog" inline :label-width="130" :rules="addEditDialog.ruleValidate"
+          <Form ref="addEditDialogForm" :model="addEditDialog.params" inline :label-width="130" :rules="addEditDialog.rules"
           >
-            <FormItem prop="roleName" label="角色名称：">
-              <Input
-                type="text"
-                v-model="addEditDialog.form.roleName"
-                placeholder="请输入角色名称"
-                style="width: 250px"
-              />
+            <FormItem prop="userName" label="角色名称：">
+              <Input type="text" v-model="addEditDialog.params.userName" placeholder="请输入用户姓名" style="width: 200px" />
             </FormItem>
-            <FormItem prop="description" label="描述：">
-              <Input
-                type="textarea"
-                v-model="addEditDialog.form.description"
-                placeholder="请输入描述"
-                style="width: 250px"
-              />
+            <FormItem prop="loginName" label="登录ID：">
+              <Input type="text" v-model="addEditDialog.params.loginName" placeholder="请输入登录ID" style="width: 200px" />
+            </FormItem>
+            <FormItem prop="userCode" label="工号：">
+              <Input type="text" v-model="addEditDialog.params.userCode" placeholder="请输入用户工号" style="width: 200px" />
+            </FormItem>
+            <FormItem prop="position" label="职位：">
+              <Select v-model="addEditDialog.params.position" style="width: 200px">
+                <Option value="普通职员" key="1"></Option>
+                <Option value="中层" key="2"></Option>
+                <Option value="部门经理" key="3"></Option>
+                <Option value="管理层" key="4"></Option>
+              </Select>
+            </FormItem>
+            <FormItem prop="organizationId" label="部门：">
+              <Input type="text" v-model="addEditDialog.params.organizationId" placeholder="请输入用户工号" style="width: 200px" icon="md-apps" />
+            </FormItem>
+            <FormItem prop="sex" label="性别：">
+              <RadioGroup v-model="addEditDialog.params.sex">
+                <Radio :label="0">
+                    <span>男</span>
+                </Radio>
+                <Radio :label="1">
+                    <span>女</span>
+                </Radio>
+              </RadioGroup>
+            </FormItem>
+            <FormItem prop="mobile" label="手机：">
+              <Input type="text" v-model="addEditDialog.params.mobile" placeholder="请输入用户工号" style="width: 200px" />
+            </FormItem>
+            <FormItem prop="accountStatus" label="账号状态：">
+              <RadioGroup v-model="addEditDialog.params.accountStatus">
+                <Radio :label="0">
+                    <span>开启</span>
+                </Radio>
+                <Radio :label="1">
+                    <span>关闭</span>
+                </Radio>
+              </RadioGroup>
+            </FormItem>
+            <FormItem prop="phone" label="联系电话：">
+              <Input type="text" v-model="addEditDialog.params.phone" placeholder="请输入用户工号" style="width: 200px" />
+            </FormItem>
+            <FormItem prop="availableStatus" label="在职状态：">
+              <RadioGroup v-model="addEditDialog.params.availableStatus">
+                <Radio :label="0">
+                    <span>在职</span>
+                </Radio>
+                <Radio :label="1">
+                    <span>离职</span>
+                </Radio>
+              </RadioGroup>
+            </FormItem>
+            <FormItem prop="email" label="电子邮件：">
+              <Input type="text" v-model="addEditDialog.params.email" placeholder="请输入用户工号" style="width: 200px"  />
+            </FormItem>
+            <FormItem prop="description" label="用户描述：">
+              <Input type="textarea" v-model="addEditDialog.params.description" placeholder="请输入用户描述" style="width: 400px" />
             </FormItem>
           </Form>
         </TabPane>
-        <TabPane label="角色" name="name2" :disabled="addEditDialog.type == 'add'">
-          <Tree :data="addEditDialog.treeData" show-checkbox></Tree>
+        <TabPane label="角色" name="name2" >
+          <Table :columns="addEditDialog.columns" :data="addEditDialog.data" @on-selection-change="onSelectionRole" size="small" height="350" ></Table>
+          <Page
+            size="small"
+            :total="addEditDialog.total"
+            :current.sync="addEditDialog.pageNum"
+            show-elevator
+            @on-change="pageChangeRole"
+            :styles="{float:'right',margin:'10px'}"
+          />
         </TabPane>
       </Tabs>
     </Modal>
@@ -95,8 +148,8 @@
 
 <script>
 import { 
-  getUserTable, addUserFun
-  } from "@/api/system";
+  getUserTable, addUserFun, editUserFun, getRole
+} from "@/api/system";
 export default {
   props: {
     tableLoading: {
@@ -145,7 +198,7 @@ export default {
                     class: "operation-btn",
                     on: {
                       click: () => {
-                        this.openDialog("edit", params);
+                        this.addEditOpen("edit", params.row);
                       }
                     }
                   },
@@ -201,22 +254,36 @@ export default {
         },
         rules:{
           loginName: [
-            
+            { required: true, message: '请输入登录ID', trigger: 'blur' }
           ], // 登录名
-          userName: "", // 姓名
-          userCode: "", // 工号
-          organizationId:"", // 部门
-          mobile: "", // 手机
-          phone: "", // 联系电话
-          email:"", // 电子邮件
-          position: "", // 职位
-          sex: "", // 性别
-          accountStatus:"", // 账号状态
-          availableStatus: "", // 组织状态
-          roleIds: "", // 角色id数组
-        }
-        
+          userName: [
+            { required: true, message: '请输入姓名', trigger: 'blur' }
+          ], // 姓名
+          userCode: [
+            { required: true, message: '请输入工号', trigger: 'blur' }
+          ], // 工号
+          organizationId:[
+            { required: true, message: '请选择所属部门', trigger: 'blur' }
+          ], // 部门
+          mobile: [
+            { required: true, message: '请输入手机号码', trigger: 'blur' }
+          ], // 手机
+          email:[
+            { required: true, message: '请输入邮件地址', trigger: 'blur' }
+          ], // 电子邮件
+          position: [
+            { required: true, message: '请选择职位', trigger: 'blur' }
+          ], // 职位
+        },
         // 角色
+        columns:[
+          {type: 'selection',width: 60,align: 'center'},
+          { title: "角色名称", key: "roleName" },
+					{ title: "描述", key: "description" },
+        ],
+        data:[],
+        total:0,
+        pageNum:1
       }
     };
   },
@@ -249,11 +316,55 @@ export default {
      * @param {type} --
      * @return:
      */
-    addHandler() {
+    addEditOpen(v,row) {
       this.addEditDialog.show = true;
-      this.addEditDialog.type = 'add';
+      this.addEditDialog.type = v;
+      getRole({pageNum: 1,pageSize: 10}).then(res=>{
+        if(res.data.status === 200) {
+          this.addEditDialog.data = res.data.data;
+        }
+      })
+      if(v=='edit'){
+        let { id, loginName, userCode, userName, position, organizationId, organizationName  } = row;
+      }
     },
+    
+    /***********************modal方法***************************/
+    addEditSave() {
+      let type = this.addEditDialog.type, params = {
+        ...this.addEditDialog.params
+      }
+      type == 'add'?
+      addUserFun(params).then(res=>{
+        let {status, message} = res.data;
+        if(status == 200){
+          this.$Message.success(message)
+          this.initTablbe()
+        }
+      }):
+      editUserFun(params).then(res=>{
+        let {status, message} = res.data;
+        if(status == 200){
+          this.$Message.success(message)
+          this.initTablbe()
+        }
+      });
+    },
+    onSelectionRole(){
 
+    },
+    pageChangeRole(v){
+      getRole({pageNum: v,pageSize: 10}).then(res=>{
+        if(res.data.status === 200) {
+          this.addEditDialog.data = res.data.data;
+        }
+      })
+    },
+    onVisibleChange(visible) {
+      if(!visible){
+        this.$refs['addEditDialogForm'].resetFields();
+      }
+    },
     /***********************表格方法***************************/
     /**
      * @description: 初始化表格函数
@@ -282,7 +393,6 @@ export default {
      */
     onSelectionChange(selection) {
       this.table.selection = selection.map(v => v.id);
-      console.log(this.table.selection);
     },
     /**
      * @description: pageNum变动函数
@@ -305,31 +415,6 @@ export default {
     deleteData(data) {
       console.log(data);
     },
-    // 新增、编辑
-    openDialog(type) {
-      this.addEditRole.show = true;
-      this.addEditRole.type = type;
-      console.log(this.addEditRole.tabs);
-      //				this.$refs['addEditRole'].resetFields();
-    },
-    // 切换tab
-    changeView(item) {
-      this.editRoleDialog.basicInfo = true ? item == "basicInfo" : false;
-      this.editRoleDialog.permissionsSet = true
-        ? item == "permissionsSet"
-        : false;
-      this.editRoleDialog.personManage = true ? item == "personManage" : false;
-      this.editRoleDialog.currentView = item;
-    },
-    saveSubmit() {
-      this.$refs["addEditRole"].validate(valid => {
-        if (valid) {
-          this.$Message.success("Success!");
-        } else {
-          this.$Message.error("Fail!");
-        }
-      });
-    }
   },
   mounted() {
     this.initTablbe();
@@ -338,6 +423,11 @@ export default {
 </script>
 
 <style lang="less">
+.user-dialog{
+  .ivu-modal{
+    width: 750px !important;
+  }
+}
 .user-manage {
   button {
     margin-top: -5px;

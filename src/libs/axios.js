@@ -59,25 +59,10 @@ class HttpRequest {
       this.destroy(url)
       const { data, status } = res
       if (data.status !== 200) {
-        switch (data.status) {
-          case 401:
-            //删除token
-            store.commit('setUserInfo')
-            window.location.href = '/#/login'
-            Message.error(data.message)
-            break;
-          case 403:
-            window.location.href = '/#/403'
-            Message.error(data.message)
-            break;
-          case 404:
-            window.location.href = '/#/404'
-            Message.error(data.message)
-            break;
-          default:
-            Message.error(data.message)
-            break;
-        }
+        //删除token
+        store.commit('setUserInfo')
+        window.location.href = '/#/login'
+        Message.error(data.message)
       }
       return { data, status }
     }, error => {
