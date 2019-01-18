@@ -461,3 +461,12 @@ export const syncValue = (targetObj, sourceObj) => {
 		}
 	}
 }
+
+/**	
+ * syncValue 深拷贝
+ * @param {obj} 对象
+ */
+export const deepCopy = (obj) => {
+	var str = JSON.stringify(obj);
+	return JSON.parse(str);
+}

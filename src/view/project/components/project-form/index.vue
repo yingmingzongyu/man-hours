@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 09:42:22
+ * @LastEditTime: 2019-01-18 17:10:03
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -17,13 +17,19 @@
       </Select>
     </FormItem>
     <FormItem prop="projectName" label="项目名称：" key="projectName">
-      <Input v-model="form.projectName" placeholder="请填写项目名称" :style="`width:${formWidth}px`"/>
+      <Input v-model="form.projectName" placeholder="请填写项目名称" :maxlength="16" :style="`width:${formWidth}px`"/>
     </FormItem>
     <FormItem prop="summarize" label="概述：" key="summarize">
-      <Input v-model="form.summarize" type="textarea" :rows="4" :style="`width:${formWidth}px`"/>
+      <Input v-model="form.summarize" type="textarea" :rows="4"  :maxlength="200" :style="`width:${formWidth}px`"/>
     </FormItem>
     <FormItem prop="timeEvaluation" label="项目预估总耗时：" key="timeEvaluation">
-      <InputNumber :min="0" :max="999999999" :precision="0" v-model="form.timeEvaluation" :style="`width:${formWidth}px`"/>
+      <InputNumber
+        :min="0"
+        :max="999"
+        :precision="0"
+        v-model="form.timeEvaluation"
+        :style="`width:${formWidth}px`"
+      />
     </FormItem>
     <FormItem prop="startTime" label="开始时间：" key="startTime">
       <DatePicker type="date" v-model="form.startTime" :style="`width:${formWidth}px`"/>
@@ -55,6 +61,7 @@
 import throttle from "lodash/throttle";
 import { querySystemUser } from "@/api/user";
 import { projectDetail } from "@/api/project";
+import dayjs from "dayjs";
 export default {
   props: {
     type: {
@@ -100,6 +107,40 @@ export default {
                 : callback(new Error("项目参与人员不能为空"));
             }
           }
+        ],
+        startTime: [
+          {
+            trigger: "change",
+            validator: (rule, value, callback) => {
+              const { endTime } = this.form;
+              if (endTime && value) {
+                if (dayjs(endTime).unix() < dayjs(value).unix()) {
+                  callback(new Error("开始时间不能大于结束时间"));
+                } else {
+                  callback();
+                }
+              } else {
+                callback();
+              }
+            }
+          }
+        ],
+        endTime: [
+          {
+            trigger: "change",
+            validator: (rule, value, callback) => {
+              const { startTime } = this.form;
+              if (startTime && value) {
+                if (dayjs(startTime).unix() > dayjs(value).unix()) {
+                  callback(new Error("结束时间不能小于开始时间"));
+                } else {
+                  callback();
+                }
+              } else {
+                callback();
+              }
+            }
+          }
         ]
       },
       userList: [],
@@ -135,36 +176,36 @@ export default {
         .catch(error => {
           this.searchUserLoading = false;
         });
+    },
+    getData(id) {
+      this.loading = true;
+      projectDetail({
+        id
+      }).then(res => {
+        if (res.data.status === 200) {
+          let formData = res.data.data.project;
+          formData.user = res.data.data.user;
+          this.selectLabel = formData.user.map(item => ({
+            label: `${item.userName}(工号${item.userCode})`,
+            value: item.id
+          }));
+          //过滤掉userList已经存在的用户
+          const moreUserList = formData.user.filter(
+            item => formData.user.map(d => d.id).indexOf(item.id) === -1
+          );
+          this.userList = moreUserList.concat(this.userList);
+          formData.user = formData.user.map(item => item.id);
+          this.tempRemoteMethod = this.searchUser;
+          this.form = formData;
+        }
+        this.loading = false;
+      });
     }
   },
   watch: {
     projectId(newVal, oldVal) {
-      if (newVal) {
-        this.$refs["form"].resetFields();
-        this.loading = true;
-        projectDetail({
-          id: newVal
-        }).then(res => {
-          if (res.data.status === 200) {
-            let formData = res.data.data.project;
-            formData.user = res.data.data.user;
-            this.selectLabel = formData.user.map(item => ({
-              label: `${item.userName}(工号${item.userCode})`,
-              value: item.id
-            }));
-            //过滤掉userList已经存在的用户
-            const moreUserList = formData.user.filter(
-              item => formData.user.map(d => d.id).indexOf(item.id) === -1
-            );
-            this.userList = moreUserList.concat(this.userList);
-            formData.user = formData.user.map(item => item.id);
-            this.tempRemoteMethod = this.searchUser;
-            this.form = formData;
-          }
-          this.loading = false;
-        });
-      } else {
-        this.$refs["form"].resetFields();
+      this.$refs["form"].resetFields();
+      if (!newVal) {
         this.form = {
           projectNumber: null,
           projectAttribution: null,
@@ -174,6 +215,9 @@ export default {
           endTime: null,
           user: []
         };
+        this.$nextTick(()=>{
+          this.$refs["form"].resetFields();
+        })
       }
     }
   },
