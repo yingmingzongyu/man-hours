@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 10:53:55
+ * @LastEditTime: 2019-01-18 14:54:08
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -61,6 +61,7 @@
 import throttle from "lodash/throttle";
 import { querySystemUser } from "@/api/user";
 import { projectDetail } from "@/api/project";
+import dayjs from "dayjs";
 export default {
   props: {
     type: {
@@ -104,6 +105,26 @@ export default {
               value.length > 0
                 ? callback()
                 : callback(new Error("项目参与人员不能为空"));
+            }
+          }
+        ],
+        endTime: [
+          {
+            trigger: "change",
+            validator: (rule, value, callback) => {
+              const { startTime } = this.form;
+              if (startTime && value) {
+                if (
+                  dayjs(startTime).unix() >
+                  dayjs(value).unix()
+                ) {
+                  callback(new Error("结束时间不能小于开始时间"));
+                } else {
+                  callback();
+                }
+              } else {
+                callback();
+              }
             }
           }
         ]
