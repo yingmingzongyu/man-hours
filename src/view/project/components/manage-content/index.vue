@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 09:33:09
+ * @LastEditTime: 2019-01-18 09:58:33
  -->
 <template>
   <div>
@@ -47,6 +47,7 @@
       <Table :columns="columns" :data="tableData.list" :loading="tableLoading"></Table>
       <br>
       <Page
+        show-total
         :total="tableData.total"
         :current.sync="pageNum"
         show-sizer
