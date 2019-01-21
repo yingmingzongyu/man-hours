@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 17:04:38
+ * @LastEditTime: 2019-01-21 10:17:05
  -->
 <template>
   <div>
@@ -39,9 +39,9 @@
       <p slot="title"></p>
       <div slot="extra">
         <div class="btn-group">
-          <Button type="primary" icon="ios-search" @click="reset">重置</Button>
-          <Button type="primary" icon="ios-search" @click="query">查询</Button>
-          <Button type="primary" icon="ios-search" @click="showAdd">新增</Button>
+          <Button type="primary" @click="reset">重置</Button>
+          <Button type="primary" @click="query">查询</Button>
+          <Button type="primary" @click="showAdd">新增</Button>
         </div>
       </div>
       <Table :columns="columns" :data="tableData.list" :loading="tableLoading"></Table>
@@ -209,12 +209,8 @@ export default {
               )
             );
             return h("div", [
-              h("Button", {
-                props: {
-                  type: "text",
-                  size: "small",
-                  icon: "ios-search"
-                },
+              h("span", {
+                class: "operation-btn",
                 on: {
                   click: () => {
                     this.projectType = "edit";
@@ -223,14 +219,9 @@ export default {
                     this.modal = true;
                   }
                 }
-              }),
-              h("Button", {
-                props: {
-                  type: "text",
-                  size: "small",
-                  icon: "ios-search",
-                  disabled: this.phaseDisable
-                },
+              }, '编辑'),
+              h("span", {
+                class: "operation-btn",
                 on: {
                   click: () => {
                     this.treeLoading = true;
@@ -245,7 +236,7 @@ export default {
                     this.treeLoading = false;
                   }
                 }
-              }),
+              }, '配置'),
               h(
                 "Dropdown",
                 {
@@ -266,13 +257,9 @@ export default {
                   }
                 },
                 [
-                  h("Button", {
-                    props: {
-                      type: "text",
-                      size: "small",
-                      icon: "ios-pricetag-outline"
-                    }
-                  }),
+                  h("span", {
+                    class: "operation-btn",
+                  }, '标签'),
                   h(
                     "DropdownMenu",
                     {
