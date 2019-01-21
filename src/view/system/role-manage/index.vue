@@ -65,9 +65,9 @@
         		</TabPane>
         		<!--人员信息-->
         		<TabPane label="人员信息" name="name3">
-        			<Button type="primary" style="margin: 0 10px 10px 0;" @click="deletePerson">删除</Button>
+        			<Button type="primary" style="margin: 0 10px 10px 3px;" @click="deletePerson">删除</Button>
 					<Button type="primary" style="margin: 0 10px 10px 0;" @click="openPeopleDialog">新增</Button>
-					<Table height="255" :columns="editDialog.columns" :data="editDialog.personList" @on-selection-change="onSelectionChange"></Table>
+					<Table height="255" style="margin-left: 3px;" :columns="editDialog.columns" :data="editDialog.personList" @on-selection-change="onSelectionChange"></Table>
         		</TabPane>
     		</Tabs>
     	</Modal>
@@ -234,7 +234,7 @@
 				this.$refs['editDialog'].validate((valid) => {
                     if(valid) {
                     	let nodes = this.$refs.tree.getCheckedNodes().map(v => v.id);
-                    	let ids = this.editDialog.personList.map(v => v.id)
+                    	let ids = this.editDialog.personList.map(v => v.id);
                     	let params = {
                     		id: this.editDialog.id,
                     		description: this.editDialog.form.description,
@@ -268,10 +268,6 @@
 			},
 			// 获取权限树
 			getTree(ids) {
-				let params = {
-					usability: 1,
-					parentId: 0
-				}
 				getSlideMenu().then(res => {
 					if(res.data.status == 200) {
 						let list = this.formatTree(res.data.data.top, ids);
