@@ -135,7 +135,7 @@ export const editUserFun = (params) => {
  */
 export const delUserFun = (id) => {
   return axios.request({
-    url: `/itsm/system/sso/user/deleteUser?userId=${id}`,
+    url: `/itsm/system/sso/user/deleteUser?userIds=${id}`,
     method: 'get'
   })
 }

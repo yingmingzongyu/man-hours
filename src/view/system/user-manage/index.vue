@@ -1,3 +1,10 @@
+<!--
+ * @Description: In User Settings Edit
+ * @Author: Zero
+ * @Date: 2019-01-16 10:29:42
+ * @LastEditTime: 2019-01-21 09:20:21
+ * @LastEditors: Please set LastEditors
+ -->
 <!--用户管理-->
 <template>
   <div class="user-manage">
@@ -36,12 +43,12 @@
       <p slot="title"></p>
       <div slot="extra">
         <div class="btn-group">
-          <Upload style="float: left;" :show-upload-list="false" action="/itsm/system/sso/user/exportExcelUser">
+          <Upload style="float: left;" :show-upload-list="false" action="/api/itsm/system/sso/user/exportExcelUser">
             <Button type="primary"   >导入</Button>
           </Upload>
           <Button type="primary" @click="downTmplHandler()">下载导入模板</Button>
           <Button type="primary" @click="exportHandler()">导出</Button>
-          <Button type="primary">删除</Button>
+          <Button type="primary" @click="deleteHandler()">删除</Button>
           <Button type="primary" style="float: right;" @click="addEditOpen('add')">新增</Button>
           <Button type="primary" style="float: right;" @click="queryHandler()">查询</Button>
           <Button type="primary" style="float: right;" @click="resetFields()">重置</Button>
@@ -312,10 +319,8 @@ export default {
      * @return:
      */
     exportHandler(){
-      let ids = this.table.selection.join(',')
-      exportUserFun(ids).then(res=>{
-
-      })
+      let token = this.$store.state.user.token, ids = this.table.selection.join(',');
+      window.open(`/api/itsm/system/sso/user/exportExcelUser?Token=${token}&userIds=${ids}`)
     },
     /**
      * @description: 下载模板
@@ -354,11 +359,14 @@ export default {
      * @param {String} id 要删除用户的id
      * @return:
      */
-    deleteHandler(id) {
+    deleteHandler() {
+      if(this.table.selection.length == 0) return;
+      let id = this.table.selection.join(',');
       delUserFun(id).then(res=>{
         let {status, message} = res.data;
         if(status == 200){
           this.$Message.success(message)
+          this.initTablbe()
         }else{
           this.$Message.warning(message)
         }
