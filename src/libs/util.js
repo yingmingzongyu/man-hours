@@ -52,6 +52,17 @@ export const formatTreeList = (list,parentNode={id:0, title:'菜单树',children
   })
 }
 
+export const formatOrganizeTree = (list, parentNode = null) => {
+  return list.map((v) => {
+    let { id, title, organizationCode, description, organizationName } = { id: v.id, title: v.organizationName, organizationCode: v.organizationCode, description: v.description, organizationName: v.organizationName };
+    if (v.children && v.children.length > 0) {
+      return { id, title, parentNode, children: formatOrganizeTree(v.children), organizationCode, description, organizationName };
+    } else {
+      return { id, title, parentNode, organizationCode, description, organizationName };
+    }
+  })
+}
+
 
 
 export const hasChild = (item) => {

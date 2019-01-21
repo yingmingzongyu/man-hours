@@ -1,5 +1,20 @@
 import axios from '@/libs/api.request'
 
+/************************************ 菜单管理 ************************************/
+
+/**
+ * @description: 获取菜单分页数据
+ * @param {Object} params
+ * @return: 
+ */
+export const getMenuTable = (params) => {
+  return axios.request({
+    url: '/itsm/system/permission/resource/queryResourceByPage',
+    params,
+    method: 'post'
+  })
+}
+
 /**
  * @description: 获取左侧菜单数据
  * @param {Number} parentId
@@ -11,21 +26,6 @@ export const getTreeList = ({ usability, parentId } = { usability: 1, parentId: 
     params: {
       usability, parentId
     },
-    method: 'post'
-  })
-}
-
-/************ 菜单管理 ************/
-
-/**
- * @description: 获取菜单分页数据
- * @param {Object} params
- * @return: 
- */
-export const getMenuTable = (params) => {
-  return axios.request({
-    url: '/itsm/system/permission/resource/queryResourceByPage',
-    params,
     method: 'post'
   })
 }
@@ -88,7 +88,7 @@ export const editMenuFun = (params) => {
   })
 }
 
-/************ 用户管理 ************/
+/************************************ 用户管理 ************************************/
 /**
  * @description: 获取用户分页数据
  * @param {Object} params
@@ -127,6 +127,58 @@ export const editUserFun = (params) => {
     method: 'post'
   })
 }
+
+/**
+ * @description: 删除用户
+ * @param {Object} id 用户的id
+ * @return: 
+ */
+export const delUserFun = (id) => {
+  return axios.request({
+    url: `/itsm/system/sso/user/deleteUser?userIds=${id}`,
+    method: 'get'
+  })
+}
+
+ /**
+ * @description: 导出Excel
+ * @param {String} userIds 用户id字符串
+ * @return: 
+ */
+export const exportUserFun = (userIds) => {
+  return axios.request({
+    url: '/itsm/system/sso/user/exportExcelUser',
+    params:{
+      userIds
+    },
+    method: 'post'
+  })
+}
+
+ /**
+ * @description: 获取用户详情
+ * @param {String} id  用户id 
+ * @return: 
+ */
+export const getUserDetail = (id) => {
+  return axios.request({
+    url: `/itsm/system/sso/user/queryUserSkillAndRoleRel?userId=${id}`,
+    method: 'get'
+  })
+}
+
+ /**
+ * @description: 重置用户密码
+ * @param {String} id  用户id 
+ * @return: 
+ */
+export const resetUserPass = (id) => {
+  return axios.request({
+    url: `/itsm/system/sso/user/updateUserPassword?id=${id}`,
+    method: 'get'
+  })
+}
+
 /*
  * 部门管理
  */
