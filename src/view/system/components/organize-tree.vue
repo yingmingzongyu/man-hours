@@ -22,7 +22,8 @@ export default {
       default: false
     },
     data: {
-      type: String
+      type: Number,
+      default: 0
     },
     type: {
       type: String,
@@ -57,25 +58,33 @@ export default {
     },
     render(h, { root, node, data }) {
       const self = this;
-      return h('span', null, [
-        h('Radio', {
-          attrs:{
-            value:self.selectId==data.id,
-            label:data.id
-          },
-          on:{
-            input:(v)=>{ 
-              self.selectId = data.id
-              self.selectNode = data
+      if(data.id == 1){
+        return h('span', null, data.organizationName) 
+      }else{
+        return h('span', null, [
+          h('Radio', {
+            attrs:{
+              value:self.selectId==data.id,
+              label:data.id
+            },
+            on:{
+              input:(v)=>{ 
+                self.selectId = data.id
+                self.selectNode = data
+              }
             }
-          }
-        },data.organizationName)
-      ])
+          },data.organizationName)
+        ])
+      }
     }
   },
   watch:{
     value(cur, old){
       this.visible = cur;
+    },
+    data(cur, old){
+      console.log(cur)
+      this.selectId = cur;
     }
   },
   mounted() {

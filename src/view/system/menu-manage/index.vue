@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-18 14:58:02
+ * @LastEditTime: 2019-01-21 13:23:16
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -51,7 +51,7 @@
               <Button @click="submit" type="info" :loading="addEditDialog.submitLoading">保存</Button>
             </div>
             <Form ref="addEditDialogForm" :model="addEditDialog.params" :rules="addEditDialog.rules" inline :label-width="130" >
-              <FormItem prop="resourceName" label="菜单名称：">
+              <FormItem  label="父菜单名称：">
                 {{tree.selectNode.title}}
               </FormItem>
               <FormItem prop="resourceName" label="菜单名称：">
@@ -63,7 +63,7 @@
               <FormItem prop="permissionUrl" label="权限URL：">
                 <Input type="text" v-model="addEditDialog.params.permissionUrl" placeholder="请输入权限链接" style="width: 250px" />
               </FormItem>
-              <FormItem prop="resourceType" label="页面类型：">
+              <FormItem prop="resourceType" label="菜单类型：">
                 <Radio-group v-model="addEditDialog.params.resourceType">
                   <Radio :label="1">
                     <span>父级页面</span>
@@ -165,7 +165,7 @@ export default {
                   class: params.row.visible?"operation-btn ban-btn":"operation-btn",
                   on: {
                     click: () => {
-                      this.toggleHandler(params.row,1);
+                      params.row.visible?"operation-btn ban-btn":this.toggleHandler(params.row,1);
                     }
                   }
                 }, "启用"),
@@ -173,7 +173,7 @@ export default {
                   class: params.row.visible?"operation-btn":"operation-btn ban-btn",
                   on: {
                     click: () => {
-                      this.toggleHandler(params.row,0);
+                      params.row.visible?this.toggleHandler(params.row,0):"operation-btn ban-btn";
                     }
                   }
                 }, "禁用"),
@@ -219,7 +219,7 @@ export default {
             { required: true, message: '请输入菜单名称', trigger: 'blur' }
           ],
           resourceType:[
-            { required: true, message: '请选择菜单类型', trigger: 'blur' }
+            { required: true, type:'number', message: '请选择菜单类型', trigger: 'change' }
           ],
           resourceUrl:[
             { required: true, message: '请输入菜单链接', trigger: 'blur' }
@@ -228,7 +228,7 @@ export default {
             { required: true, message: '请输入权限URL', trigger: 'blur' }
           ],
           operatingAuthorization:[
-            { required: true, message: '请选择权限标签', trigger: 'blur' }
+            { required: true, type:'number', message: '请选择权限标签', trigger: 'change' }
           ]
         }
       }
@@ -247,6 +247,7 @@ export default {
         let {status, message} = res.data;
         if(status==200){
           this.$Message.success(message);
+          this.table.pageNum = 1;
           this.initTree();
           this.initTablbe();
         }else{
@@ -317,35 +318,40 @@ export default {
     
     /***********************moadl方法***************************/
     submit(){
-      let params = {
-        parentResourceId: this.tree.selectNode.id,
-        ...this.addEditDialog.params,
-        parentFlag: this.addEditDialog.params.resourceType===1?true:false
-      }
-      params.operatingAuthorization =  params.operatingAuthorization.join(',');
-      this.addEditDialog.type==="add"?
-      addMenuFun(params).then(res=>{
-        let {status, message} = res.data;
-        if(status==200){
-          this.$Message.success(message);
-          this.addEditDialog.show = false;
-          this.initTree();
-          this.initTablbe();
-        }else{
-          this.$Message.warning(message);
+      this.$refs['addEditDialogForm'].validate((valid) => {
+        if (valid) {
+          let params = {
+            parentResourceId: this.tree.selectNode.id,
+            ...this.addEditDialog.params,
+            parentFlag: this.addEditDialog.params.resourceType===1?true:false
+          }
+          params.operatingAuthorization =  params.operatingAuthorization.join(',');
+          this.addEditDialog.type==="add"?
+          addMenuFun(params).then(res=>{
+            let {status, message} = res.data;
+            if(status==200){
+              this.$Message.success(message);
+              this.addEditDialog.show = false;
+              this.initTree();
+              this.initTablbe();
+            }else{
+              this.$Message.warning(message);
+            }
+          }):
+          editMenuFun(params).then(res=>{
+            let {status, message} = res.data;
+            if(status==200){
+              this.$Message.success(message);
+              this.addEditDialog.show = false;
+              this.initTree();
+              this.initTablbe();
+            }else{
+              this.$Message.warning(message);
+            }
+          });
         }
-      }):
-      editMenuFun(params).then(res=>{
-        let {status, message} = res.data;
-        if(status==200){
-          this.$Message.success(message);
-          this.addEditDialog.show = false;
-          this.initTree();
-          this.initTablbe();
-        }else{
-          this.$Message.warning(message);
-        }
-      });
+      })
+
     },
     onVisibleChange(visible) {
       if(!visible){

@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: Zero
  * @Date: 2019-01-16 10:29:42
- * @LastEditTime: 2019-01-21 09:20:21
+ * @LastEditTime: 2019-01-21 13:09:11
  * @LastEditors: Please set LastEditors
  -->
 <!--用户管理-->
@@ -12,14 +12,14 @@
       <p slot="title">
         <Icon type="ios-search"/>查询条件
       </p>
-      <Form ref="form" :model="form.params" inline :label-width="80">
+      <Form ref="searchForm" :model="form.params" inline :label-width="80">
         <FormItem prop="userCode" label="工号：">
           <Input type="text" v-model="form.params.userCode" placeholder="请输入工号" style="width: 180px"/>
         </FormItem>
         <FormItem prop="userName" label="姓名：">
           <Input type="text" v-model="form.params.userName" placeholder="请输入姓名" style="width: 180px"/>
         </FormItem>
-        <FormItem prop="labelName" label="部门：">
+        <FormItem prop="organizationName" label="部门：">
           <Input type="text" v-model="form.params.organizationName" readonly placeholder="请选择部门" style="width: 180px" icon="md-apps" @on-click="organizeOpen('search')" />
         </FormItem>
         <FormItem prop="availableStatus" label="在职状态：">
@@ -43,15 +43,15 @@
       <p slot="title"></p>
       <div slot="extra">
         <div class="btn-group">
-          <Upload style="float: left;" :show-upload-list="false" action="/api/itsm/system/sso/user/exportExcelUser">
-            <Button type="primary"   >导入</Button>
+          <Upload style="float: left;" :show-upload-list="false" action="/api/itsm/system/sso/user/importPoiExcelUser" :on-success="uploadSuccess" :on-error="uploadError" :headers="{Token:$store.state.user.token}">
+            <Button type="primary" >导入</Button>
           </Upload>
           <Button type="primary" @click="downTmplHandler()">下载导入模板</Button>
           <Button type="primary" @click="exportHandler()">导出</Button>
           <Button type="primary" @click="deleteHandler()">删除</Button>
           <Button type="primary" style="float: right;" @click="addEditOpen('add')">新增</Button>
           <Button type="primary" style="float: right;" @click="queryHandler()">查询</Button>
-          <Button type="primary" style="float: right;" @click="resetFields()">重置</Button>
+          <Button type="primary" style="float: right;" @click="resetHandler()">重置</Button>
         </div>
       </div>
       <Table :columns="table.columns" :data="table.data" :loading="tableLoading" @on-selection-change="onSelectionChange"></Table>
@@ -61,6 +61,7 @@
         :current.sync="table.pageNum"
         show-sizer
         show-elevator
+        show-total
         @on-change="pageChange"
       />
     </Card>
@@ -71,25 +72,25 @@
       <div slot="footer">
         <Button @click="addEditSave()" type="info" :loading="addEditDialog.submitLoading">保存</Button>
       </div>
-      <Tabs :value="addEditDialog.tabs">
-        <TabPane label="基本信息" name="name1">
+      <Tabs v-model="addEditDialog.tabs">
+        <TabPane label="基本信息" name="basic">
           <Form ref="addEditDialogForm" :model="addEditDialog.params" inline :label-width="130" :rules="addEditDialog.rules"
           >
-            <FormItem prop="userName" label="角色名称：">
-              <Input type="text" v-model="addEditDialog.params.userName" placeholder="请输入用户姓名" style="width: 200px" />
+            <FormItem prop="userName" label="名称：">
+              <Input type="text" v-model="addEditDialog.params.userName" placeholder="请输入姓名" style="width: 200px" />
             </FormItem>
             <FormItem prop="loginName" label="登录ID：">
               <Input type="text" v-model="addEditDialog.params.loginName" placeholder="请输入登录ID" style="width: 200px" />
             </FormItem>
             <FormItem prop="userCode" label="工号：">
-              <Input type="text" v-model="addEditDialog.params.userCode" placeholder="请输入用户工号" style="width: 200px" />
+              <Input type="text" v-model="addEditDialog.params.userCode" placeholder="请输入工号" style="width: 200px" />
             </FormItem>
             <FormItem prop="position" label="职位：">
               <Select v-model="addEditDialog.params.position" style="width: 200px">
-                <Option value="普通职员" key="1"></Option>
-                <Option value="中层" key="2"></Option>
-                <Option value="部门经理" key="3"></Option>
-                <Option value="管理层" key="4"></Option>
+                <Option value="1">普通职员</Option>
+                <Option value="2">中层</Option>
+                <Option value="3">部门经理</Option>
+                <Option value="4">管理层</Option>
               </Select>
             </FormItem>
             <FormItem prop="organizationName" label="部门：">
@@ -110,11 +111,11 @@
             </FormItem>
             <FormItem prop="accountStatus" label="账号状态：">
               <RadioGroup v-model="addEditDialog.params.accountStatus">
-                <Radio :label="0">
-                    <span>开启</span>
+                <Radio label="0">
+                    <span>启用</span>
                 </Radio>
-                <Radio :label="1">
-                    <span>关闭</span>
+                <Radio label="1">
+                    <span>禁用</span>
                 </Radio>
               </RadioGroup>
             </FormItem>
@@ -123,36 +124,28 @@
             </FormItem>
             <FormItem prop="availableStatus" label="在职状态：">
               <RadioGroup v-model="addEditDialog.params.availableStatus">
-                <Radio :label="0">
+                <Radio label="0">
                     <span>在职</span>
                 </Radio>
-                <Radio :label="1">
+                <Radio label="1">
                     <span>离职</span>
                 </Radio>
               </RadioGroup>
             </FormItem>
             <FormItem prop="email" label="电子邮件：">
-              <Input type="text" v-model="addEditDialog.params.email" placeholder="请输入邮件地址" style="width: 200px"  />
+              <Input type="text" v-model="addEditDialog.params.email" placeholder="请输入电子邮件地址" style="width: 200px"  />
             </FormItem>
             <FormItem prop="description" label="用户描述：">
               <Input type="textarea" v-model="addEditDialog.params.description" placeholder="请输入用户描述" style="width: 400px" />
             </FormItem>
           </Form>
         </TabPane>
-        <TabPane label="角色" name="name2" >
-          <Table :columns="addEditDialog.columns" ref='roleTable' :data="addEditDialog.data" @on-selection-change="onSelectionRole" size="small" height="350" ></Table>
-          <Page
-            size="small"
-            :total="addEditDialog.total"
-            :current.sync="addEditDialog.pageNum"
-            show-elevator
-            @on-change="pageChangeRole"
-            :styles="{float:'right',margin:'10px'}"
-          />
+        <TabPane label="角色" name="roles" >
+          <Table :columns="addEditDialog.columns" ref='roleTable' :data="addEditDialog.data" @on-selection-change="onSelectionRole" size="small" height="380" ></Table>
         </TabPane>
       </Tabs>
     </Modal>
-    <organizeTree v-model="organize.show" :data="organize.organizationId" @submit="organizeSave"></organizeTree>
+    <organizeTree v-model="organize.show"  :data="organize.organizationId" @submit="organizeSave"></organizeTree>
   </div>
 </template>
 
@@ -178,7 +171,7 @@ export default {
       organize:{
         type:'search',
         show: false,
-        organizationId:'0'
+        organizationId: 0
       },
       form: {
         params: {
@@ -204,10 +197,19 @@ export default {
           { title: "工号", key: "userCode" },
           { title: "姓名", key: "userName" },
           { title: "登录ID", key: "loginName" },
-          { title: "部门", key: "organizationId" },
-          { title: "性别", key: "sex" },
-          { title: "在职状态", key: "availableStatus" },
-          { title: "账号状态", key: "accountStatus" },
+          { title: "部门", key: "organizationName" },
+          { title: "性别", key: "sex", render:(h, params)=>{
+            let text = params.row.sex == '0'?'男':'女';
+            return h('span', null, text)
+          } },
+          { title: "在职状态", key: "availableStatus", render:(h, params)=>{
+            let text = params.row.availableStatus == '0'?'在职':'离职';
+            return h('span', null, text)
+          }  },
+          { title: "账号状态", key: "accountStatus", render:(h, params)=>{
+            let text = params.row.accountStatus == '0'?'启用':'禁用';
+            return h('span', null, text)
+          }  },
           { title: "手机", key: "mobile" },
           {
             title: "操作",
@@ -257,7 +259,7 @@ export default {
       addEditDialog: {
         show: false,
         type: "add", // 新增还是编辑
-        tabs: "",
+        tabs: "basic",
         submitLoading: false,
         // 基本信息
         params: {
@@ -286,13 +288,13 @@ export default {
             { required: true, message: '请输入工号', trigger: 'blur' }
           ], // 工号
           organizationName:[
-            { required: true, message: '请选择所属部门', trigger: 'blur' }
+            { required: true, message: '请选择部门', trigger: 'blur' }
           ], // 部门
           mobile: [
             { required: true, message: '请输入手机号码', trigger: 'blur' }
           ], // 手机
           email:[
-            { required: true, message: '请输入邮件地址', trigger: 'blur' }
+            { required: true, message: '请输入电子邮件地址', trigger: 'blur' }
           ], // 电子邮件
           position: [
             { required: true, message: '请选择职位', trigger: 'blur' }
@@ -305,9 +307,7 @@ export default {
           { title: "角色名称", key: "roleName" },
 					{ title: "描述", key: "description" },
         ],
-        selection:[],
-        total:0,
-        pageNum:1
+        selection:[]
       }
     };
   },
@@ -319,8 +319,23 @@ export default {
      * @return:
      */
     exportHandler(){
+      if(this.table.selection.length == 0){
+        this.$Message.warning('请选择要导出的数据!')
+        return
+      }  
       let token = this.$store.state.user.token, ids = this.table.selection.join(',');
       window.open(`/api/itsm/system/sso/user/exportExcelUser?Token=${token}&userIds=${ids}`)
+    },
+    uploadSuccess(response, file, fileList){
+      let { status, message } = response;
+      if(status==200){
+        this.$Message.success(message);
+      }else{
+        this.$Message.warning(message);
+      }
+    },
+    uploadError(error, file, fileList){
+      this.$Message.error('上传失败');
     },
     /**
      * @description: 下载模板
@@ -351,7 +366,9 @@ export default {
      * @return:
      */
     resetHandler() {
-      this.$refs['form'].resetFields();
+      this.form.params.organizationId = '';
+      this.$refs['searchForm'].resetFields();
+      console.log(this.form.params);
     },
 
     /**
@@ -360,17 +377,32 @@ export default {
      * @return:
      */
     deleteHandler() {
-      if(this.table.selection.length == 0) return;
-      let id = this.table.selection.join(',');
-      delUserFun(id).then(res=>{
-        let {status, message} = res.data;
-        if(status == 200){
-          this.$Message.success(message)
-          this.initTablbe()
-        }else{
-          this.$Message.warning(message)
-        }
-      })
+      const self = this;
+      if(self.table.selection.length == 0){
+        self.$Message.warning('请选择要删除的用户！');
+        return;
+      } else{
+        self.$Modal.warning({
+          title:'提示',
+          content:"是否删除所选中的用户？",
+          closable: true,
+          onOk:()=>{
+            let id = self.table.selection.join(',');
+            delUserFun(id).then(res=>{
+              let {status, message} = res.data;
+              if(status == 200){
+                self.$Message.success(message)
+                self.initTablbe()
+              }else{
+                self.$Message.warning(message)
+              }
+            })
+          }
+        })
+      }
+      
+      
+      
     },
 
     /**
@@ -381,6 +413,7 @@ export default {
     addEditOpen(v,id) {
       this.addEditDialog.show = true;
       this.addEditDialog.type = v;
+      this.addEditDialog.tabs = 'basic';
       if(v=='edit'){
         getUserDetail(id).then(res=>{
           // 获取用户详细信息并格式化
@@ -393,7 +426,7 @@ export default {
           })
           this.addEditDialog.params.id = row.id;
         }).then(res=>{
-          return getRole({pageNum: 1,pageSize: 10})
+          return getRole()
         }).then(res=>{
           if(res.data.status === 200) {
             this.addEditDialog.data = res.data.data;
@@ -402,8 +435,20 @@ export default {
               let roleIds = this.addEditDialog.params.roleIds.length>0?this.addEditDialog.params.roleIds.map(v=>v.id):[], roleData = this.$refs['roleTable'].$refs.tbody.objData;
               if(roleIds.length>0) for(var k in roleData){
                 // 遍历回显 选中的role
-                if(roleIds.indexOf(v.id)!==-1) v._isChecked = true
+                if(roleIds.indexOf(roleData[k].id)!==-1){
+                  roleData[k]._isChecked = true
+                } 
               }
+            })
+          }
+        })
+      }else{
+        getRole().then(res=>{
+          if(res.data.status === 200) {
+            this.addEditDialog.data = res.data.data;
+            // 获取所有角色 并赋值给tab2页中的表格
+            this.$nextTick(()=>{
+              let roleIds = this.addEditDialog.params.roleIds.length>0?this.addEditDialog.params.roleIds.map(v=>v.id):[], roleData = this.$refs['roleTable'].$refs.tbody.objData;
             })
           }
         })
@@ -411,7 +456,7 @@ export default {
     },
 
     /**
-     * @description: 新增函数
+     * @description: 重置密码
      * @param {String} id 需要重置密码的用户id
      * @return:
      */
@@ -434,6 +479,11 @@ export default {
     organizeOpen(t){
       this.organize.show = true
       this.organize.type = t
+      if(t=='search'){
+        this.organize.organizationId = this.form.params.organizationId || 0;
+      }else{
+        this.organize.organizationId = this.addEditDialog.params.organizationId || 0;
+      }
     },
 
     /**
@@ -442,7 +492,6 @@ export default {
      * @return:
      */
     organizeSave(data){
-      console.log(data);
       if(this.organize.type == 'search'){
         this.form.params.organizationId = data.id
         this.form.params.organizationName = data.organizationName
@@ -459,27 +508,32 @@ export default {
      * @return:
      */
     addEditSave() {
-      console.log(this.addEditDialog.params);
-      this.addEditDialog.params.roleIds = this.addEditDialog.selection.join(',');
-      let type = this.addEditDialog.type, params = {
-        ...this.addEditDialog.params
-      }
-      
-      type == 'add'?
-      addUserFun(params).then(res=>{
-        let {status, message} = res.data;
-        if(status == 200){
-          this.$Message.success(message)
-          this.initTablbe()
+      this.$refs['addEditDialogForm'].validate((valid) => {
+        if (valid) {
+          this.addEditDialog.params.roleIds = this.addEditDialog.selection.join(',');
+          let type = this.addEditDialog.type, params = {
+            ...this.addEditDialog.params
+          }
+          type == 'add'?
+          addUserFun(params).then(res=>{
+            let {status, message} = res.data;
+            if(status == 200){
+              this.$Message.success(message)
+              this.addEditDialog.show = false
+              this.table.pageNum = 1;
+              this.initTablbe()
+            }
+          }):
+          editUserFun(params).then(res=>{
+            let {status, message} = res.data;
+            if(status == 200){
+              this.$Message.success(message)
+              this.addEditDialog.show = false
+              this.initTablbe()
+            }
+          });
         }
-      }):
-      editUserFun(params).then(res=>{
-        let {status, message} = res.data;
-        if(status == 200){
-          this.$Message.success(message)
-          this.initTablbe()
-        }
-      });
+      })
     },
     onSelectionRole(selection){
       this.addEditDialog.selection = selection.map(v=> v.id)
@@ -493,6 +547,7 @@ export default {
     },
     onVisibleChange(visible) {
       if(!visible){
+        this.addEditDialog.params.organizationId = '';
         this.$refs['addEditDialogForm'].resetFields();
       }
     },
@@ -541,11 +596,7 @@ export default {
     pageSizeChange(pageSize) {
       this.table.pageSize = pageSize;
       this.initTablbe();
-    },
-    // 删除
-    deleteData(data) {
-      console.log(data);
-    },
+    }
   },
   mounted() {
     this.initTablbe();

@@ -235,11 +235,10 @@ export const changeDepartmentFlag = (params) => {
 /*
  * 角色管理
  */
-export const getRole = (params) => {
+export const getRole = () => {
   return axios.request({
     url: '/itsm/system/permission/role/queryRoleByPage',
-    params,
-    method: 'post'
+    method: 'get'
   })
 }
 
