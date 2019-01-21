@@ -10,7 +10,7 @@
       <p slot="title">
         <Icon type="ios-search"/>查询条件
       </p>
-      <Form ref="form" :model="form" inline :label-width="80">
+      <Form ref="form" :model="form" inline :label-width="120">
         <FormItem prop="projectName" label="项目名称：">
           <Input type="text" v-model="form.projectName" placeholder="请输入关键词" style="width: 180px"/>
         </FormItem>
