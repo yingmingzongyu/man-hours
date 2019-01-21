@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-11 14:26:18
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-18 17:10:03
+ * @LastEditTime: 2019-01-21 10:58:27
  -->
 <template>
   <Form :model="form" ref="form" :label-width="140" :rules="rules">
@@ -17,10 +17,21 @@
       </Select>
     </FormItem>
     <FormItem prop="projectName" label="项目名称：" key="projectName">
-      <Input v-model="form.projectName" placeholder="请填写项目名称" :maxlength="16" :style="`width:${formWidth}px`"/>
+      <Input
+        v-model="form.projectName"
+        placeholder="请填写项目名称"
+        :maxlength="16"
+        :style="`width:${formWidth}px`"
+      />
     </FormItem>
     <FormItem prop="summarize" label="概述：" key="summarize">
-      <Input v-model="form.summarize" type="textarea" :rows="4"  :maxlength="200" :style="`width:${formWidth}px`"/>
+      <Input
+        v-model="form.summarize"
+        type="textarea"
+        :rows="4"
+        :maxlength="200"
+        :style="`width:${formWidth}px`"
+      />
     </FormItem>
     <FormItem prop="timeEvaluation" label="项目预估总耗时：" key="timeEvaluation">
       <InputNumber
@@ -215,9 +226,9 @@ export default {
           endTime: null,
           user: []
         };
-        this.$nextTick(()=>{
+        this.$nextTick(() => {
           this.$refs["form"].resetFields();
-        })
+        });
       }
     }
   },

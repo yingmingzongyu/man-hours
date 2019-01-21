@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 17:58:57
  * @LastEditors: yincheng
- * @LastEditTime: 2019-01-21 10:17:05
+ * @LastEditTime: 2019-01-21 10:58:50
  -->
 <template>
   <div>
@@ -169,7 +169,7 @@ export default {
                       size: 18
                     },
                     style: {
-                      float: "right",
+                      float: "right"
                     },
                     on: {
                       click: () => {
@@ -180,12 +180,16 @@ export default {
                       }
                     }
                   }),
-                  h("span", {
-                    style: {
-                      display: 'block',
-                      paddingRight: '24px'
-                    }
-                  }, item.labelName)
+                  h(
+                    "span",
+                    {
+                      style: {
+                        display: "block",
+                        paddingRight: "24px"
+                      }
+                    },
+                    item.labelName
+                  )
                 ]
               )
             );
@@ -209,34 +213,42 @@ export default {
               )
             );
             return h("div", [
-              h("span", {
-                class: "operation-btn",
-                on: {
-                  click: () => {
-                    this.projectType = "edit";
-                    this.editProjectId = params.row.id;
-                    this.$refs["project-form"].getData(params.row.id);
-                    this.modal = true;
+              h(
+                "span",
+                {
+                  class: "operation-btn",
+                  on: {
+                    click: () => {
+                      this.projectType = "edit";
+                      this.editProjectId = params.row.id;
+                      this.$refs["project-form"].getData(params.row.id);
+                      this.modal = true;
+                    }
                   }
-                }
-              }, '编辑'),
-              h("span", {
-                class: "operation-btn",
-                on: {
-                  click: () => {
-                    this.treeLoading = true;
-                    this.phaseProjectId = params.row.id;
-                    this.phaseVisible = true;
-                    this.treeData = [];
-                    const ids = (params.row.phaseId || "")
-                      .split(",")
-                      .filter(Boolean)
-                      .map(item => Number(item));
-                    this.treeData = this.mapPhaseData(this.phaseData, ids);
-                    this.treeLoading = false;
+                },
+                "编辑"
+              ),
+              h(
+                "span",
+                {
+                  class: "operation-btn",
+                  on: {
+                    click: () => {
+                      this.treeLoading = true;
+                      this.phaseProjectId = params.row.id;
+                      this.phaseVisible = true;
+                      this.treeData = [];
+                      const ids = (params.row.phaseId || "")
+                        .split(",")
+                        .filter(Boolean)
+                        .map(item => Number(item));
+                      this.treeData = this.mapPhaseData(this.phaseData, ids);
+                      this.treeLoading = false;
+                    }
                   }
-                }
-              }, '配置'),
+                },
+                "配置"
+              ),
               h(
                 "Dropdown",
                 {
@@ -257,9 +269,13 @@ export default {
                   }
                 },
                 [
-                  h("span", {
-                    class: "operation-btn",
-                  }, '标签'),
+                  h(
+                    "span",
+                    {
+                      class: "operation-btn"
+                    },
+                    "标签"
+                  ),
                   h(
                     "DropdownMenu",
                     {
