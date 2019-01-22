@@ -1,13 +1,20 @@
-<!--角色管理-->
+<!--项目工时统计-->
 <template>
-	<div class="role-manage">
+	<div class="project-time">
 		<Card dis-hover>
 			<p slot="title">
 				<Icon type="ios-search" />查询条件
 			</p>
-			<Form ref="form" :model="form" inline :label-width="120">
-				<FormItem prop="labelName" label="角色名称：">
+			<Form ref="form" :model="form" inline :label-width="80">
+				<FormItem prop="labelName" label="统计时间：">
 					<Input type="text" v-model="form.roleName" placeholder="请输入角色名称" style="width: 180px" />
+				</FormItem>
+				<br />
+				<FormItem prop="labelName" label="项目名称：">
+					<Input type="text" v-model="form.roleName" placeholder="请输入项目名称" style="width: 180px" />
+				</FormItem>
+				<FormItem prop="labelName" label="项目名称：">
+					<Input type="text" v-model="form.roleName" placeholder="请输入项目名称" style="width: 180px" />
 				</FormItem>
 			</Form>
 		</Card>
@@ -20,59 +27,8 @@
 					<Button type="primary" @click="openDialog('add')">新增</Button>
 				</div>
 			</div>
-			<Table :columns="table.columns" :data="table.data" :loading="table.loading"></Table>
+			<Table :columns="table.columns" :data="table.data"></Table>
 		</Card>
-		
-		<!--新增弹窗-->
-		<Modal v-model="addDialog.show" title="新增角色" :loading="true" class-name="role-add-dialog" :mask-closable="false">
-      		<div slot="footer">
-        		<Button @click="save" type="info" :loading="addDialog.submitLoading">保存</Button>
-      		</div>
-      		<Tabs value="name1">
-        		<TabPane label="基本信息" name="name1">
-        			<Form ref="addDialog" :model="addDialog.form" inline :label-width="130" :rules="addDialog.ruleValidate">
-						<FormItem prop="roleName" label="角色名称：">
-							<Input type="text" v-model="addDialog.form.roleName" placeholder="请输入角色名称" style="width: 250px" />
-						</FormItem>
-						<FormItem prop="description" label="描述：">
-							<Input type="textarea" v-model="addDialog.form.description" placeholder="请输入描述" style="width: 250px" />
-						</FormItem>
-					</Form>
-        		</TabPane>
-    		</Tabs>
-    	</Modal>
-		
-		<!--编辑弹窗-->
-		<Modal v-model="editDialog.show" title="编辑角色" :loading="true" class-name="role-edit-dialog" :mask-closable="false">
-      		<div slot="footer">
-        		<Button @click="submit" type="info" :loading="editDialog.submitLoading">保存</Button>
-      		</div>
-      		<Tabs value="name1" ref="tabs">
-      			<!--基本信息-->
-        		<TabPane label="基本信息" name="name1">
-        			<Form ref="editDialog" :model="editDialog.form" inline :label-width="130" :rules="editDialog.ruleValidate">
-						<FormItem prop="roleName" label="角色名称：">
-							<Input type="text" v-model="editDialog.form.roleName" style="width: 250px" disabled/>
-						</FormItem>
-						<FormItem prop="description" label="描述：">
-							<Input type="textarea" v-model="editDialog.form.description" placeholder="请输入描述" style="width: 250px" />
-						</FormItem>
-					</Form>
-        		</TabPane>
-        		<!--权限设置-->
-        		<TabPane label="权限设置" name="name2">
-        			 <Tree ref="tree" :data="editDialog.treeData" show-checkbox></Tree>
-        		</TabPane>
-        		<!--人员信息-->
-        		<TabPane label="人员信息" name="name3">
-        			<Button type="primary" style="margin: 0 10px 10px 3px;" @click="deletePerson">删除</Button>
-					<Button type="primary" style="margin: 0 10px 10px 0;" @click="openPeopleDialog">新增</Button>
-					<Table height="255" style="margin-left: 3px;" :columns="editDialog.columns" :data="editDialog.personList" @on-selection-change="onSelectionChange"></Table>
-        		</TabPane>
-    		</Tabs>
-    	</Modal>
-    	
-    	<person-check ref="personCheck" @selectPersonHandler="selectPersonHandler" :defaultSelect="editDialog.personList"></person-check>
 	</div>
 </template>
 
@@ -122,8 +78,7 @@
 							}
 						}
 					],
-					data: [],
-					loading: false
+					data: []
 				},
 				// 新增
 				addDialog: {
@@ -162,13 +117,11 @@
 						{ title: "用户名", key: "userName" }
 	                ],
 	                personList: [],
-	                selection: []
+	                selection: [],
+	                personDialogShow: false
 				}
 			};
 		},
-		mounted() {
-    		this.query();
-  		},
 		methods: {
 			// 查询
 			query() {
@@ -177,14 +130,10 @@
 					pageNum: this.table.pageNum,
 					pageSize: this.table.pageSize
 				};
-				this.table.loading = true;
 				getRole(data).then(res => {
         			if(res.data.status === 200) {
           				this.table.data = res.data.data;
-        			} else {
-        				this.table.data = [];
         			}
-        			this.table.loading = false;
       			})
 			},
 			// 删除
@@ -310,9 +259,11 @@
 		   	// 打开人员弹窗
 			openPeopleDialog() {
 				const self = this;
+				this.editDialog.personDialogShow = true;
 				setTimeout(function() {
 					self.$refs.personCheck.open();
 				},100)
+//				this.$refs.personCheck.open();
 			},
 			// 选择人员弹窗回调
 			selectPersonHandler(data) {
@@ -323,27 +274,17 @@
 				})
 				this.editDialog.personList = data;
 			}
-		}
+		},
+		mounted() {
+    		this.query();
+  		}
 	};
 </script>
 
 <style lang="less">
-	.role-manage {
+	.project-time {
 		button {
 			margin-top: -5px; margin-left: 4px;
-		}
-	}
-	.role-add-dialog {
-		textarea.ivu-input {
-			height: 180px; resize: none;
-		}
-	}
-	.role-edit-dialog {
-		.ivu-tabs-tabpane {
-			height: 310px; overflow: auto;
-		}
-		textarea.ivu-input {
-			height: 180px; resize: none;
 		}
 	}
 </style>

@@ -28,13 +28,13 @@
 						<Button type="primary" @click="changeOpenFlag(0)">启用</Button>
 					</div>
 				</div>
-				<Table :columns="table.columns" :data="table.data" @on-selection-change="onSelectionChange"></Table>
+				<Table :columns="table.columns" :data="table.data" :loading="table.loading" @on-selection-change="onSelectionChange"></Table>
 				<br>
 				<Page show-total :total="table.total" :current.sync="table.pageNum" show-sizer show-elevator @on-change="pageChange" @on-page-size-change="pageSizeChange" />
 			</Card>
 			
 			<!--新增、编辑弹窗-->
-			<Modal v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增部门':'编辑部门'" :loading="true" class-name="department-dialog" draggable>
+			<Modal v-model="addEditDialog.show" :title="addEditDialog.type=='add'?'新增部门':'编辑部门'" :loading="true" class-name="department-dialog" :mask-closable="false">
 	      		<div slot="footer">
 	        		<Button @click="submit" type="info" :loading="addEditDialog.submitLoading">保存</Button>
 	      		</div>
@@ -113,7 +113,8 @@
 					total: 0,
 					pageNum: 1,
 					pageSize: 10,
-					selection: []
+					selection: [],
+					loading: false
 				},
 				addEditDialog: {
 					show: false,
@@ -158,7 +159,6 @@
 		    			if(type == 'init') {
 		    				// 初始化时，停留在最大的节点
 		    				syncValue(this.form, this.tree.data[0]);
-		    				console.log(this.tree.data)
 		    				this.query();
 		    			} else if(type == 1) {
 		    				// 各种操作时，停留在当前节点，并且当前页置为1
@@ -204,6 +204,7 @@
         			pageNum: this.table.pageNum,
         			pageSize: this.table.pageSize
       			}
+				this.table.loading = true;
       			getDepartmentTable(params).then(res => {
       				if(res.data.status == 200) {
       					this.table.data = res.data.data.list;
@@ -212,6 +213,7 @@
       					this.table.data = [];
         				this.table.total = 0;
       				}
+      				this.table.loading = false;
       			})
 			},
 			// 翻页
@@ -362,7 +364,7 @@
 	}
 	.department-dialog {
 		textarea.ivu-input {
-			height: 210px; resize: none;
+			height: 180px; resize: none;
 		}
 	}
 </style>
