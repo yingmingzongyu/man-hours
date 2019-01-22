@@ -6,7 +6,12 @@
       </p>
       <Form ref="form" :model="form" inline :label-width="120">
         <FormItem prop="date" label="统计时间：">
-          <DatePicker v-model="form.date" type="daterange" :options="dateOptions" style="width: 200px"></DatePicker>
+          <DatePicker
+            v-model="form.date"
+            type="daterange"
+            :options="dateOptions"
+            style="width: 200px"
+          ></DatePicker>
         </FormItem>
         <FormItem prop="organizationName" label="部门：">
           <Input
@@ -35,8 +40,14 @@
       </div>
       <Table :columns="columns" :data="tableData.list" :loading="tableLoading">
         <template slot-scope="{ row }" slot="action">
-            <Button type="text" size="small" icon="ios-search" style="margin-right: 5px" @click="goToDetail(row)"></Button>
-            <Button type="text" size="small" icon="ios-search" @click="goToStatistic(row)"></Button>
+          <Button
+            type="text"
+            size="small"
+            icon="ios-search"
+            style="margin-right: 5px"
+            @click="goToDetail(row)"
+          ></Button>
+          <Button type="text" size="small" icon="ios-search" @click="goToStatistic(row)"></Button>
         </template>
       </Table>
       <br>
@@ -127,7 +138,7 @@ export default {
           title: "操作",
           key: "action",
           slot: "action",
-          align: "center",
+          align: "center"
         }
       ],
       selectedOrganizeId: null,
@@ -160,6 +171,7 @@ export default {
         const data = [];
         for (let i = 1; i <= 20; i++) {
           data.push({
+            id: i,
             loginName: "test123" + i,
             userName: "刘德华" + i,
             part: "部门" + i,
@@ -184,20 +196,24 @@ export default {
       this.query();
     },
     goToDetail(data) {
-      console.log(data)
+      console.log(data);
+      //前往详情页
     },
     goToStatistic(data) {
-      console.log(data)
-    },
+      console.log(data);
+      //前往分析页
+    }
   },
   created() {
     this.query();
   }
 };
 </script>
-<style scoped>
-button {
-  margin-top: -5px;
-  margin-left: 4px;
+<style lang="less">
+.btn-group {
+  button {
+    margin-top: -6px;
+    margin-left: 4px;
+  }
 }
 </style>
