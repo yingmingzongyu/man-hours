@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-22 17:26:15
+ * @LastEditTime: 2019-01-22 17:45:30
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -151,6 +151,7 @@ export default {
             title: "操作",
             key: "operate",
             align: "center",
+            width: 230,
             render: (h, params) => {
               return h("div", [
                 h("span", {

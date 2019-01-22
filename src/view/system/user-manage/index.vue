@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: Zero
  * @Date: 2019-01-16 10:29:42
- * @LastEditTime: 2019-01-22 17:27:01
+ * @LastEditTime: 2019-01-22 17:44:40
  * @LastEditors: Please set LastEditors
  -->
 <!--用户管理-->
@@ -141,7 +141,8 @@
           </Form>
         </TabPane>
         <TabPane label="角色" name="roles" >
-          <Table :columns="addEditDialog.columns" ref='roleTable' :data="addEditDialog.data" @on-selection-change="onSelectionRole" size="small" height="380" ></Table>
+          <Table :columns="addEditDialog.columns" ref='roleTable' :data="addEditDialog.data" @on-selection-change="onSelectionRole" size="small" height="380" >
+          </Table>
         </TabPane>
       </Tabs>
     </Modal>
@@ -215,9 +216,9 @@ export default {
             title: "操作",
             key: "handle",
             align: "center",
-            width: 120,
+            width: 180,
             render: (h, params) => {
-              return h("div", [
+              return h("div",[
                 h(
                   "span",
                   {
