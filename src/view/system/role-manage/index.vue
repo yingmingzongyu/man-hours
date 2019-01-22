@@ -5,7 +5,7 @@
 			<p slot="title">
 				<Icon type="ios-search" />查询条件
 			</p>
-			<Form ref="form" :model="form" inline :label-width="80">
+			<Form ref="form" :model="form" inline :label-width="120">
 				<FormItem prop="labelName" label="角色名称：">
 					<Input type="text" v-model="form.roleName" placeholder="请输入角色名称" style="width: 180px" />
 				</FormItem>
@@ -20,11 +20,11 @@
 					<Button type="primary" @click="openDialog('add')">新增</Button>
 				</div>
 			</div>
-			<Table :columns="table.columns" :data="table.data"></Table>
+			<Table :columns="table.columns" :data="table.data" :loading="table.loading"></Table>
 		</Card>
 		
 		<!--新增弹窗-->
-		<Modal v-model="addDialog.show" title="新增角色" :loading="true" class-name="role-add-dialog">
+		<Modal v-model="addDialog.show" title="新增角色" :loading="true" class-name="role-add-dialog" :mask-closable="false">
       		<div slot="footer">
         		<Button @click="save" type="info" :loading="addDialog.submitLoading">保存</Button>
       		</div>
@@ -43,7 +43,7 @@
     	</Modal>
 		
 		<!--编辑弹窗-->
-		<Modal v-model="editDialog.show" title="编辑角色" :loading="true" class-name="role-edit-dialog">
+		<Modal v-model="editDialog.show" title="编辑角色" :loading="true" class-name="role-edit-dialog" :mask-closable="false">
       		<div slot="footer">
         		<Button @click="submit" type="info" :loading="editDialog.submitLoading">保存</Button>
       		</div>
@@ -72,7 +72,7 @@
     		</Tabs>
     	</Modal>
     	
-    	<person-check ref="personCheck" v-if="editDialog.personDialogShow" @selectPersonHandler="selectPersonHandler" :defaultSelect="editDialog.personList"></person-check>
+    	<person-check ref="personCheck" @selectPersonHandler="selectPersonHandler" :defaultSelect="editDialog.personList"></person-check>
 	</div>
 </template>
 
@@ -122,7 +122,8 @@
 							}
 						}
 					],
-					data: []
+					data: [],
+					loading: false
 				},
 				// 新增
 				addDialog: {
@@ -161,11 +162,13 @@
 						{ title: "用户名", key: "userName" }
 	                ],
 	                personList: [],
-	                selection: [],
-	                personDialogShow: false
+	                selection: []
 				}
 			};
 		},
+		mounted() {
+    		this.query();
+  		},
 		methods: {
 			// 查询
 			query() {
@@ -174,10 +177,14 @@
 					pageNum: this.table.pageNum,
 					pageSize: this.table.pageSize
 				};
+				this.table.loading = true;
 				getRole(data).then(res => {
         			if(res.data.status === 200) {
           				this.table.data = res.data.data;
+        			} else {
+        				this.table.data = [];
         			}
+        			this.table.loading = false;
       			})
 			},
 			// 删除
@@ -303,11 +310,9 @@
 		   	// 打开人员弹窗
 			openPeopleDialog() {
 				const self = this;
-				this.editDialog.personDialogShow = true;
 				setTimeout(function() {
 					self.$refs.personCheck.open();
 				},100)
-//				this.$refs.personCheck.open();
 			},
 			// 选择人员弹窗回调
 			selectPersonHandler(data) {
@@ -318,10 +323,7 @@
 				})
 				this.editDialog.personList = data;
 			}
-		},
-		mounted() {
-    		this.query();
-  		}
+		}
 	};
 </script>
 
@@ -333,15 +335,15 @@
 	}
 	.role-add-dialog {
 		textarea.ivu-input {
-			height: 210px; resize: none;
+			height: 180px; resize: none;
 		}
 	}
 	.role-edit-dialog {
 		.ivu-tabs-tabpane {
-			height: 300px; overflow: auto;
+			height: 310px; overflow: auto;
 		}
 		textarea.ivu-input {
-			height: 210px; resize: none;
+			height: 180px; resize: none;
 		}
 	}
 </style>
