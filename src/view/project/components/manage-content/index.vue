@@ -148,7 +148,7 @@ export default {
         },
         {
           title: "操作",
-          key: "address",
+          key: "action",
           align: "center",
           render: (h, params) => {
             const DropdownItems = params.row.labelList.map(item =>
@@ -348,7 +348,7 @@ export default {
         }
       });
     },
-    pageChange(pageNum) {
+    pageChange() {
       this.query();
     },
     pageSizeChange(pageSize) {
