@@ -1,8 +1,8 @@
 /*
  * @Author: yincheng
  * @Date: 2019-01-10 10:12:27
- * @LastEditors: yincheng
- * @LastEditTime: 2019-01-17 18:15:29
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2019-01-22 10:40:49
  */
 import Main from '@/components/main'
 import parentView from '@/components/parent-view'
@@ -207,6 +207,24 @@ export default [
           title: '用户管理'
         },
         component: () => import('@/view/system/user-manage/index.vue'),
+      },
+    ]
+  },{
+    path: '/statistic',
+    name: 'statistic',
+    component: Main,
+    meta: {
+      icon: 'logo-buffer',
+      title: '统计分析'
+    },
+    children:[
+      {
+        path: 'detail',
+        name: 'detail',
+        meta: {
+          title: '用户管理'
+        },
+        component: () => import('@/view/statistic/components/statistic-detail.vue'),
       },
     ]
   },
