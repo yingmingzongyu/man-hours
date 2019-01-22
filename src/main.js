@@ -27,8 +27,6 @@ Vue.use(iView, {
 })
 Vue.use(TreeTable)
 Vue.use(VOrgTree)
-// 按需引入echars
-require('echarts/lib/chart/line')
 /**
  * @description 注册admin内置插件
  */
