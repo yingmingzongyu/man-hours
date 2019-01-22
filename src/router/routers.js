@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 10:12:27
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-01-22 10:40:49
+ * @LastEditTime: 2019-01-22 11:00:24
  */
 import Main from '@/components/main'
 import parentView from '@/components/parent-view'
@@ -222,7 +222,7 @@ export default [
         path: 'detail',
         name: 'detail',
         meta: {
-          title: '用户管理'
+          title: '项目工时详情'
         },
         component: () => import('@/view/statistic/components/statistic-detail.vue'),
       },
