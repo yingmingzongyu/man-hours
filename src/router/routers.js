@@ -56,6 +56,24 @@ export default [
     ]
   },
   {
+    path: '/user-center',
+    name: 'user-center',
+    component: Main,
+    meta: {
+      hideInBread: true
+    },
+    children: [
+      {
+        path: 'personalInfo',
+        name: 'personalInfo',
+        meta: {
+          title: '个人信息'
+        },
+        component: () => import('@/view/user-center/personal-info.vue')
+      }
+    ]
+  },
+  {
     path: '/project',
     name: 'project',
     component: Main,
