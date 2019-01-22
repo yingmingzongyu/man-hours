@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-21 13:23:16
+ * @LastEditTime: 2019-01-22 17:26:15
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -16,7 +16,7 @@
           <p slot="title">
             当前分类信息
           </p>
-          <Form ref="form" :model="form.params" inline :label-width="80">
+          <Form ref="form" :model="form.params" inline :label-width="100">
             <FormItem  label="上级菜单：">
               {{tree.selectNode.parentNode?tree.selectNode.parentNode.title:'暂无'}}
             </FormItem>

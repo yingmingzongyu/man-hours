@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: Zero
  * @Date: 2019-01-16 10:29:42
- * @LastEditTime: 2019-01-22 13:11:21
+ * @LastEditTime: 2019-01-22 17:27:01
  * @LastEditors: Please set LastEditors
  -->
 <!--用户管理-->
@@ -12,7 +12,7 @@
       <p slot="title">
         <Icon type="ios-search"/>查询条件
       </p>
-      <Form ref="searchForm" :model="form.params" inline :label-width="80">
+      <Form ref="searchForm" :model="form.params" inline :label-width="100">
         <FormItem prop="userCode" label="工号：">
           <Input type="text" v-model="form.params.userCode" placeholder="请输入工号" style="width: 180px"/>
         </FormItem>
