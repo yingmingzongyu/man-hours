@@ -1,6 +1,6 @@
 <!--选择多人弹窗-->
 <template>
-	<Modal v-model="show" title="选择多人" :loading="true" width="640px">
+	<Modal v-model="show" title="选择多人" :loading="true" width="640px" :mask-closable="false">
   		<div slot="footer">
     		<Button @click="submit" type="info">保存</Button>
   		</div>
@@ -8,7 +8,7 @@
 			<p slot="title">
 				<Icon type="ios-search" />查询条件
 			</p>
-			<Form ref="form" :model="form" inline :label-width="90" style="margin: 10px 0 -15px 0;">
+			<Form ref="form" :model="form" inline :label-width="80" style="margin: 10px 0 -15px 0;">
         		<FormItem prop="loginName" label="登录ID：">
 					<Input type="text" v-model="form.loginName" placeholder="请输入登录ID" />
 				</FormItem>
@@ -22,20 +22,21 @@
 			<p slot="title"></p>
 			<div slot="extra">
 				<div class="btn-group">
-					<Button type="primary" @click="query">查询</Button>
+					<Button type="primary" @click="search">查询</Button>
 				</div>
 			</div>
-			<Table height="200" ref="multipleTable" :columns="table.columns" :data="table.data" @on-selection-change="onSelectionChange"></Table>
+			<Table height="220" :loading="table.loading" :columns="table.columns" :data="table.data" @on-selection-change="onSelectionChange"></Table>
 			<br>
-			<Page show-total :total="table.total" :current.sync="table.pageNum" show-sizer show-elevator @on-change="pageChange" @on-page-size-change="pageSizeChange" />
+			<Page show-total :total="table.total" :current.sync="params.pageNum" show-sizer show-elevator @on-change="pageChange" @on-page-size-change="pageSizeChange" />
 		</Card>
 	</Modal>
 </template>
 
 <script>
 	import { querySystemUser } from "@/api/user.js";
+	import { syncValue } from '@/libs/util.js';
 	export default {
-		props:[ 'defaultSelect' ],
+		props: [ 'defaultSelect' ],
 		data() {
             return {
             	show: false,
@@ -52,35 +53,35 @@
             		],
             		data: [],
             		total: 0,
+            		selection: [],
+            		loading: false
+            	},
+            	selectedAll: [],	// 二维数组，【0】：全部数据，【1】：当前页数据，【2】：剩下页的数据
+            	params: {
+            		userName: "",
+            		loginName: "",
             		pageSize: 10,
             		pageNum: 1,
-            		selection: []
-            	},
-            	selectedAll: [],
+            	}
             }
       	},
-      	mounted() {
-            this.init();
-    	},
+      	mounted() { },
     	methods: {
-    		init() {
-    			this.selectedAll[0] = this.defaultSelect;
-    			this.query('init');
-    		},
     		// 打开弹窗
     		open() {
     			this.show = true;
+    			this.$refs['form'].resetFields();
+    			syncValue(this.params, this.form);
+    			this.params.pageNum = 1;
+    			this.selectedAll[0] = this.defaultSelect;
+    			this.query('init');
     		},
-    		// 查询
+    		// 请求数据
     		query(v) {
     			v !== 'init' && this.mergeCheckedData();
     			
-    			let data = {
-					...this.form,
-					pageNum: this.table.pageNum,
-					pageSize: this.table.pageSize
-				};
-				querySystemUser(data).then(res => {
+    			this.table.loading = true;
+				querySystemUser(this.params).then(res => {
         			if(res.data.status === 200) {
         				this.table.data = res.data.data.list;
 						this.table.total = res.data.data.total;
@@ -93,9 +94,6 @@
 									flag = false;
 									item2['_checked'] = true;
 									this.selectedAll[1].push(item2);
-//									this.$nextTick( ()=>{
-//										this.$refs.multipleTable.toggleRowSelection(item2);
-//									});
 								}
 							});
 							flag && this.selectedAll[2].push(item1);
@@ -104,21 +102,27 @@
         				this.table.data = [];
           				this.table.total = 0;
         			}
+        			this.table.loading = false;
       			})
     		},
     		// 合并数据
-        	mergeCheckedData(){
+        	mergeCheckedData() {
 				this.selectedAll[0] = this.selectedAll[1].concat(this.selectedAll[2]);
 				return this.selectedAll[0];
         	},
+        	// 查询
+        	search() {
+        		syncValue(this.params, this.form);
+        		this.query();
+        	},
     		// 翻页
 			pageChange(v) {
-				this.table.pageNum = v;
+				this.params.pageNum = v;
 				this.query();
 			},
 			// 页面大小切换
 			pageSizeChange(v) {
-				this.table.pageSize = v;
+				this.params.pageSize = v;
 				this.query();
 			},
     		// 表格勾选数据
@@ -127,8 +131,8 @@
     		},
     		// 保存
     		submit() {
-    			this.$emit('selectPersonHandler',this.mergeCheckedData());
-    			this.show = false;
+      			this.$emit('selectPersonHandler',this.mergeCheckedData());
+      			this.show = false;
     		}
     	}
 	}
