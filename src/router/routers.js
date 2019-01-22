@@ -219,6 +219,22 @@ export default [
     },
     children:[
       {
+        path: "project-statistic",
+        name: "project-statistic",
+        meta: {
+          title: '项目工时统计'
+        },
+        component: () => import('@/view/statistic/project-statistic')
+      },
+      {
+        path: "man-statistic",
+        name: "man-statistic",
+        meta: {
+          title: '人员工时统计'
+        },
+        component: () => import('@/view/statistic/man-statistic')
+      },
+      {
         path: 'detail',
         name: 'detail',
         meta: {

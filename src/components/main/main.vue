@@ -140,165 +140,188 @@ export default {
     ...mapActions(["handleLogin"]),
     getMenu() {
       this.menuList = [
-          {
-            icon: "ios-construct",
-            name: "system",
-            meta: {
-              title: "系统管理"
-            },
-            children:[
-              {
-                icon: "ios-construct",
-                name: "department",
-                meta: {
-                  icon: "ios-construct",
-                  title: "部门管理"
-                },
-              },
-              {
-                icon: "ios-construct",
-                name: "role",
-                meta: {
-                  icon: "ios-construct",
-                  title: "角色管理"
-                },
-              },
-              {
-                icon: "ios-construct",
-                name: "user",
-                meta: {
-                  icon: "ios-construct",
-                  title: "用户管理"
-                },
-              },
-              {
-                icon: "ios-construct",
-                name: "menu",
-                meta: {
-                  icon: "ios-construct",
-                  title: "菜单管理"
-                },
-              },
-            ]
+        {
+          icon: "ios-construct",
+          name: "system",
+          meta: {
+            title: "系统管理"
           },
-          { 
-            icon: "ios-construct",
-            name: "project",
-            meta: {
-              title: "项目管理"
-            },
-            children: [
-              {
+          children: [
+            {
+              icon: "ios-construct",
+              name: "department",
+              meta: {
                 icon: "ios-construct",
-                name: "software-development",
-                meta: {
-                  icon: "ios-construct",
-                  title: "软件开发"
-                },
-                children: [
-                  {
-                    icon: "ios-construct",
-                    name: "product-manage",
-                    meta: {
-                      icon: "ios-construct",
-                      title: "软件产品管理"
-                    }
-                  },
-                  {
-                    icon: "ios-construct",
-                    name: "project-manage",
-                    meta: {
-                      icon: "ios-construct",
-                      title: "软件项目管理"
-                    }
-                  }
-                ]
-              },
-              {
-                icon: "ios-construct",
-                name: "project-construction",
-                meta: {
-                  icon: "ios-construct",
-                  title: "项目施工"
-                },
-                children: [
-                  {
-                    icon: "ios-construct",
-                    name: "intelligentize",
-                    meta: {
-                      icon: "ios-construct",
-                      title: "智能化项目管理"
-                    }
-                  },
-                  {
-                    icon: "ios-construct",
-                    name: "integration",
-                    meta: {
-                      icon: "ios-construct",
-                      title: "系统集成项目管理"
-                    }
-                  },
-                  {
-                    icon: "ios-construct",
-                    name: "multimedia",
-                    meta: {
-                      icon: "ios-construct",
-                      title: "多媒体项目管理"
-                    }
-                  },
-                  {
-                    icon: "ios-construct",
-                    name: "ops",
-                    meta: {
-                      icon: "ios-construct",
-                      title: "运维服务项目管理"
-                    }
-                  }
-                ]
-              },
-              {
-                icon: "ios-construct",
-                name: "train-study",
-                meta: {
-                  icon: "ios-construct",
-                  title: "学习培训"
-                },
-                children: [
-                  {
-                    icon: "ios-construct",
-                    name: "internal",
-                    meta: {
-                      icon: "ios-construct",
-                      title: "内部培训"
-                    }
-                  },
-                  {
-                    icon: "ios-construct",
-                    name: "external",
-                    meta: {
-                      icon: "ios-construct",
-                      title: "外部培训"
-                    }
-                  }
-                ]
-              },
-              {
-                icon: "ios-construct",
-                name: "label-manage",
-                meta: {
-                  icon: "ios-construct",
-                  title: "标签管理"
-                }
+                title: "部门管理"
               }
-            ]
-          }
-        ];
+            },
+            {
+              icon: "ios-construct",
+              name: "role",
+              meta: {
+                icon: "ios-construct",
+                title: "角色管理"
+              }
+            },
+            {
+              icon: "ios-construct",
+              name: "user",
+              meta: {
+                icon: "ios-construct",
+                title: "用户管理"
+              }
+            },
+            {
+              icon: "ios-construct",
+              name: "menu",
+              meta: {
+                icon: "ios-construct",
+                title: "菜单管理"
+              }
+            }
+          ]
+        },
+        {
+          icon: "ios-construct",
+          name: "project",
+          meta: {
+            title: "项目管理"
+          },
+          children: [
+            {
+              icon: "ios-construct",
+              name: "software-development",
+              meta: {
+                icon: "ios-construct",
+                title: "软件开发"
+              },
+              children: [
+                {
+                  icon: "ios-construct",
+                  name: "product-manage",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "软件产品管理"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "project-manage",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "软件项目管理"
+                  }
+                }
+              ]
+            },
+            {
+              icon: "ios-construct",
+              name: "project-construction",
+              meta: {
+                icon: "ios-construct",
+                title: "项目施工"
+              },
+              children: [
+                {
+                  icon: "ios-construct",
+                  name: "intelligentize",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "智能化项目管理"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "integration",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "系统集成项目管理"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "multimedia",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "多媒体项目管理"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "ops",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "运维服务项目管理"
+                  }
+                }
+              ]
+            },
+            {
+              icon: "ios-construct",
+              name: "train-study",
+              meta: {
+                icon: "ios-construct",
+                title: "学习培训"
+              },
+              children: [
+                {
+                  icon: "ios-construct",
+                  name: "internal",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "内部培训"
+                  }
+                },
+                {
+                  icon: "ios-construct",
+                  name: "external",
+                  meta: {
+                    icon: "ios-construct",
+                    title: "外部培训"
+                  }
+                }
+              ]
+            },
+            {
+              icon: "ios-construct",
+              name: "label-manage",
+              meta: {
+                icon: "ios-construct",
+                title: "标签管理"
+              }
+            }
+          ]
+        },
+        {
+          icon: "ios-construct",
+          name: "statistic",
+          meta: {
+            title: "统计分析"
+          },
+          children: [
+            {
+              icon: "ios-construct",
+              name: "project-statistic",
+              meta: {
+                icon: "ios-construct",
+                title: "项目工时统计"
+              }
+            },
+            {
+              icon: "ios-construct",
+              name: "man-statistic",
+              meta: {
+                icon: "ios-construct",
+                title: "人员工时统计"
+              }
+            }
+          ]
+        }
+      ];
       getSlideMenu().then(res => {
         // 格式化返回数据
         // const data = res.data.data.top;
-
         // this.menuList = formatMenuList(data);
-        
       });
     },
     turnToPage(route) {
