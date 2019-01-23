@@ -79,7 +79,7 @@
     		// 请求数据
     		query(v) {
     			v !== 'init' && this.mergeCheckedData();
-    			
+
     			this.table.loading = true;
 				querySystemUser(this.params).then(res => {
         			if(res.data.status === 200) {
