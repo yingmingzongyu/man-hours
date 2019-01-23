@@ -22,10 +22,8 @@ export default {
   methods: {
     resize () {
       this.dom.resize()
-    }
-  },
-  mounted () {
-    this.$nextTick(() => {
+    },
+    setOption() {
       let xAxisData = Object.keys(this.value)
       let seriesData = Object.values(this.value)
       let option = {
@@ -46,8 +44,25 @@ export default {
           type: 'bar'
         }]
       }
-      this.dom = echarts.init(this.$refs.dom, 'tdTheme')
       this.dom.setOption(option)
+    }
+  },
+  watch: {
+    value: {
+      handler(){
+        this.setOption()
+      },
+      deep: true
+    },
+    subtext() {
+      console.log(this.subtext)
+      this.setOption()
+    }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.dom = echarts.init(this.$refs.dom, 'tdTheme')
+      this.setOption()
       on(window, 'resize', this.resize)
     })
   },
