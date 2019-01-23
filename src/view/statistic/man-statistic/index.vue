@@ -61,21 +61,26 @@
         @on-page-size-change="pageSizeChange"
       />
     </Card>
-    <OrganizeTree v-model="organizeVisible" :data="form.organizeId" @submit="setOrganize"/>
+    <OrganizeTree v-model="organizeVisible" :data="form.organizationId" @submit="setOrganize"/>
   </div>
 </template>
 <script>
 import OrganizeTree from "@/components/organize-tree";
+import { getManHourStatistics } from "@/api/statistic";
+import { formatTime } from "@/libs/util";
 export default {
   components: {
     OrganizeTree
   },
   data() {
+    const end = new Date();
+    const start = new Date();
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
     return {
       form: {
-        date: [],
+        date: [start, end],
         organizationName: null,
-        organizeId: null,
+        organizationId: null,
         userName: null
       },
       dateOptions: {
@@ -112,7 +117,7 @@ export default {
       columns: [
         {
           title: "用户ID",
-          key: "loginName"
+          key: "userId"
         },
         {
           title: "人员姓名",
@@ -120,19 +125,19 @@ export default {
         },
         {
           title: "部门",
-          key: "part"
+          key: "organizationName"
         },
         {
           title: "参与项目数量",
-          key: "projectNumber"
+          key: "involvedProjectTotal"
         },
         {
           title: "总工作时间(h)",
-          key: "worktTime"
+          key: "workTimeTotal"
         },
         {
           title: "完成打卡天数",
-          key: "day"
+          key: "punchTotal"
         },
         {
           title: "操作",
@@ -141,7 +146,6 @@ export default {
           align: "center"
         }
       ],
-      selectedOrganizeId: null,
       organizeVisible: false,
       tableData: {
         list: [],
@@ -157,36 +161,35 @@ export default {
     },
     setOrganize(data) {
       if (data.id) {
-        this.form.organizeId = data.id;
+        this.form.organizationId = data.id;
         this.form.organizationName = data.organizationName;
       }
     },
     reset() {
       this.$refs["form"].resetFields();
+      this.form.organizationId = null
     },
     query() {
       //query
       this.tableLoading = true;
-      setTimeout(() => {
-        const data = [];
-        for (let i = 1; i <= 20; i++) {
-          data.push({
-            id: i,
-            loginName: "test123" + i,
-            userName: "刘德华" + i,
-            part: "部门" + i,
-            projectNumber: i,
-            worktTime: i,
-            day: i
-          });
+      const { organizationId, date, userName } = this.form;
+      const { pageNum, pageSize } = this.tableData
+      const params = {
+        organizationId,
+        startTime: formatTime(date[0]),
+        endTime: formatTime(date[1]),
+        userName,
+        pageNum,
+        pageSize
+      }
+      console.log(params)
+      getManHourStatistics(params).then(res => {
+        if (res.data.status === 200) {
+          console.log(res)
+          this.tableData = res.data.data;
         }
-        this.tableData = {
-          list: data,
-          total: 99,
-          pageNum: 1
-        };
         this.tableLoading = false;
-      }, 1000);
+      });
     },
     pageChange() {
       this.query();
@@ -198,10 +201,22 @@ export default {
     goToDetail(data) {
       console.log(data);
       //前往详情页
+      this.$router.push({
+        path: "/statistic/man-detail",
+        query: {
+          id: data.userId
+        }
+      });
     },
     goToStatistic(data) {
-      console.log(data);
       //前往分析页
+      this.$router.push({
+        path: "/statistic/work-statistic",
+        query: {
+          id: data.id,
+          userName: data.userName
+        }
+      });
     }
   },
   created() {

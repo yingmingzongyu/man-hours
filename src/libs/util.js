@@ -3,6 +3,7 @@ import Cookies from 'js-cookie'
 import config from '@/config'
 import { forEach, hasOneOf, objEqual } from '@/libs/tools'
 const { title, cookieExpires, useI18n } = config
+import dayjs from 'dayjs'
 
 export const TOKEN_KEY = 'token'
 
@@ -449,7 +450,7 @@ export const setTitle = (routeItem, vm) => {
   window.document.title = resTitle
 }
 
-/**	
+/**
  * syncValue 同步对象的源数据到目标对象
  * @param {targetObj} 目标对象
  * @param {sourceObj} 源对象
@@ -462,11 +463,19 @@ export const syncValue = (targetObj, sourceObj) => {
 	}
 }
 
-/**	
+/**
  * syncValue 深拷贝
  * @param {obj} 对象
  */
 export const deepCopy = (obj) => {
 	var str = JSON.stringify(obj);
 	return JSON.parse(str);
+}
+
+export const formatTime = (date, format = 'YYYY-MM-DD') => {
+  if(date) {
+    return dayjs(date).format(format)
+  }else{
+    return ''
+  }
 }

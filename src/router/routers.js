@@ -253,6 +253,22 @@ export default [
         component: () => import('@/view/statistic/man-statistic')
       },
       {
+        path: "man-detail",
+        name: "man-detail",
+        meta: {
+          title: '人员工时详情'
+        },
+        component: () => import('@/view/statistic/man-statistic/detail')
+      },
+      {
+        path: "work-statistic",
+        name: "work-statistic",
+        meta: {
+          title: '人员工作统计'
+        },
+        component: () => import('@/view/statistic/man-statistic/work-statistic')
+      },
+      {
         path: 'detail',
         name: 'detail',
         meta: {

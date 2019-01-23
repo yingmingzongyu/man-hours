@@ -55,6 +55,7 @@ export const projectDetails = () => {
 export const queryDetails = req => {
   let list = []
   req = JSON.parse(req.body) || {}
+  console.log(req)
   doCustomTimes(req.pageSize || 10, () => {
     list.push(Mock.mock({
       "projectNumber|1-300000": 300000,
