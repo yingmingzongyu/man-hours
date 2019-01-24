@@ -117,7 +117,7 @@ class HttpRequest {
     options.url = checkUrl(options.url)
     const instance = axios.create()
     options = Object.assign(this.getInsideConfig(), options)
-    this.interceptors(instance, options.url)
+    // this.interceptors(instance, options.url)
     return instance(options)
   }
 }
