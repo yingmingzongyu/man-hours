@@ -5,7 +5,7 @@
       <p slot="title">
         <Icon type="ios-search"/>查询条件
       </p>
-      <Form ref="form" :model="form" inline :label-width="80">
+      <Form ref="form" :model="form" inline :label-width="120">
         <FormItem prop="labelName" label="标签名称：">
           <Input type="text" v-model="form.labelName" placeholder="请输入标签名称" style="width: 180px"/>
         </FormItem>
@@ -16,7 +16,7 @@
       <p slot="title"></p>
       <div slot="extra">
         <div class="btn-group">
-          <Button type="primary" @click="query()">查询</Button>
+          <Button type="primary" @click="query(true)">查询</Button>
         </div>
       </div>
       <Table :columns="columns" :data="tableData.list" :loading="tableLoading"></Table>
@@ -81,11 +81,11 @@ export default {
   },
   methods: {
     // 查询
-    query() {
+    query(first) {
       this.tableLoading = true;
       let data = {
         ...this.form,
-        pageNum: this.tableData.pageNum,
+        pageNum: first ? 1 : this.tableData.pageNum,
         pageSize: this.tableData.pageSize
       };
       getLabel(data).then(res => {

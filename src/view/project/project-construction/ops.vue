@@ -11,6 +11,7 @@
       :tableLoading="tableLoading"
       @query="getData"
       @submitProject="submitProject"
+      :projectType="1"
     />
   </div>
 </template>

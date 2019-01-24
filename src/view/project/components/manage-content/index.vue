@@ -40,7 +40,7 @@
       <div slot="extra">
         <div class="btn-group">
           <Button type="primary" @click="reset">重置</Button>
-          <Button type="primary" @click="query">查询</Button>
+          <Button type="primary" @click="query(1)">查询</Button>
           <Button type="primary" @click="showAdd">新增</Button>
         </div>
       </div>
@@ -56,11 +56,11 @@
         @on-page-size-change="pageSizeChange"
       />
     </Card>
-    <Modal v-model="modal" :title="(projectType ==='add' ? '新增':'编辑')+'项目'">
+    <Modal v-model="modal" :title="(projectModalType ==='add' ? '新增':'编辑')+'项目'">
       <div slot="footer">
         <Button @click="submit" type="info" :loading="submitLoading">提交</Button>
       </div>
-      <ProjectFrom ref="project-form" :type="projectType" :projectId="editProjectId"/>
+      <ProjectFrom ref="project-form" :type="projectModalType" :projectId="editProjectId"/>
     </Modal>
     <Modal v-model="phaseVisible" title="配置阶段可用性">
       <div slot="footer">
@@ -86,9 +86,8 @@ export default {
       required: true,
       default: () => ({})
     },
-    phaseDisable: {
-      type: Boolean,
-      default: false
+    projectType: {
+      type: Number
     }
   },
   components: {
@@ -212,6 +211,29 @@ export default {
                 ]
               )
             );
+            const phaseBtn = this.projectType === 3
+              ? null
+              : h(
+                  "span",
+                  {
+                    class: "operation-btn",
+                    on: {
+                      click: () => {
+                        this.treeLoading = true;
+                        this.phaseProjectId = params.row.id;
+                        this.phaseVisible = true;
+                        this.treeData = [];
+                        const ids = (params.row.phaseId || "")
+                          .split(",")
+                          .filter(Boolean)
+                          .map(item => Number(item));
+                        this.treeData = this.mapPhaseData(this.phaseData, ids);
+                        this.treeLoading = false;
+                      }
+                    }
+                  },
+                  "配置"
+                );
             return h("div", [
               h(
                 "span",
@@ -219,7 +241,7 @@ export default {
                   class: "operation-btn",
                   on: {
                     click: () => {
-                      this.projectType = "edit";
+                      this.projectModalType = "edit";
                       this.editProjectId = params.row.id;
                       this.$refs["project-form"].getData(params.row.id);
                       this.modal = true;
@@ -228,27 +250,7 @@ export default {
                 },
                 "编辑"
               ),
-              h(
-                "span",
-                {
-                  class: "operation-btn",
-                  on: {
-                    click: () => {
-                      this.treeLoading = true;
-                      this.phaseProjectId = params.row.id;
-                      this.phaseVisible = true;
-                      this.treeData = [];
-                      const ids = (params.row.phaseId || "")
-                        .split(",")
-                        .filter(Boolean)
-                        .map(item => Number(item));
-                      this.treeData = this.mapPhaseData(this.phaseData, ids);
-                      this.treeLoading = false;
-                    }
-                  }
-                },
-                "配置"
-              ),
+              phaseBtn,
               h(
                 "Dropdown",
                 {
@@ -290,7 +292,7 @@ export default {
         }
       ],
       modal: false,
-      projectType: "",
+      projectModalType: "",
       submitLoading: false,
       pageNum: this.tableData.pageNum,
       pageSize: this.tableData.pageSize,
@@ -311,20 +313,21 @@ export default {
       this.$refs["form"].resetFields();
     },
     //查询
-    query() {
+    query(page) {
       let data = {
         ...this.form,
-        pageNum: this.pageNum,
+        pageNum: page || this.pageNum,
         pageSize: this.pageSize
       };
       data.startTime = this.formatTime(data.createTime[0]);
       data.endTime = this.formatTime(data.createTime[1]);
       delete data.createTime;
+      console.log(data)
       this.$emit("query", data);
     },
     //显示add
     showAdd() {
-      this.projectType = "add";
+      this.projectModalType = "add";
       this.editProjectId = null;
       this.modal = true;
     },
@@ -334,7 +337,7 @@ export default {
       this.$refs["project-form"].$refs["form"].validate(valid => {
         if (valid) {
           let formData = { ...this.$refs["project-form"].form };
-          formData.type = this.projectType;
+          formData.type = this.projectModalType;
           formData.participants = formData.user.toString();
           delete formData.user;
           formData.startTime = this.formatTime(formData.startTime);
@@ -414,11 +417,12 @@ export default {
     },
     mapPhaseData(data, ids) {
       return data.map(item => {
+        const checked = ids.indexOf(item.id) === -1 ? false : true;
         let itemData = {
           expand: true,
           title: item.phaseName,
           id: item.id,
-          checked: ids.indexOf(item.id) === -1 ? false : true
+          checked
         };
         if (item.childList) {
           itemData.children = this.mapPhaseData(item.childList, ids);
@@ -459,7 +463,9 @@ export default {
     }
   },
   created() {
-    getPhase().then(res => {
+    getPhase({
+      type: this.projectType
+    }).then(res => {
       if (res.data.status === 200) {
         this.phaseData = res.data.data;
       }

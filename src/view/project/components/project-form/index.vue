@@ -54,13 +54,14 @@
         multiple
         filterable
         remote
-        :remote-method="tempRemoteMethod"
+        :remote-method="searchUser"
         :loading="searchUserLoading"
         :style="`width:${formWidth}px`"
         :label="selectLabel"
       >
-        <Option v-for="(option, index) in userList" :value="option.id" :key="index">
-          <span>{{option.userName}}(工号{{option.userCode}})</span>
+        <Option v-for="(option, index) in userList" :value="option.id" :label="option.userName" :key="index">
+          <span>{{option.userName}}</span>
+          <span style="float:right;color:#ccc;padding-right:14px">工号{{option.userCode}}</span>
         </Option>
       </Select>
     </FormItem>
@@ -159,7 +160,6 @@ export default {
       selectLabel: [],
       userModal: false,
       loading: false,
-      tempRemoteMethod: null
     };
   },
   methods: {
@@ -206,7 +206,6 @@ export default {
           );
           this.userList = moreUserList.concat(this.userList);
           formData.user = formData.user.map(item => item.id);
-          this.tempRemoteMethod = this.searchUser;
           this.form = formData;
         }
         this.loading = false;

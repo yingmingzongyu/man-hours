@@ -67,10 +67,11 @@ export const addLabel = data => {
 
 // 树结构
 
-export const getPhase = () => {
+export const getPhase = params => {
   return axios.request({
     url: '/project/phase/query',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
