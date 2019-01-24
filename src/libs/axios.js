@@ -81,6 +81,26 @@ class HttpRequest {
     }, error => {
       this.destroy(url)
       let errorInfo = error.response
+      console.log(errorInfo)
+      if (errorInfo.status !== 200) {
+        switch (errorInfo.status) {
+          case 401:
+          case 403:
+            //删除token
+            store.commit('setUserInfo')
+            window.location.href = '/#/login'
+            break;
+          case 411:
+            window.location.href = '/#/403'
+            break;
+          case 404:
+            window.location.href = '/#/404'
+            break;
+          default:
+            break;
+        }
+        Message.error(errorInfo.message)
+      }
       if (!errorInfo) {
         const { request: { statusText, status }, config } = JSON.parse(JSON.stringify(error))
         errorInfo = {
@@ -97,7 +117,7 @@ class HttpRequest {
     options.url = checkUrl(options.url)
     const instance = axios.create()
     options = Object.assign(this.getInsideConfig(), options)
-    this.interceptors(instance, options.url)
+    // this.interceptors(instance, options.url)
     return instance(options)
   }
 }

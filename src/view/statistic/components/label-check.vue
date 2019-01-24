@@ -1,19 +1,16 @@
-<!--选择多人弹窗-->
+<!--选择标签弹窗(多选)-->
 <template>
-	<Modal v-model="show" title="选择多人" :loading="true" width="640px" :mask-closable="false">
+	<Modal v-model="show" title="选择标签" :loading="true" width="640px" :mask-closable="false">
   		<div slot="footer">
-    		<Button @click="submit" type="info">保存</Button>
+    		<Button @click="submit" type="info">确认</Button>
   		</div>
   		<Card dis-hover>
 			<p slot="title">
 				<Icon type="ios-search" />查询条件
 			</p>
-			<Form ref="form" :model="form" inline :label-width="80" style="margin: 10px 0 -15px 0;">
-        		<FormItem prop="loginName" label="登录ID：">
-					<Input type="text" v-model="form.loginName" placeholder="请输入登录ID" />
-				</FormItem>
-				<FormItem prop="userName" label="用户名：">
-					<Input type="text" v-model="form.userName" placeholder="请输入用户名" />
+			<Form ref="form" :model="form" inline :label-width="100" style="margin: 10px 0 -15px 0;">
+        		<FormItem prop="labelName" label="标签名称：">
+					<Input type="text" v-model="form.labelName" placeholder="请输入标签名称" />
 				</FormItem>
       		</Form>
 		</Card>
@@ -33,7 +30,7 @@
 </template>
 
 <script>
-	import { querySystemUser } from "@/api/user.js";
+	import { getLabel } from "@/api/project";
 	import { syncValue } from '@/libs/util.js';
 	export default {
 		props: [ 'defaultSelect' ],
@@ -41,15 +38,12 @@
             return {
             	show: false,
             	form: {
-            		userName: "",
-            		loginName: "",
+            		labelName: "",
             	},
             	table: {
             		columns: [
             			{ type: 'selection', width: 60, align: 'center' },
-						{ title: "工号", key: "userCode" },
-						{ title: "登录ID", key: "loginName" },
-						{ title: "用户名", key: "userName" },
+						{ title: "标签名称", key: "labelName" }
             		],
             		data: [],
             		total: 0,
@@ -58,8 +52,7 @@
             	},
             	selectedAll: [],	// 二维数组，【0】：全部数据，【1】：当前页数据，【2】：剩下页的数据
             	params: {
-            		userName: "",
-            		loginName: "",
+            		labelName: "",
             		pageSize: 10,
             		pageNum: 1,
             	}
@@ -79,9 +72,9 @@
     		// 请求数据
     		query(v) {
     			v !== 'init' && this.mergeCheckedData();
-
+    			
     			this.table.loading = true;
-				querySystemUser(this.params).then(res => {
+				getLabel(this.params).then(res => {
         			if(res.data.status === 200) {
         				this.table.data = res.data.data.list;
 						this.table.total = res.data.data.total;
@@ -132,7 +125,7 @@
     		},
     		// 保存
     		submit() {
-      			this.$emit('selectPersonHandler',this.mergeCheckedData());
+      			this.$emit('selectLabelHandler',this.mergeCheckedData());
       			this.show = false;
     		}
     	}

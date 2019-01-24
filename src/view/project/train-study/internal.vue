@@ -11,7 +11,7 @@
       :tableLoading="tableLoading"
       @query="getData"
       @submitProject="submitProject"
-      :phaseDisable="true"
+      :projectType="3"
     />
   </div>
 </template>
