@@ -21,7 +21,7 @@
             placeholder="请选择部门"
             style="width: 200px"
             icon="md-apps"
-            @on-click="showOrganize"
+            @click.native="showOrganize"
           />
         </FormItem>
         <FormItem prop="userName" label="人员姓名：">
@@ -35,7 +35,7 @@
       <div slot="extra">
         <div class="btn-group">
           <Button type="primary" @click="reset">重置</Button>
-          <Button type="primary" @click="query">查询</Button>
+          <Button type="primary" @click="query(true)">查询</Button>
         </div>
       </div>
       <Table :columns="columns" :data="tableData.list" :loading="tableLoading">
@@ -169,7 +169,7 @@ export default {
       this.$refs["form"].resetFields();
       this.form.organizationId = null
     },
-    query() {
+    query(page) {
       //query
       this.tableLoading = true;
       const { organizationId, date, userName } = this.form;
@@ -179,7 +179,7 @@ export default {
         startTime: formatTime(date[0]),
         endTime: formatTime(date[1]),
         userName,
-        pageNum,
+        pageNum: page || pageNum,
         pageSize
       }
       console.log(params)

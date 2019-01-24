@@ -4,7 +4,7 @@ import { getTableData, getDragList, uploadImage, getOrgData } from './data'
 import { getMessageInit, getContentByMsgId, hasRead, removeReaded, restoreTrash, messageCount } from './user'
 
 import { addProject, updateProject, projectDetails, queryDetails, addLabel, delLabel, queryLabel, querySystemUser, getPhase, bindPhase } from './project'
-import { manHourStatistics } from './statistic'
+import { manHourStatistics, statisticManHour, manHourStatisticsChart, queryPunchAccessory, queryStatisticProject } from './statistic'
 // 配置Ajax请求延时，可用来测试网络延迟大时项目中一些效果
 Mock.setup({
   timeout: 1000
@@ -37,6 +37,10 @@ Mock.mock(/\/project\/label\/query/, queryLabel)
 Mock.mock(/\/itsm\/system\/sso\/user\/querySystemUser/, querySystemUser)
 Mock.mock(/\/project\/phase\/query/, getPhase)
 Mock.mock(/\/project\/management\/bindPhase/, bindPhase)
+Mock.mock(/\/statisticAnalysis\/manHour\/manHourStatisticsChart/, manHourStatisticsChart)
 Mock.mock(/\/statisticAnalysis\/manHour\/manHourStatistics/, manHourStatistics)
+Mock.mock(/\/statisticAnalysis\/manHour\/statisticManHour/, statisticManHour)
+Mock.mock(/\/statisticAnalysis\/manHour\/queryPunchAccessory/, queryPunchAccessory)
+Mock.mock(/\/statisticAnalysis\/manHour\/queryStatisticProjectType/, queryStatisticProject)
 
 export default Mock
