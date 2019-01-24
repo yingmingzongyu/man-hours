@@ -4,9 +4,11 @@
       type="daterange"
       show-week-numbers
       placement="bottom-end"
-      :options="options"
+      :clearable="false"
+      :options="dateOptions"
       placeholder="默认近7日"
-      style="width: 200px;float:right"
+      style="width: 250px;float:right"
+      @on-change="dateChange"
     ></DatePicker>
     <div ref="dom" style="height: 310px;padding-top:50px;"></div>
   </div>
@@ -20,7 +22,7 @@ export default {
   data() {
     return {
       dom: null,
-      options: {
+      dateOptions: {
         shortcuts: [
           {
             text: "近7天",
@@ -50,12 +52,86 @@ export default {
             }
           }
         ]
+      },
+      lineOptions: {
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "cross",
+            label: {
+              backgroundColor: "#6a7985"
+            }
+          }
+        },
+        grid: {
+          top: "3%",
+          left: "1.2%",
+          right: "1%",
+          bottom: "3%",
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: "category",
+            boundaryGap: false,
+            data: []
+          }
+        ],
+        yAxis: [
+          {
+            type: "value"
+          }
+        ],
+        series: [
+        ]
       }
     };
   },
   methods: {
+    init() {
+      this.chartList = [
+        {
+          name: "需求阶段",
+          data: [120, 132, 101, 134, 90, 230, 210]
+        },
+        {
+          name: "方案设计阶段",
+          data: [257, 358, 278, 234, 290, 330, 310]
+        },
+        {
+          name: "招标阶段",
+          data: [379, 268, 354, 269, 310, 478, 358]
+        },
+        {
+          name: "投标阶段",
+          data: [320, 332, 301, 334, 390, 330, 320]
+        },
+        {
+          name: "项目实施",
+          data: [820, 645, 546, 745, 872, 624, 258]
+        },
+        {
+          name: "运维阶段",
+          data: [820, 645, 546, 334, 390, 330, 320]
+        }
+      ]
+    },
     resize() {
       this.dom.resize();
+    },
+    dateChange(v) {
+      
+    },
+    formatOptions(list){
+      
+    }
+  },
+  watch:{
+    options:{
+      handler(){
+        this.dom.setOption(option);
+      },
+      deep: true
     }
   },
   mounted() {

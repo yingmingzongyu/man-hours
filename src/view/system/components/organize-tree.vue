@@ -12,7 +12,7 @@ import {
   getDepartmentTree
 } from "@/api/system";
 import {
-  formatOrganizeTree
+  formatTreeList
 } from '@/libs/util.js';
 export default {
   name: "orginize-tree",
@@ -42,8 +42,14 @@ export default {
   methods: {
     getTreeData(){
       getDepartmentTree().then(res => {
-        this.list = res.data.data.top
-        this.list[0].expend = true
+        let list = formatTreeList(res.data.data.top[0].children,{ id:0, title:'组织树', expand: true},{
+          id:"id",
+          title:"organizationName"
+        })
+
+        this.list = [{ id:0, title:'组织树', expand: true, children:list }]
+        console.log(list);
+        
       })
     },
     submit(){
@@ -58,8 +64,8 @@ export default {
     },
     render(h, { root, node, data }) {
       const self = this;
-      if(data.id == 1){
-        return h('span', null, data.organizationName) 
+      if(data.id == 0){
+        return h('span', null, data.title) 
       }else{
         return h('span', null, [
           h('Radio', {
@@ -73,7 +79,7 @@ export default {
                 self.selectNode = data
               }
             }
-          },data.organizationName)
+          },data.title)
         ])
       }
     }
@@ -81,9 +87,9 @@ export default {
   watch:{
     value(cur, old){
       this.visible = cur;
+      this.selectId = this.data || 0;
     },
     data(cur, old){
-      console.log(cur)
       this.selectId = cur;
     }
   },

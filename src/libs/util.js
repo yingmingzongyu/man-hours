@@ -41,24 +41,13 @@ export const formatMenuList = (list) => {
  * @param {Array} list 树数据
  * @returns {Array}
  */
-export const formatTreeList = (list,parentNode={id:0, title:'菜单树',children:list}) => {
+export const formatTreeList = (list,parentNode=null,config={id:'id',title:'title'}) => {
   return list.map((v)=>{
-    let { id, title } = {id:v.id, title:v.resourceName};
+    let { id, title } = {id:v[config.id], title:v[config.title]};
     if(v.children&&v.children.length>0){
-      return { id, title, parentNode, children: formatTreeList(v.children,{id, title, children:v.children}) };
+      return { id, title, parentNode, children: formatTreeList(v.children,{id, title}, config) };
     }else{
       return { id, title, parentNode };
-    }
-  })
-}
-
-export const formatOrganizeTree = (list, parentNode = null) => {
-  return list.map((v) => {
-    let { id, title, organizationCode, description, organizationName } = { id: v.id, title: v.organizationName, organizationCode: v.organizationCode, description: v.description, organizationName: v.organizationName };
-    if (v.children && v.children.length > 0) {
-      return { id, title, parentNode, children: formatOrganizeTree(v.children), organizationCode, description, organizationName };
-    } else {
-      return { id, title, parentNode, organizationCode, description, organizationName };
     }
   })
 }

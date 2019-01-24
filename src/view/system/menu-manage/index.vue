@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-01-14 16:46:45
- * @LastEditTime: 2019-01-22 17:45:30
+ * @LastEditTime: 2019-01-24 16:46:37
  * @LastEditors: Please set LastEditors
  -->
 <template>
@@ -131,7 +131,7 @@ export default {
             title: "菜单类型",
             key: "resourceType",
             render: (h, params) => {
-              let text = params.resourceType==1?'父级菜单':(params.resourceType==2?'功能视图':'功能按钮');
+              let text = params.row.resourceType==1?'父级菜单':(params.resourceType==2?'功能视图':'功能按钮');
               return h('span',text)
             }
           },
@@ -367,7 +367,10 @@ export default {
      */
     initTree(){
       getTreeList().then(res => {
-        let list = formatTreeList(res.data.data.top);
+        let list = formatTreeList(res.data.data.top,{id:0, title:'菜单树', expand: true},{
+          id:'id',
+          title: 'resourceName'
+        });
         this.tree.data = [{ id:0, title:'菜单树', expand: true, children:list }]
       })
     },

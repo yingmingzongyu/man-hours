@@ -2,19 +2,15 @@
  * @Description: In User Settings Edit
  * @Author: Zero
  * @Date: 2019-01-22 16:41:37
- * @LastEditTime: 2019-01-22 17:05:13
+ * @LastEditTime: 2019-01-22 18:11:30
  * @LastEditors: Please set LastEditors
  -->
 
 <template>
   <div class="stage-table clearfix">
-    <DatePicker
-      type="daterange"
-      show-week-numbers
-      placement="bottom-end"
-      :options="options"
-      placeholder="默认近7日"
-    ></DatePicker>
+    <Select v-model="stage.value" style="width:200px">
+      <Option v-for="item in stage.list" :value="item.id" :key="item.id">{{ item.label }}</Option>
+    </Select>
     <Table :columns="table.columns" :data="table.data" ></Table>
     <br>
     <Page
@@ -33,32 +29,15 @@ export default {
   name: "stage-table",
   data() {
     return {
-      options: {
-        shortcuts: [
-          {
-            text: "近7天",
-            value() {
-              const end = new Date(), start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              return [start, end];
-            }
-          },
-          {
-            text: "近30天",
-            value() {
-              const end = new Date(), start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              return [start, end];
-            }
-          },
-          {
-            text: "近90天",
-            value() {
-              const end = new Date(), start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              return [start, end];
-            }
-          }
+      stage:{
+        value:'',
+        list:[
+          {id:0,label:"需求阶段"},
+          {id:1,label:"方案设计极端"},
+          {id:2,label:"招标阶段"},
+          {id:3,label:"投标阶段"},
+          {id:4,label:"项目实施阶段"},
+          {id:5,label:"运维阶段"}
         ]
       },
       table: {
@@ -126,7 +105,7 @@ export default {
 <style lang="less">
 .stage-table{
     padding: 50px 0;position: relative;
-    >.ivu-date-picker{
+    >.ivu-select{
         position: absolute;right: 0;top: 0px;
     }
     >.ivu-page{

@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: Zero
  * @Date: 2019-01-16 10:29:42
- * @LastEditTime: 2019-01-22 17:44:40
+ * @LastEditTime: 2019-01-24 17:10:41
  * @LastEditors: Please set LastEditors
  -->
 <!--用户管理-->
@@ -289,7 +289,7 @@ export default {
             { required: true, message: '请输入工号', trigger: 'blur' }
           ], // 工号
           organizationName:[
-            { required: true, message: '请选择部门', trigger: 'blur' }
+            { required: true, message: '请选择部门', trigger: 'change' }
           ], // 部门
           mobile: [
             { required: true, message: '请输入手机号码', trigger: 'blur' }
@@ -298,7 +298,7 @@ export default {
             { required: true, message: '请输入电子邮件地址', trigger: 'blur' }
           ], // 电子邮件
           position: [
-            { required: true, message: '请选择职位', trigger: 'blur' }
+            { required: true, message: '请选择职位', trigger: 'change' }
           ], // 职位
         },
         // 角色
@@ -485,6 +485,7 @@ export default {
       }else{
         this.organize.organizationId = this.addEditDialog.params.organizationId || 0;
       }
+      console.log('organizationId'+this.organize.organizationId);
     },
 
     /**
@@ -495,12 +496,11 @@ export default {
     organizeSave(data){
       if(this.organize.type == 'search'){
         this.form.params.organizationId = data.id
-        this.form.params.organizationName = data.organizationName
+        this.form.params.organizationName = data.title
       }else{
         this.addEditDialog.params.organizationId = data.id
-        this.addEditDialog.params.organizationName = data.organizationName
+        this.addEditDialog.params.organizationName = data.title
       }
-     
     },
 
     /**
