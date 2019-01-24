@@ -13,3 +13,11 @@ export const getManHourStatistics = params => {
     params
   })
 }
+
+export const getProjectHourStatistics = (params) => {
+  return axios.request({
+    url: '/statisticAnalysis/projectTime/projectTimeStatistics',
+    params,
+    method: 'post'
+  })
+}

@@ -40,10 +40,10 @@
 					<Button type="primary">导出Excel</Button>
 				</div>
 			</div>
-			<Table :columns="table.columns" :data="table.data" :loading="table.tableLoading">
+			<Table :columns="table.columns" :data="table.data" :loading="table.loading">
 				<template slot-scope="{ row }" slot="action">
 					<!--<Button type="text" size="small" icon="ios-search" @click="goToDetail(row.id)"></Button>-->
-					<span class="operation-btn" @click="goToDetail(row.id)">详情</span>
+					<span class="operation-btn" @click="goToDetail(row.id)">统计详情</span>
 				</template>
 			</Table>
 			<br>
@@ -56,7 +56,8 @@
 
 <script>
 	import labelCheck from "../components/label-check.vue";
-	import { syncValue, deepCopy } from '@/libs/util.js';
+	import { syncValue, deepCopy, formatTime } from '@/libs/util.js';
+	import { getProjectHourStatistics } from "@/api/statistic";
 	export default {
 		components: {
 			labelCheck
@@ -186,7 +187,7 @@
 						}
 					],
 					total: 0,
-					tableLoading: false
+					loading: false
 				},
 			};
 		},
@@ -195,7 +196,24 @@
 		},
 		methods: {
 			query() {
-
+				let param = deepCopy(this.params);
+				for(let item in param) {
+					if(!param[item]) {
+						delete param[item];
+					}
+				}
+				console.log(param);
+//				this.table.loading = true;
+//				getProjectHourStatistics(param).then(res => {
+//    				if(res.data.status == 200) {
+//    					this.table.data = res.data.data.list;
+//      				this.table.total = res.data.data.total;
+//    				} else {
+//    					this.table.data = [];
+//      				this.table.total = 0;
+//    				}
+//    				this.table.loading = false;
+//    			})
 			},
 			pageChange(v) {
 				this.params.pageNum = v;
@@ -208,11 +226,10 @@
 			// 查询
 			search() {
 				syncValue(this.params, this.form);
-				this.params.startTime = this.formatDate(this.form.date[0]);
-				this.params.endTime = this.formatDate(this.form.date[1]);
+				this.params.startTime = formatTime(this.form.date[0]);
+				this.params.endTime = formatTime(this.form.date[1]);
 				this.params.pageNum = 1;
 				this.query();
-				console.log(this.params)
 			},
 			// 重置
 			reset() {
@@ -244,22 +261,9 @@
 				this.form.labelId = ids.toString();
 				this.form.labelName = names.toString();
 			},
-			// 格式化日期
-			formatDate(date) {
-				if(date) {
-					let year = date.getFullYear();
-	  				let month = date.getMonth() + 1;
-	  				let day = date.getDate();
-	  				return year + "-" + month + "-" + day;
-				} else {
-					return "";
-				}
-			},
 			// 打开详情
 			goToDetail(id) {
-				this.$router.push({
-          			name: "detail"
-        		});
+				this.$router.push({ name: "detail", params: {id: id} });
 			}
 		}
 	};
