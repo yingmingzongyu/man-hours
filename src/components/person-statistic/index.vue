@@ -170,7 +170,7 @@ export default {
       ],
       businessTypes: [],
       form: {
-        userId: null,
+        userId: this.$route.query.id || null,
         year: nowYear,
         period: nowMonth,
         businessType: null
