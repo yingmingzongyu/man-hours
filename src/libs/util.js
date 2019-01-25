@@ -46,14 +46,41 @@ export const formatTreeList = (list,parentNode=null,config={id:'id',title:'title
   return list.map((v)=>{
     let { id, title } = {id:v[config.id], title:v[config.title]};
     if(v.children&&v.children.length>0){
-      return { id, title, parentNode, children: formatTreeList(v.children,{id, title}, config) };
+      return { id, title, expand: false, parentNode, children: formatTreeList(v.children,{id, title}, config) };
     }else{
-      return { id, title, parentNode };
+      return { id, title, expand: false, parentNode };
     }
   })
 }
 
+/**遍历寻找list中的key 并设置expand
+ * @param {Array} list 树数据
+ * @param {Array} key 目标id
+ * @param {Array} expand 展开或是收起
+ * @returns {Array}
+ */
+export const mapKeyExpend = (list,key,hashList)=>{
+  return list.some(v=>{
+    if(v.id == key){
+      v.expand = true;
+      if(v.parentNode && v.parentNode.id!=0) mapKeyExpend(hashList,v.parentNode.id,hashList);
+      return true
+    }else{
+      if(v.children&&v.children.length>0) mapKeyExpend(v.children,key,hashList);
+    }
+  })
+}
 
+/**遍历寻找list设置expand
+ * @param {Array} list 树数据
+ * @returns {Array}
+ */
+export const mapListExpend = (list)=>{
+  return list.map(v=>{
+    v.id == 0?v.expand=true: v.expand=false;
+    if(v.children&&v.children.length>0) mapListExpend(v.children);
+  })
+}
 
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0

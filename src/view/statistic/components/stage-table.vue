@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: Zero
  * @Date: 2019-01-22 16:41:37
- * @LastEditTime: 2019-01-22 18:11:30
+ * @LastEditTime: 2019-01-25 10:10:20
  * @LastEditors: Please set LastEditors
  -->
 
@@ -13,14 +13,6 @@
     </Select>
     <Table :columns="table.columns" :data="table.data" ></Table>
     <br>
-    <Page
-      :total="table.total"
-      :current.sync="table.pageNum"
-      show-sizer
-      show-elevator
-      show-total
-      @on-change="pageChange"
-    />
   </div>
 </template>
 
@@ -90,9 +82,7 @@ export default {
             punchCount: 20,
             stageCount: 50
           }
-        ],
-        total: 0,
-        pageNum: 1
+        ]
       }
     };
   },

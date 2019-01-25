@@ -12,7 +12,7 @@ import {
   getDepartmentTree
 } from "@/api/system";
 import {
-  formatTreeList
+  formatTreeList, mapKeyExpend, mapListExpend
 } from '@/libs/util.js';
 export default {
   name: "orginize-tree",
@@ -46,10 +46,7 @@ export default {
           id:"id",
           title:"organizationName"
         })
-
         this.list = [{ id:0, title:'组织树', expand: true, children:list }]
-        console.log(list);
-        
       })
     },
     submit(){
@@ -88,6 +85,13 @@ export default {
     value(cur, old){
       this.visible = cur;
       this.selectId = this.data || 0;
+      if(cur == true){
+        // 根据选中的id 遍历list 设置expend
+        mapKeyExpend(this.list,this.selectId,this.list);
+      }else{
+        // 关闭打开的expend
+        mapListExpend(this.list);
+      }
     },
     data(cur, old){
       this.selectId = cur;

@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: Zero
  * @Date: 2019-01-16 10:29:42
- * @LastEditTime: 2019-01-24 17:10:41
+ * @LastEditTime: 2019-01-25 10:08:34
  * @LastEditors: Please set LastEditors
  -->
 <!--用户管理-->
@@ -485,7 +485,6 @@ export default {
       }else{
         this.organize.organizationId = this.addEditDialog.params.organizationId || 0;
       }
-      console.log('organizationId'+this.organize.organizationId);
     },
 
     /**
