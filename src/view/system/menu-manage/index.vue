@@ -36,7 +36,7 @@
           </div>
           <Table :columns="table.columns" :data="table.data" @on-selection-change="onSelectionChange"></Table>
           <br>
-          <Page
+          <Page show-total
             :total="table.total"
             :current.sync="table.pageNum"
             show-sizer
