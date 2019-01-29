@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 11:35:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-01-15 14:27:56
+ * @LastEditTime: 2019-01-29 14:11:27
  -->
 <template>
   <Layout style="height: 100%" class="main">
@@ -141,177 +141,159 @@ export default {
     getMenu() {
       this.menuList = [
         {
-          icon: "ios-construct",
+          icon: "iconfont icon_xitongguanli",
           name: "system",
           meta: {
             title: "系统管理"
           },
           children: [
             {
-              icon: "ios-construct",
+              icon: "",
               name: "department",
               meta: {
-                icon: "ios-construct",
                 title: "部门管理"
               }
             },
             {
-              icon: "ios-construct",
+              icon: "",
               name: "role",
               meta: {
-                icon: "ios-construct",
                 title: "角色管理"
               }
             },
             {
-              icon: "ios-construct",
+              icon: "",
               name: "user",
               meta: {
-                icon: "ios-construct",
                 title: "用户管理"
               }
             },
             {
-              icon: "ios-construct",
+              icon: "",
               name: "menu",
               meta: {
-                icon: "ios-construct",
                 title: "菜单管理"
               }
             }
           ]
         },
         {
-          icon: "ios-construct",
+          icon: "iconfont icon_xiangmuguanli",
           name: "project",
           meta: {
             title: "项目管理"
           },
           children: [
             {
-              icon: "ios-construct",
+              icon: "",
               name: "software-development",
               meta: {
-                icon: "ios-construct",
                 title: "软件开发"
               },
               children: [
                 {
-                  icon: "ios-construct",
+                  icon: "",
                   name: "product-manage",
                   meta: {
-                    icon: "ios-construct",
                     title: "软件产品管理"
                   }
                 },
                 {
-                  icon: "ios-construct",
+                  icon: "",
                   name: "project-manage",
                   meta: {
-                    icon: "ios-construct",
                     title: "软件项目管理"
                   }
                 }
               ]
             },
             {
-              icon: "ios-construct",
+              icon: "",
               name: "project-construction",
               meta: {
-                icon: "ios-construct",
                 title: "项目施工"
               },
               children: [
                 {
-                  icon: "ios-construct",
+                  icon: "",
                   name: "intelligentize",
                   meta: {
-                    icon: "ios-construct",
                     title: "智能化项目管理"
                   }
                 },
                 {
-                  icon: "ios-construct",
+                  icon: "",
                   name: "integration",
                   meta: {
-                    icon: "ios-construct",
                     title: "系统集成项目管理"
                   }
                 },
                 {
-                  icon: "ios-construct",
+                  icon: "",
                   name: "multimedia",
                   meta: {
-                    icon: "ios-construct",
                     title: "多媒体项目管理"
                   }
                 },
                 {
-                  icon: "ios-construct",
+                  icon: "",
                   name: "ops",
                   meta: {
-                    icon: "ios-construct",
                     title: "运维服务项目管理"
                   }
                 }
               ]
             },
             {
-              icon: "ios-construct",
+              icon: "",
               name: "train-study",
               meta: {
-                icon: "ios-construct",
                 title: "学习培训"
               },
               children: [
                 {
-                  icon: "ios-construct",
+                  icon: "",
                   name: "internal",
                   meta: {
-                    icon: "ios-construct",
                     title: "内部培训"
                   }
                 },
                 {
-                  icon: "ios-construct",
+                  icon: "",
                   name: "external",
                   meta: {
-                    icon: "ios-construct",
                     title: "外部培训"
                   }
                 }
               ]
             },
             {
-              icon: "ios-construct",
+              icon: "",
               name: "label-manage",
               meta: {
-                icon: "ios-construct",
                 title: "标签管理"
               }
             }
           ]
         },
         {
-          icon: "ios-construct",
+          icon: "iconfont icon_tongjifenxi",
           name: "statistic",
           meta: {
             title: "统计分析"
           },
           children: [
             {
-              icon: "ios-construct",
+              icon: "",
               name: "project-statistic",
               meta: {
-                icon: "ios-construct",
                 title: "项目工时统计"
               }
             },
             {
-              icon: "ios-construct",
+              icon: "",
               name: "man-statistic",
               meta: {
-                icon: "ios-construct",
                 title: "人员工时统计"
               }
             }
