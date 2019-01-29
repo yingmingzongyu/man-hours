@@ -63,6 +63,9 @@
 			labelCheck
 		},
 		data() {
+			const end = new Date();
+    		const start = new Date();
+   			start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
 			return {
 				dateOptions: {
 					shortcuts: [{
@@ -112,7 +115,7 @@
 					{ value: 'PT', label: '平台公司' },
 				],
 				form: {
-					date: [], 				// 统计时间
+					date: [ start, end ], 	// 统计时间
 					projectNumber: "", 		// 项目编号
 					projectName: "", 		// 项目名称
 					businessType: "", 		// 业务类型
@@ -122,8 +125,8 @@
 					labelList: [],			// 标签列表
 				},
 				params: {
-					startTime: "",
-					endTime: "",
+					startTime: formatTime(start),
+					endTime: formatTime(end),
 					projectNumber: "",
 					projectName: "",
 					businessType: "",

@@ -30,7 +30,7 @@
           </Select>
         </FormItem>
         <FormItem prop="labelName" label="标签：">
-          <Input type="text" v-model="form.labelName" style="width: 180px"/>
+          <Input type="text" placeholder="请输入标签名称" v-model="form.labelName" style="width: 180px"/>
         </FormItem>
       </Form>
     </Card>
@@ -401,7 +401,7 @@ export default {
               value: this.tagVal,
               autofocus: true,
               maxlength: 8,
-              placeholder: "请输入标签名..."
+              placeholder: "请输入标签名称"
             },
             style: {
               marginTop: "15px"
