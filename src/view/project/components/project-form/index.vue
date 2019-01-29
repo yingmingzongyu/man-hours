@@ -59,7 +59,12 @@
         :style="`width:${formWidth}px`"
         :label="selectLabel"
       >
-        <Option v-for="(option, index) in userList" :value="option.id" :label="option.userName" :key="index">
+        <Option
+          v-for="(option, index) in userList"
+          :value="option.id"
+          :label="option.userName"
+          :key="index"
+        >
           <span>{{option.userName}}</span>
           <span style="float:right;color:#ccc;padding-right:14px">工号{{option.userCode}}</span>
         </Option>
@@ -87,6 +92,7 @@ export default {
       formWidth: 308,
       form: {
         projectNumber: null,
+        projectName: null,
         projectAttribution: null,
         summarize: null,
         timeEvaluation: null,
@@ -159,7 +165,7 @@ export default {
       searchUserLoading: false,
       selectLabel: [],
       userModal: false,
-      loading: false,
+      loading: false
     };
   },
   methods: {
@@ -194,8 +200,18 @@ export default {
         id
       }).then(res => {
         if (res.data.status === 200) {
-          let formData = res.data.data.project;
-          formData.user = res.data.data.user;
+          const resData = res.data.data
+          console.log(res)
+          let formData = {
+            projectNumber: resData.project.projectNumber,
+            projectAttribution: resData.project.projectAttribution,
+            projectName: resData.project.projectName,
+            summarize: resData.project.summarize,
+            timeEvaluation: resData.project.timeEvaluation,
+            startTime: resData.project.startTime,
+            endTime: resData.project.endTime,
+            user: resData.user
+          };
           this.selectLabel = formData.user.map(item => ({
             label: `${item.userName}(工号${item.userCode})`,
             value: item.id

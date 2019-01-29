@@ -64,6 +64,7 @@ export default {
       //判断新增or修改项目
       const func = data.type === 'add' ? addProject : updateProject
       delete data.type
+      console.log(data)
       func(data).then(res => {
         if (res.data.status === 200) {
           this.$Message.success(res.data.message);
