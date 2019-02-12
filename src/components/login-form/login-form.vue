@@ -1,21 +1,25 @@
+<style lang="less">
+@import "./login-form.less";
+</style>
+
 <template>
-  <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
+  <Form class="login-form" ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
     <FormItem prop="userName">
       <Input v-model="form.userName" placeholder="请输入用户名">
         <span slot="prepend">
-          <Icon :size="16" type="ios-person"></Icon>
+          <img src="./../../assets/images/user.png" alt="">
         </span>
       </Input>
     </FormItem>
     <FormItem prop="password">
       <Input type="password" v-model="form.password" placeholder="请输入密码">
         <span slot="prepend">
-          <Icon :size="14" type="md-lock"></Icon>
+          <img src="./../../assets/images/password.png" alt="">
         </span>
       </Input>
     </FormItem>
     <FormItem>
-      <Button @click="handleSubmit" type="primary" long :loading="loginLoading">登录</Button>
+      <Button class="login-submit" @click="handleSubmit" type="primary" long :loading="loginLoading">登录</Button>
     </FormItem>
   </Form>
 </template>

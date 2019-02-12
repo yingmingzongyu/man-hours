@@ -5,11 +5,8 @@
 <template>
   <div class="login">
     <div class="login-con">
-      <Card icon="log-in" title="欢迎登录" :bordered="false">
-        <div class="form-con">
-          <login-form @on-success-valid="handleSubmit" :loginLoading="loading"></login-form>
-        </div>
-      </Card>
+      <img src="./../../assets/images/login-lg.png" style="position: absolute;left: 30px;top: -80px;" alt="">
+      <login-form @on-success-valid="handleSubmit" :loginLoading="loading"></login-form>
     </div>
   </div>
 </template>

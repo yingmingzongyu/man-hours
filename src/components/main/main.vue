@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 11:35:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-01-29 14:11:27
+ * @LastEditTime: 2019-02-12 15:59:01
  -->
 <template>
   <Layout style="height: 100%" class="main">
@@ -26,7 +26,6 @@
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
         <div class="logo-con">
           <img v-show="!collapsed" :src="maxLogo" key="max-logo">
-          <img v-show="collapsed" :src="minLogo" key="min-logo">
         </div>
       </side-menu>
     </Sider>
@@ -71,8 +70,7 @@ import { mapMutations, mapActions, mapGetters } from "vuex";
 import { getNewTagList, routeEqual, formatMenuList } from "@/libs/util";
 import { getSlideMenu } from "@/api/routers.js";
 import routers from "@/router/routers";
-import minLogo from "@/assets/images/logo-min.jpg";
-import maxLogo from "@/assets/images/logo.jpg";
+import maxLogo from "@/assets/images/logo.png";
 import router from "@/router/routers.js";
 import "./main.less";
 export default {
@@ -90,7 +88,6 @@ export default {
   data() {
     return {
       collapsed: false,
-      minLogo,
       maxLogo,
       isFullscreen: false,
       menuList: []
