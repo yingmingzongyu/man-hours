@@ -8,6 +8,9 @@
       <img src="./../../assets/images/login-lg.png" style="position: absolute;left: 30px;top: -85px;" alt="">
       <login-form @on-success-valid="handleSubmit" :loginLoading="loading"></login-form>
     </div>
+    <div class="login-bottom">
+      技术支持：安徽智恒信科技有限公司
+    </div>
   </div>
 </template>
 
