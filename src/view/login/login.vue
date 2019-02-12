@@ -5,7 +5,7 @@
 <template>
   <div class="login">
     <div class="login-con">
-      <img src="./../../assets/images/login-lg.png" style="position: absolute;left: 30px;top: -80px;" alt="">
+      <img src="./../../assets/images/login-lg.png" style="position: absolute;left: 30px;top: -85px;" alt="">
       <login-form @on-success-valid="handleSubmit" :loginLoading="loading"></login-form>
     </div>
   </div>

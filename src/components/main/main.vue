@@ -2,7 +2,7 @@
  * @Author: yincheng
  * @Date: 2019-01-10 11:35:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-02-12 15:59:01
+ * @LastEditTime: 2019-02-12 17:53:06
  -->
 <template>
   <Layout style="height: 100%" class="main">
@@ -25,7 +25,8 @@
       >
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
         <div class="logo-con">
-          <img v-show="!collapsed" :src="maxLogo" key="max-logo">
+          <!-- <img v-show="!collapsed" :src="maxLogo" key="max-logo"> -->
+          <div class="logo" v-show="!collapsed">易运维工时管理系统</div>
         </div>
       </side-menu>
     </Sider>
