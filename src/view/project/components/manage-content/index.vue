@@ -64,6 +64,7 @@
     </Modal>
     <Modal v-model="phaseVisible" title="配置阶段可用性">
       <div slot="footer">
+        <Button @click="clearPhase" type="error">清空</Button>
         <Button @click="submitPhase" type="info" :loading="submitPhaseLoading">提交</Button>
       </div>
       <Tree :data="treeData" show-checkbox></Tree>
@@ -401,7 +402,7 @@ export default {
               value: this.tagVal,
               autofocus: true,
               maxlength: 8,
-              placeholder: "请输入标签名称"
+              placeholder: "请输入标签名…"
             },
             style: {
               marginTop: "15px"
@@ -441,6 +442,9 @@ export default {
         }
         return arr;
       });
+    },
+    clearPhase() {
+      this.treeData = this.mapPhaseData(this.phaseData, '');
     },
     submitPhase() {
       this.submitPhaseLoading = true;
